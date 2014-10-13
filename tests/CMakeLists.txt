@@ -6,7 +6,7 @@ include_directories(${GTEST_INCLUDE_DIRS})
 
 INCLUDE(CMakeForceCompiler) 
 CMAKE_FORCE_C_COMPILER(gcc GNU)
-CMAKE_FORCE_CXX_COMPILER(g++ GNU)
+CMAKE_FORCE_CXX_COMPILER(gcc GNU)
  
 # Link runTests with what we want to test and the GTest and pthread library
 add_executable(runTests Vector2d_test.cpp Point2d_test.cpp ../gtest-1.7.0/make/sample1_unittest)
