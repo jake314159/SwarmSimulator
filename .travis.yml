@@ -6,6 +6,7 @@ compiler:
 sudo: true
 
 script: 
+  - mkdir bin
   - bash configure_gtest.sh
   - make
 
