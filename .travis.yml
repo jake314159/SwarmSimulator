@@ -6,9 +6,6 @@ compiler:
 sudo: true
 
 before_install:
- - sudo apt-get update -qq
- - sudo apt-get install -y libgtest-dev
- - "cd /usr/src/gtest && sudo cmake . && sudo cmake --build . && sudo mv libg* /usr/local/lib/ ; cd -"
-script: make test
+script: bash configure_gtest.sh && make test
 
 
