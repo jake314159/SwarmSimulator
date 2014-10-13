@@ -1,23 +1,12 @@
-language: cpp
-
-compiler:
-  - g++
-
-script: make test
 
 language: cpp
 compiler:
   - gcc
 
 before_install:
- - sudo apt-get update
- - sudo apt-get install libgtest-dev
+ - sudo apt-get update -qq
+ - sudo apt-get install -y libgtest-dev
  - "cd /usr/src/gtest && sudo cmake . && sudo cmake --build . && sudo mv libg* /usr/local/lib/ ; cd -"
-before_script:
- - pwd
- - cd samples/STL/
- - pwd
- - which sh
 script: make test
 
 
