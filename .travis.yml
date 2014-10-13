@@ -1,10 +1,12 @@
 
 language: cpp
 compiler:
-  - g++
+  - clang++
 
 sudo: true
 
-script: bash configure_gtest.sh && make test
+script: 
+  - bash configure_gtest.sh
+  - make test
 
 
