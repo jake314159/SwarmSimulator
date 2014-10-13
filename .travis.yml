@@ -9,5 +9,6 @@ script:
   - mkdir bin
   - bash configure_gtest.sh
   - make
+  - make test
 
 
