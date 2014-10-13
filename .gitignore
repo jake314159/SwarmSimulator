@@ -1,0 +1,8 @@
+*~
+bin/*
+tests/runTests
+tests/CMakeCache.txt
+tests/CMakeFiles/*
+tests/Makefile
+tests/cmake_install.cmake
+
