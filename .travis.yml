@@ -1,7 +1,6 @@
-language: c
+language: c++
 
 compiler:
-  - clang
-  - gcc
+  - g++
 
 script: make test
