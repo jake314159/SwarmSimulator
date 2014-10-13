@@ -7,6 +7,6 @@ sudo: true
 
 script: 
   - bash configure_gtest.sh
-  - make test
+  - make
 
 
