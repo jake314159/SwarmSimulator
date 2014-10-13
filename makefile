@@ -20,4 +20,6 @@ bin/%.o: src/%.cpp
 -include $(OBJ_F:.o=.d)
 
 test: 
-	cd tests && cmake -DCMAKE_CC_COMPILER=gcc -DCMAKE_CXX_COMPILER=gcc -DCMAKE_CC_COMPILER=gcc "CMakeLists.txt" && make && ./runTests
+	cd tests && make && ./runTests
+
+#cmake -DCMAKE_CC_COMPILER=gcc -DCMAKE_CXX_COMPILER=gcc -DCMAKE_CC_COMPILER=gcc "CMakeLists.txt" && 
