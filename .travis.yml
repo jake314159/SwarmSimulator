@@ -1,11 +1,10 @@
 
 language: cpp
 compiler:
-  - g++
+  - gcc
 
 sudo: true
 
-before_install: ln -s /usr/bin/gcc /usr/bin/g++
 script: bash configure_gtest.sh && make test
 
 
