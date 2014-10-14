@@ -106,6 +106,20 @@ TEST(Vector2d_test, operator_comparison_not_equal_Y) {
     delete l;
     delete r;
 }
+
+TEST(Vector2d_test, set_vector_from_vector) { 
+    double val_x = 2.0;
+    double val_y = 4.0;
+    double val_x_2 = 3.0;
+    double val_y_2 = 5.0;
+    Vector2d *l = new Vector2d( val_x, val_y );
+    Vector2d *r = new Vector2d( val_x_2, val_y_2 );
+    l->setVector(r);
+    ASSERT_EQ(l->getX(), val_x_2);
+    ASSERT_EQ(l->getY(), val_y_2);
+    delete l;
+    delete r;
+}
  
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);

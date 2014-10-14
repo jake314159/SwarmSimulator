@@ -30,4 +30,15 @@ TEST(Point2d_test, apply_vector) {
     delete p;
 }
  
+TEST(Point2d_test, distance) { 
+    double answer = 5.0;
+    
+    Point2d *p1 = new Point2d(13.0, 6.0);
+    Point2d *p2 = new Point2d(10.0, 2.0);
 
+    ASSERT_EQ(p1->distanceFrom(*p2), answer);
+    ASSERT_EQ(p2->distanceFrom(*p1), answer);
+
+    delete p1;
+    delete p2;
+}

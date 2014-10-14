@@ -1,3 +1,6 @@
+#ifndef POINT2D_INCLUDE_GUARD_H
+#define POINT2D_INCLUDE_GUARD_H 1
+
 #include "Vector2d.h"
 
 class Point2d {
@@ -9,5 +12,7 @@ class Point2d {
         Point2d ();
 
         void applyVector(Vector2d &v);
+        double distanceFrom(Point2d &p);
 };
 
+#endif

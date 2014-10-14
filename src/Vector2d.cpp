@@ -40,7 +40,8 @@ Vector2d& Vector2d::operator += (Vector2d& right)
     return *this;
 }
 
-bool Vector2d::operator == (Vector2d& right) {
+bool Vector2d::operator == (Vector2d& right)
+{
     //cout << "this.x" << this->x << "right.x" << right.getX() << endl;
     return (this->x == right.getX()) && (this->y == right.getY());
 }
@@ -54,4 +55,10 @@ Vector2d& Vector2d::operator /= (double right)
     this->x /= right;
     this->y /= right;
     return *this;
+}
+
+void Vector2d::setVector(Vector2d *v)
+{
+    this->x = v->getX();
+    this->y = v->getY();
 }
