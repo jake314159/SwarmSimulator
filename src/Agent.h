@@ -8,6 +8,7 @@ class Agent {
     private:
         Point2d location;
         Vector2d velocity;
+        Vector2d velocity_next;
     public:
         Agent();
 
@@ -18,6 +19,7 @@ class Agent {
         void updateLocation();
         double distanceFrom(Point2d *p);
         Vector2d* vectorFrom(Point2d *p);
+        Vector2d getVelocity();
 };
 
 #endif

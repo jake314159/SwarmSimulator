@@ -68,18 +68,50 @@ void Display::drawDisplay() {
     ((Simulation*)sim)->getCenterOfMass(&center);
     //cout << "Center " << center.x << " " << center.y << endl;
 
-    SDL_Rect rect = {static_cast<int>(camera_x+center.x),
-                static_cast<int>(camera_y+center.y),5,5}; 
+    SDL_Rect rect = {static_cast<int>(camera_x-center.x),
+                static_cast<int>(camera_y-center.y),5,5}; 
 
     SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
     SDL_RenderFillRect(ren, &rect);
 
-    SDL_SetRenderDrawColor(ren, 0, 255, 0, 0);
     std::vector<Agent*>* agents = ((Simulation*)sim)->getAgents();
+
+    double minX = (*agents)[0]->getLocationX();
+    double minY = (*agents)[0]->getLocationY();
+    double maxX = minX;
+    double maxY = minY;
+
+    SDL_SetRenderDrawColor(ren, 0, 255, 0, 0);
+
+    std::vector<Vector2d*> queued_velocities;
+    
     for(unsigned int i=0; i<agents->size(); i++) {
-        rect.x = (*agents)[i]->getLocationX()+camera_x+center.x;
-        rect.y = (*agents)[i]->getLocationY()+camera_y+center.y;
+        rect.x = (*agents)[i]->getLocationX()+camera_x-center.x;
+        rect.y = (*agents)[i]->getLocationY()+camera_y-center.y;
+        if((*agents)[i]->getLocationX() < minX) minX = (*agents)[i]->getLocationX();
+        if((*agents)[i]->getLocationY() < minY) minY = (*agents)[i]->getLocationY();
+        if((*agents)[i]->getLocationX() > maxX) maxX = (*agents)[i]->getLocationX();
+        if((*agents)[i]->getLocationY() > maxX) maxY = (*agents)[i]->getLocationY();
+
         SDL_RenderFillRect(ren, &rect);
+
+        Vector2d v = (*agents)[i]->getVelocity();
+        SDL_RenderDrawLine(ren,
+                                 rect.x+2,
+                                 rect.y+2,
+                                 rect.x+2+v.getX()*10.0,
+                                 rect.y+2+v.getY()*10.0);
+    }
+
+    SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
+    minX = minX-fmod(minX, 50.)-400.;
+    minY = minY-fmod(minY, 50.)-400.;
+    for(int x = minX; x <maxX+400; x+=50.) {
+        for(int y = minY; y < maxY+400; y+=50.) {
+            rect.x = x+camera_x-center.x;
+            rect.y = y+camera_y-center.y;
+            SDL_RenderFillRect(ren, &rect);
+        }
     }
 
     SDL_RenderPresent(ren);

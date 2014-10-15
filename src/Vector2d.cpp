@@ -1,5 +1,6 @@
 using namespace std;
 #include <iostream>
+#include <math.h>
 #include "Vector2d.h"
 
 Vector2d::Vector2d () {
@@ -57,8 +58,22 @@ Vector2d& Vector2d::operator /= (double right)
     return *this;
 }
 
+Vector2d& Vector2d::operator *= (double right)
+{
+    this->x *= right;
+    this->y *= right;
+    return *this;
+}
+
 void Vector2d::setVector(Vector2d *v)
 {
     this->x = v->getX();
     this->y = v->getY();
+}
+//TODO test
+double Vector2d::getMagnitude() {
+    double a = this->x;
+    double b = this->y;
+
+    return sqrt (a*a + b*b);
 }

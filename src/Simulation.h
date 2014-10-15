@@ -15,9 +15,9 @@ class Simulation {
         int score;
         long runTime; //In steps
         long maxRunTime;
-        void getKNN(Point2d *p, Agent *knn[], int number);
+        void getKNN(Point2d *p, Agent *knn[], int number, int ignore_index);
     public:
-        Simulation(int flockSize);
+        Simulation(int flockSize, SwarmValues *values);
         void runSimulation(long maxRunTime);
         void setSwarmValues(SwarmValues *values);
         //void setEnvironment(Environment *env);

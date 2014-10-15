@@ -3,9 +3,10 @@
 Agent::Agent () {
 }
 void Agent::updateVelocity(Vector2d *v){
-    this->velocity.setVector(v);
+    this->velocity_next.setVector(v);
 }
 void Agent::updateLocation() {
+    this->velocity.setVector(&velocity_next);
     this->location.applyVector((this->velocity));
 }
 double Agent::distanceFrom(Point2d *p) {
@@ -27,4 +28,8 @@ double Agent::getLocationY() {
 void Agent::setLocation(double x, double y) {
     this->location.x = x;
     this->location.y = y;
+}
+
+Vector2d Agent::getVelocity() {
+    return (this->velocity);
 }

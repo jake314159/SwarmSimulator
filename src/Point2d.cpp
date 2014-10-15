@@ -2,6 +2,7 @@ using namespace std;
 #include <iostream>
 #include <math.h>
 #include "Point2d.h"
+#include "SwarmValues.h"
 
 Point2d::Point2d () {
     this->x = 0;

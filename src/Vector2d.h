@@ -15,9 +15,11 @@ class Vector2d {
         void setY(double y);
         void setVector(double x, double y);
         void setVector(Vector2d *v);
+        double getMagnitude();
 
         Vector2d& operator += (Vector2d& right);
         Vector2d& operator /= (double right);
+        Vector2d& operator *= (double right);
         bool operator == (Vector2d& right);
         bool operator != (Vector2d& right);
 };
