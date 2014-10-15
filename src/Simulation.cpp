@@ -63,42 +63,50 @@ void Simulation::runSimulation(long maxRunTime) {
 
     while(this->maxRunTime >=0 && this->runTime < this->maxRunTime) {
 
-        for(unsigned int i=0; i<this->agents.size(); i++) {
-            //Update agents[i]
+        if( runTime%2 == 0) {
+            for(unsigned int i=0; i<this->agents.size(); i++) {
+                //Update agents[i]
 
-            Point2d p;
-            p.x = agents[i]->getLocationX();
-            p.y = agents[i]->getLocationY();
-            Agent **knn = new Agent*[4];
-            this->getKNN(&p, knn, 4, i);
+                Point2d p;
+                p.x = agents[i]->getLocationX();
+                p.y = agents[i]->getLocationY();
+                Agent **knn = new Agent*[4];
+                this->getKNN(&p, knn, 4, i);
 
-            Vector2d v;
-            v.setVector(0.0,0.0);//((double)rand()/(double)RAND_MAX)*1-0.5,((double)rand()/(double)RAND_MAX)*1-0.5);
-            double mag = 0.0;
-            for(int j=0; j<4; j++) {
-                Vector2d v2 = (knn[j]->getVelocity());
-                v.setX(v.getX()+v2.getX());
-                v.setY(v.getY()+v2.getY());
-                mag += v2.getMagnitude();
+                Vector2d v;
+                v.setVector(0.0,0.0);//((double)rand()/(double)RAND_MAX)*1-0.5,((double)rand()/(double)RAND_MAX)*1-0.5);
+                double mag = 0.0;
+                for(int j=0; j<4; j++) {
+                    Vector2d v2 = (knn[j]->getVelocity());
+                    v.setX(v.getX()+v2.getX());
+                    v.setY(v.getY()+v2.getY());
+                    mag += v2.getMagnitude();
+                }
+
+                if(mag != 0.0)
+                    v /= mag;
+
+                Vector2d v_rand;
+                v_rand.setVector(((double)rand()/(double)RAND_MAX)*2-1.0,((double)rand()/(double)RAND_MAX)*2-1.0);
+
+                v *= this->values->align_weight;
+                v_rand *= this->values->noise_weight;
+                v.setX(v.getX() + v_rand.getX());
+                v.setY(v.getY() + v_rand.getY());
+
+                v *= 7; //the speed
+
+                agents[i]->updateVelocity(&v);
+                agents[i]->updateLocation();
             }
-
-            if(mag != 0.0)
-                v /= mag;
-
-            Vector2d v_rand;
-            v_rand.setVector(((double)rand()/(double)RAND_MAX)*2-1.0,((double)rand()/(double)RAND_MAX)*2-1.0);
-
-            v *= this->values->align_weight;
-            v_rand *= this->values->noise_weight;
-            v.setX(v.getX() + v_rand.getX());
-            v.setY(v.getY() + v_rand.getY());
-
-            agents[i]->updateVelocity(&v);
-            agents[i]->updateLocation();
+        } else {
+            for(unsigned int i=0; i<this->agents.size(); i++) {
+                agents[i]->updateLocation();
+            }
         }
 
         // If there is a display then draw it
-        if(display != 0 && runTime%3==0) {
+        if(display != 0 && runTime%1==0) {
             display->drawDisplay();
         }
 
@@ -108,7 +116,7 @@ void Simulation::runSimulation(long maxRunTime) {
 
 void Simulation::reset() {
     srand(time(NULL));
-    double spread = 200.0;
+    double spread = 100.0;
     Vector2d *v = new Vector2d();
     for(unsigned int i=0; i<this->agents.size(); i++) {
         double x = ((double)rand()/(double)RAND_MAX)*spread;

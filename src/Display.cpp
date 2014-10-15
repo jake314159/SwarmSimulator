@@ -99,8 +99,8 @@ void Display::drawDisplay() {
         SDL_RenderDrawLine(ren,
                                  rect.x+2,
                                  rect.y+2,
-                                 rect.x+2+v.getX()*10.0,
-                                 rect.y+2+v.getY()*10.0);
+                                 rect.x+2+v.getX()*2,
+                                 rect.y+2+v.getY()*2);
     }
 
     SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
