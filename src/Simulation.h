@@ -4,11 +4,13 @@
 #include <vector>
 #include "SwarmValues.h"
 #include "Agent.h"
+#include "Display.h"
 
 class Simulation {
     private:
         std::vector<Agent*> agents;
         SwarmValues *values;
+        Display *display;
         //Environment *env;
         int score;
         long runTime; //In steps
@@ -20,7 +22,10 @@ class Simulation {
         void setSwarmValues(SwarmValues *values);
         //void setEnvironment(Environment *env);
         void reset();
-        Point2d getCenterOfMass();
+        void getCenterOfMass(Point2d *p);
+
+        std::vector<Agent*>* getAgents();
+        void addDisplay();
 };
 
 

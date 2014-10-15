@@ -9,7 +9,14 @@ Simulation::Simulation(int flockSize) {
     for(int i=flockSize; i>0; i--) {
         this->agents.push_back(new Agent());
     }
+    display = 0;
     cout << "Created a flock of " << this->agents.size() << endl;
+}
+
+void Simulation::addDisplay()
+{
+    this->display = new Display(this);
+    this->display->initDisplay();
 }
 
 //TODO test
@@ -47,9 +54,15 @@ void Simulation::runSimulation(long maxRunTime) {
     this->runTime = 0;
 
     while(this->maxRunTime >=0 && this->runTime < this->maxRunTime) {
-        cout << "Frame " << this->runTime << endl;
+
         for(unsigned int i=0; i<this->agents.size(); i++) {
             //Update agents[i]
+            agents[i]->updateLocation();
+        }
+
+        // If there is a display then draw it
+        if(display != 0) {
+            display->drawDisplay();
         }
 
         this->runTime++;
@@ -61,9 +74,12 @@ void Simulation::reset() {
     double spread = 100.0;
     Vector2d *v = new Vector2d();
     for(unsigned int i=0; i<this->agents.size(); i++) {
-        this->agents[0]->setLocation(
-                ((double)rand()/(double)RAND_MAX)*spread, 
-                ((double)rand()/(double)RAND_MAX)*spread
+        double x = ((double)rand()/(double)RAND_MAX)*spread;
+        double y = ((double)rand()/(double)RAND_MAX)*spread;
+
+        this->agents[i]->setLocation(
+                x, 
+                y
             );
         double d = ((double)rand()/(double)RAND_MAX)*2. -1.;
 
@@ -74,7 +90,25 @@ void Simulation::reset() {
         }    
         v->setX(d);
         v->setY(y_val); 
-        cout << "(" << d << "," << y_val << ")" << endl;
+        this->agents[i]->updateVelocity(v);
     }
     delete v;
 }
+
+std::vector<Agent*>* Simulation::getAgents() {
+    return &(this->agents);
+}
+
+void Simulation::getCenterOfMass(Point2d *p) {
+    p->x = 0;
+    p->y = 0;
+
+    for(unsigned int i=0; i<this->agents.size(); i++) {
+        p->x += this->agents[i]->getLocationX();
+        p->y += this->agents[i]->getLocationY();
+    }
+
+    p->x /= agents.size();
+    p->y /= agents.size();
+}
+
