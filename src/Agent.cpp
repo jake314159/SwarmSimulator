@@ -23,3 +23,8 @@ double Agent::getLocationX() {
 double Agent::getLocationY() {
     return this->location.y;
 }
+
+void Agent::setLocation(double x, double y) {
+    this->location.x = x;
+    this->location.y = y;
+}

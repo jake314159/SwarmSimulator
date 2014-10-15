@@ -1,6 +1,6 @@
 *~
 bin/*
-tests/runTests
+tests/runTests*
 tests/CMakeCache.txt
 tests/CMakeFiles/*
 tests/Makefile

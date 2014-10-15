@@ -11,6 +11,7 @@ class Agent {
     public:
         Agent();
 
+        void setLocation(double x, double y);
         double getLocationX();
         double getLocationY();
         void updateVelocity(Vector2d *v);
