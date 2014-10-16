@@ -9,8 +9,8 @@ class Display {
         SDL_Window *window;
         SDL_Renderer* ren;
         void *sim;
-        const static int SCREEN_WIDTH = 640;
-        const static int SCREEN_HEIGHT = 480;
+        const static int SCREEN_WIDTH = 800;
+        const static int SCREEN_HEIGHT = 580;
         //const int fontSize = 48;
         const static int FRAME_DELAY = 30;
         //const char* fontFile = "fonts/sample.ttf";

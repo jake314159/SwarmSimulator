@@ -81,7 +81,7 @@ void Display::drawDisplay() {
     double maxX = minX;
     double maxY = minY;
 
-    SDL_SetRenderDrawColor(ren, 0, 255, 0, 0);
+    SDL_SetRenderDrawColor(ren, 0, 180, 0, 0);
 
     std::vector<Vector2d*> queued_velocities;
     

@@ -1,6 +1,7 @@
 using namespace std;
 #include <iostream>
 #include <math.h>
+#include <stdlib.h>
 #include "Point2d.h"
 #include "SwarmValues.h"
 
@@ -23,5 +24,13 @@ double Point2d::distanceFrom(Point2d &p) {
     double a = p.x - this->x;
     double b = p.y - this->y;
 
-    return sqrt (a*a + b*b);
+    if(a != a) exit(2);
+
+    //cout << "(a,b) ("<<a<<","<<b << ")(" << p.x << "," << p.y << ")" <<endl;
+
+    if((a*a + b*b)==0.0) {
+        return 0;
+    } else {
+        return sqrt (a*a + b*b);
+    }
 }

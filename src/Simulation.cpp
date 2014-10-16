@@ -5,6 +5,8 @@ using namespace std;
 #include <math.h>
 #include "Simulation.h"
 
+#define BIN_COUNT 600
+
 Simulation::Simulation(int flockSize, SwarmValues *values) {
     for(int i=flockSize; i>0; i--) {
         this->agents.push_back(new Agent());
@@ -89,12 +91,82 @@ void Simulation::runSimulation(long maxRunTime) {
                 Vector2d v_rand;
                 v_rand.setVector(((double)rand()/(double)RAND_MAX)*2-1.0,((double)rand()/(double)RAND_MAX)*2-1.0);
 
+                //Make the bins
+                double binSize = (M_PI*2)/BIN_COUNT;
+                std::vector<char> bin;
+                for(int j=0; j<BIN_COUNT;j++) bin.push_back(false);
+
+                Vector2d v_proj;
+                v_proj.setVector(0.0,0.0);
+
+                Vector2d normal_v;
+                normal_v.setVector(1.0, 0.0);
+
+                Point2d l;
+                for(unsigned int j=0; j<this->agents.size(); j++) {
+                    if( j == i) continue; //Skip self
+                    l.x = agents[j]->getLocationX();
+                    l.y = agents[j]->getLocationY();
+                    //cout << "agents["<<j<<"]=("<<l.x<<","<<l.y<<")"<<endl;
+                    Vector2d* from = agents[i]->vectorFrom(&l);
+                    double dot_prod = normal_v.getX()*from->getX()+normal_v.getY()*from->getY();
+                    double cos_theta = dot_prod/(from->getMagnitude()*normal_v.getMagnitude());
+                    double theta = acos(cos_theta);
+
+                    if(from->getY() > 0) theta += M_PI;
+
+                    double size_angle = atan(1/(1*agents[j]->distanceFrom(&l)));
+                    int size_bins = size_angle/binSize;
+
+                    //cout << size_bins << endl;
+                    int bin_N = (int)((theta)/binSize);
+                    //bin[bin_N] = true;
+                    for(int k=-size_bins/2; k<size_bins/2; k++) {
+                        if((bin_N+k)>=0) {
+                            bin[(bin_N+k)%BIN_COUNT] = true;
+                        } else {
+                            bin[(bin_N+k+BIN_COUNT)%BIN_COUNT] = true;
+                        }
+                    }
+                }
+
+                Vector2d vt;
+                double boundry_count = 0.0;
+                for(int j=0; j<BIN_COUNT;j++) {
+                    //cout << (bin[j] ? "X" : "_");
+                    if(bin[j] != bin[(j+1)%BIN_COUNT]) {
+                        double theta = (j*binSize);
+                        double mult = 1;
+                        if(theta>M_PI) {
+                            theta = theta-M_PI;
+                            mult = -1;
+                        }
+                        if(j<= BIN_COUNT/2)
+                            vt.setVector(cos(theta), mult*sin(theta));
+                        else
+                            vt.setVector(cos(theta), sin(theta-M_PI));
+                        v_proj.setX(v_proj.getX() + vt.getX());
+                        v_proj.setY(v_proj.getY() + vt.getY());
+                        boundry_count += 1.0;
+                    }
+                }
+                //cout << endl;
+
+                //cout << "v_proj==("<<v_proj.getX()<<","<<v_proj.getY()<<") / "<<boundry_count<<endl;
+                if(boundry_count>0)
+                    v_proj /= boundry_count;
+
                 v *= this->values->align_weight;
                 v_rand *= this->values->noise_weight;
+                v_proj *= this->values->proj_weight;
+
                 v.setX(v.getX() + v_rand.getX());
                 v.setY(v.getY() + v_rand.getY());
 
-                v *= 7; //the speed
+                v.setX(v.getX() + v_proj.getX());
+                v.setY(v.getY() + v_proj.getY());
+
+                v *= 6; //the speed
 
                 agents[i]->updateVelocity(&v);
                 agents[i]->updateLocation();
@@ -106,7 +178,7 @@ void Simulation::runSimulation(long maxRunTime) {
         }
 
         // If there is a display then draw it
-        if(display != 0 && runTime%1==0) {
+        if(runTime > 1500 && display != 0 && runTime%5==0) {
             display->drawDisplay();
         }
 

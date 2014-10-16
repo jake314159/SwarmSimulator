@@ -75,5 +75,9 @@ double Vector2d::getMagnitude() {
     double a = this->x;
     double b = this->y;
 
-    return sqrt (a*a + b*b);
+    if((a*a + b*b) == 0.0) {
+        return 0.0;
+    } else {
+        return sqrt (a*a + b*b);
+    }
 }
