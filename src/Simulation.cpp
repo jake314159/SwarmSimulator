@@ -16,6 +16,10 @@ Simulation::Simulation(int flockSize, SwarmValues *values) {
     cout << "Created a flock of " << this->agents.size() << endl;
 }
 
+long Simulation::getRunTime() {
+    return this->runTime;
+}
+
 void Simulation::addDisplay()
 {
     this->display = new Display(this);
@@ -65,7 +69,7 @@ void Simulation::runSimulation(long maxRunTime) {
 
     while(this->maxRunTime >=0 && this->runTime < this->maxRunTime) {
 
-        if( runTime%2 == 0) {
+        if( runTime%10 == 0) {
             for(unsigned int i=0; i<this->agents.size(); i++) {
                 //Update agents[i]
 
@@ -89,7 +93,16 @@ void Simulation::runSimulation(long maxRunTime) {
                     v /= mag;
 
                 Vector2d v_rand;
-                v_rand.setVector(((double)rand()/(double)RAND_MAX)*2-1.0,((double)rand()/(double)RAND_MAX)*2-1.0);
+                double rand_val = ((double)rand()/(double)RAND_MAX)*2. -1.;
+
+                //Set Y so speed = 1
+                double y_val = sqrt(1.0 - rand_val*rand_val);
+                if( (rand()&1) == 0) {
+                    y_val = -y_val;
+                }
+                v_rand.setX(rand_val);
+                v_rand.setY(y_val);
+                //v_rand.setVector(((double)rand()/(double)RAND_MAX)*2-1.0,((double)rand()/(double)RAND_MAX)*2-1.0);
 
                 //Make the bins
                 double binSize = (M_PI*2)/BIN_COUNT;
@@ -109,19 +122,51 @@ void Simulation::runSimulation(long maxRunTime) {
                     l.y = agents[j]->getLocationY();
                     //cout << "agents["<<j<<"]=("<<l.x<<","<<l.y<<")"<<endl;
                     Vector2d* from = agents[i]->vectorFrom(&l);
-                    double dot_prod = normal_v.getX()*from->getX()+normal_v.getY()*from->getY();
-                    double cos_theta = dot_prod/(from->getMagnitude()*normal_v.getMagnitude());
-                    double theta = acos(cos_theta);
+                    //double dot_prod = normal_v.getX()*from->getX()+normal_v.getY()*from->getY();
+                    //double cos_theta = dot_prod/(from->getMagnitude()*normal_v.getMagnitude());
+                    double theta;// = acos(cos_theta);
+                    //
+                    //    2     |    1
+                    //          |
+                    //  --------+--------
+                    //          |
+                    //    3     |    4
+                    //
+                    
+                    if(from->getX() >=0 && from->getY()>=0) {
+                        //case 1
+                        theta = atan(from->getY()/from->getX());
+                    } else if(from->getX() <=0 && from->getY() >= 0) {
+                        //case 2
+                        theta = M_PI/2 + atan((-from->getX())/from->getY());
+                    } else if(from->getX() <=0 && from->getY() <=0) {
+                        //case 3
+                        theta = M_PI + atan((-from->getY())/(-from->getX()));
+                    } else { //from->getX()>=0 && y<=0
+                        //case4
+                        theta = M_PI + M_PI/2 + atan(from->getX()/(-from->getY()));
+                    }
 
-                    if(from->getY() > 0) theta += M_PI;
+                    Vector2d other_velocity = agents[j]->getVelocity();
+                    double raw_size = 6;
+                    double ratio = 3;
+                    double dif = M_PI/2;
+                    double dot_prod = other_velocity.getX()*-from->getX()+other_velocity.getY()*-from->getY();
+                    double cos_angle_working = dot_prod/(from->getMagnitude()*other_velocity.getMagnitude());
+                    double angle = acos(cos_angle_working);
+                    double sin_angle = sin(angle+dif);
+                    double cos_angle = cos(angle+dif);
+                    double apear_size = raw_size/(sqrt(sin_angle*sin_angle + (ratio*ratio*cos_angle*cos_angle)));
 
-                    double size_angle = atan(1/(1*agents[j]->distanceFrom(&l)));
-                    int size_bins = size_angle/binSize;
+                    //if(from->getY() > 0) theta += M_PI;
+                    double size_angle = atan(apear_size/(agents[i]->distanceFrom(&l)));
+                    int size_bins = (int)(size_angle/binSize);
 
                     //cout << size_bins << endl;
                     int bin_N = (int)((theta)/binSize);
-                    //bin[bin_N] = true;
-                    for(int k=-size_bins/2; k<size_bins/2; k++) {
+                    bin[bin_N] = true;
+                    //cout << size_angle << " " << size_bins << " " << agents[i]->distanceFrom(&l)<<endl;
+                    for(int k=-size_bins; k<size_bins; k++) {
                         if((bin_N+k)>=0) {
                             bin[(bin_N+k)%BIN_COUNT] = true;
                         } else {
@@ -130,16 +175,19 @@ void Simulation::runSimulation(long maxRunTime) {
                     }
                 }
 
+                if(i==0) cout << this->runTime << "  ";
                 Vector2d vt;
                 double boundry_count = 0.0;
                 for(int j=0; j<BIN_COUNT;j++) {
-                    //cout << (bin[j] ? "X" : "_");
+                    if(i==0 && j%6==0)  {
+                        cout <<(((int)bin[j]) ? "X" : "_");
+                    }
                     if(bin[j] != bin[(j+1)%BIN_COUNT]) {
                         double theta = (j*binSize);
                         double mult = 1;
                         if(theta>M_PI) {
-                            theta = theta-M_PI;
-                            mult = -1;
+                            //theta = theta-M_PI;
+                            //mult = -1;
                         }
                         if(j<= BIN_COUNT/2)
                             vt.setVector(cos(theta), mult*sin(theta));
@@ -150,7 +198,7 @@ void Simulation::runSimulation(long maxRunTime) {
                         boundry_count += 1.0;
                     }
                 }
-                //cout << endl;
+                if(i==0) cout << endl;
 
                 //cout << "v_proj==("<<v_proj.getX()<<","<<v_proj.getY()<<") / "<<boundry_count<<endl;
                 if(boundry_count>0)
@@ -166,7 +214,8 @@ void Simulation::runSimulation(long maxRunTime) {
                 v.setX(v.getX() + v_proj.getX());
                 v.setY(v.getY() + v_proj.getY());
 
-                v *= 6; //the speed
+                v /= v.getMagnitude();
+                v *= 7; //the speed
 
                 agents[i]->updateVelocity(&v);
                 agents[i]->updateLocation();
@@ -178,7 +227,7 @@ void Simulation::runSimulation(long maxRunTime) {
         }
 
         // If there is a display then draw it
-        if(runTime > 1500 && display != 0 && runTime%5==0) {
+        if(/*runTime > 1500 && */display != 0 && runTime%2==0) {
             display->drawDisplay();
         }
 

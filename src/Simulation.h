@@ -26,6 +26,7 @@ class Simulation {
 
         std::vector<Agent*>* getAgents();
         void addDisplay();
+        long getRunTime();
 };
 
 
