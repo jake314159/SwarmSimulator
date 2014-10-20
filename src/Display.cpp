@@ -6,12 +6,8 @@ using namespace std;
 
 void Display::draw_frame_number()
 {
-    //if(scoreInBuffer != score) {
-        long timer =  ((Simulation*)sim)->getRunTime();
-        cout << timer << endl;
-        sprintf(score_buffer, "%ld", timer);
-        //scoreInBuffer = score;
-    //}
+    long timer = ((Simulation*)sim)->getRunTime();
+    sprintf(score_buffer, "%ld", timer);
     SDL_Color score_color = { 0, 0, 0 };
     SDL_Texture *font_image = renderText(score_buffer, font, score_color, ren);
     if (font_image == NULL){
