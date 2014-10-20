@@ -69,7 +69,7 @@ void Simulation::runSimulation(long maxRunTime) {
 
     while(this->maxRunTime >=0 && this->runTime < this->maxRunTime) {
 
-        if( runTime%10 == 0) {
+        if( runTime%4 == 0) {
             for(unsigned int i=0; i<this->agents.size(); i++) {
                 //Update agents[i]
 
@@ -149,7 +149,7 @@ void Simulation::runSimulation(long maxRunTime) {
 
                     Vector2d other_velocity = agents[j]->getVelocity();
                     double raw_size = 6;
-                    double ratio = 3;
+                    double ratio = 8;
                     double dif = M_PI/2;
                     double dot_prod = other_velocity.getX()*-from->getX()+other_velocity.getY()*-from->getY();
                     double cos_angle_working = dot_prod/(from->getMagnitude()*other_velocity.getMagnitude());
@@ -189,10 +189,7 @@ void Simulation::runSimulation(long maxRunTime) {
                             //theta = theta-M_PI;
                             //mult = -1;
                         }
-                        if(j<= BIN_COUNT/2)
-                            vt.setVector(cos(theta), mult*sin(theta));
-                        else
-                            vt.setVector(cos(theta), sin(theta-M_PI));
+                        vt.setVector(cos(theta), sin(theta));
                         v_proj.setX(v_proj.getX() + vt.getX());
                         v_proj.setY(v_proj.getY() + vt.getY());
                         boundry_count += 1.0;
