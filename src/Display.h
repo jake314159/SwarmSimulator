@@ -4,6 +4,15 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 
+/*
+ * DISPLAY CONTROLS
+ * 
+ *   q : QUIT
+ *   z : INCREASE SPEED
+ *   x : DECREASE SPEED
+ * 
+*/
+
 class Display {
 
     private:
@@ -20,7 +29,12 @@ class Display {
         double camera_x;
         double camera_y;
 
+        int count;
+        int speed;
+
         void draw_frame_number();
+        void draw_string(std::string text, int x, int y);
+        void draw_int_number(int i, int x, int y);
         char score_buffer[30];
     public:
 

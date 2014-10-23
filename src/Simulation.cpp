@@ -5,7 +5,7 @@ using namespace std;
 #include <math.h>
 #include "Simulation.h"
 
-#define BIN_COUNT 600
+#define BIN_COUNT 100
 
 Simulation::Simulation(int flockSize, SwarmValues *values) {
     for(int i=flockSize; i>0; i--) {
@@ -69,7 +69,7 @@ void Simulation::runSimulation(long maxRunTime) {
 
     while(this->maxRunTime >=0 && this->runTime < this->maxRunTime) {
 
-        if( runTime%4 == 0) {
+        if( runTime%8 == 0) {
             for(unsigned int i=0; i<this->agents.size(); i++) {
                 //Update agents[i]
 
@@ -148,10 +148,10 @@ void Simulation::runSimulation(long maxRunTime) {
                     }
 
                     Vector2d other_velocity = agents[j]->getVelocity();
-                    double raw_size = 6;
-                    double ratio = 8;
-                    double dif = M_PI/2;
-                    double dot_prod = other_velocity.getX()*-from->getX()+other_velocity.getY()*-from->getY();
+                    double raw_size = 3.;
+                    double ratio = 2;
+                    double dif = 0;//M_PI/2;
+                    double dot_prod = other_velocity.getX()*(from->getX())+other_velocity.getY()*(from->getY());
                     double cos_angle_working = dot_prod/(from->getMagnitude()*other_velocity.getMagnitude());
                     double angle = acos(cos_angle_working);
                     double sin_angle = sin(angle+dif);
@@ -164,8 +164,8 @@ void Simulation::runSimulation(long maxRunTime) {
 
                     //cout << size_bins << endl;
                     int bin_N = (int)((theta)/binSize);
-                    bin[bin_N] = true;
-                    //cout << size_angle << " " << size_bins << " " << agents[i]->distanceFrom(&l)<<endl;
+                    //bin[bin_N] = true;
+                    //cout <<theta<<" "<< size_angle << " " << size_bins << " " << agents[i]->distanceFrom(&l)<<endl;
                     for(int k=-size_bins; k<size_bins; k++) {
                         if((bin_N+k)>=0) {
                             bin[(bin_N+k)%BIN_COUNT] = true;
@@ -178,7 +178,7 @@ void Simulation::runSimulation(long maxRunTime) {
                 if(i==0) cout << this->runTime << "  ";
                 Vector2d vt;
                 double boundry_count = 0.0;
-                for(int j=0; j<BIN_COUNT;j++) {
+                for(int j=0; j<(BIN_COUNT);j++) {
                     if(i==0 && j%6==0)  {
                         cout <<(((int)bin[j]) ? "X" : "_");
                     }
@@ -187,8 +187,9 @@ void Simulation::runSimulation(long maxRunTime) {
                         double mult = 1;
                         if(theta>M_PI) {
                             //theta = theta-M_PI;
-                            //mult = -1;
+                           // mult = -1;
                         }
+                        //cout << theta << "   (" << cos(theta) <<","<<sin(theta)<<")"<<endl;
                         vt.setVector(cos(theta), sin(theta));
                         v_proj.setX(v_proj.getX() + vt.getX());
                         v_proj.setY(v_proj.getY() + vt.getY());
@@ -198,8 +199,8 @@ void Simulation::runSimulation(long maxRunTime) {
                 if(i==0) cout << endl;
 
                 //cout << "v_proj==("<<v_proj.getX()<<","<<v_proj.getY()<<") / "<<boundry_count<<endl;
-                if(boundry_count>0)
-                    v_proj /= boundry_count;
+                if(v_proj.getMagnitude()>0)
+                    v_proj /= v_proj.getMagnitude();
 
                 v *= this->values->align_weight;
                 v_rand *= this->values->noise_weight;
@@ -211,8 +212,9 @@ void Simulation::runSimulation(long maxRunTime) {
                 v.setX(v.getX() + v_proj.getX());
                 v.setY(v.getY() + v_proj.getY());
 
-                v /= v.getMagnitude();
-                v *= 7; //the speed
+                if(v.getMagnitude()>0)
+                    v /= v.getMagnitude();
+                v *= 2; //the speed
 
                 agents[i]->updateVelocity(&v);
                 agents[i]->updateLocation();
@@ -224,7 +226,7 @@ void Simulation::runSimulation(long maxRunTime) {
         }
 
         // If there is a display then draw it
-        if(/*runTime > 1500 && */display != 0 && runTime%2==0) {
+        if(/*runTime > 1500 && */display != 0) {
             display->drawDisplay();
         }
 

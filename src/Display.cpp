@@ -7,7 +7,7 @@ using namespace std;
 void Display::draw_frame_number()
 {
     long timer = ((Simulation*)sim)->getRunTime();
-    sprintf(score_buffer, "%ld", timer);
+    sprintf(score_buffer, "%ld", timer/8); //TODO The 8 is how often the simulation updates //TODO turn into not a magic number
     SDL_Color score_color = { 0, 0, 0 };
     SDL_Texture *font_image = renderText(score_buffer, font, score_color, ren);
     if (font_image == NULL){
@@ -16,10 +16,32 @@ void Display::draw_frame_number()
     renderTexture(font_image, ren, 5, 5);
 }
 
+void Display::draw_string(std::string text, int x, int y)
+{
+    SDL_Color score_color = { 0, 0, 0 };
+    SDL_Texture *font_image = renderText((char*)text.c_str(), font, score_color, ren);
+    if (font_image == NULL){
+        exit(1);
+    }            
+    renderTexture(font_image, ren, x, y);
+}
+
+void Display::draw_int_number(int i, int x, int y)
+{
+    sprintf(score_buffer, "%d", i);
+    SDL_Color score_color = { 0, 0, 0 };
+    SDL_Texture *font_image = renderText(score_buffer, font, score_color, ren);
+    if (font_image == NULL){
+        exit(1);
+    }            
+    renderTexture(font_image, ren, x, y);
+}
+
 Display::Display(void *sim){
     this->sim = sim;
     camera_x = SCREEN_WIDTH/2;
     camera_y = SCREEN_HEIGHT/2;
+    speed = 1;
     //fontFile = "fonts/sample.ttf";
 }
 Display::~Display() {
@@ -75,10 +97,6 @@ void Display::initDisplay() {
 
 void Display::drawDisplay() {
 
-    //Set background color
-    SDL_SetRenderDrawColor(ren, 255, 255, 255, 0);
-    SDL_RenderClear(ren);
-
     //Check the event queue
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
@@ -88,11 +106,28 @@ void Display::drawDisplay() {
                 case SDLK_ESCAPE:
                     exit(0);
                     break;
+                case SDLK_z:
+                    if(speed>1) speed--;
+                    break;
+                case SDLK_x:
+                    speed++;
+                    break;
                 default:
                     break;
             }
         }
     }
+
+    if(count>speed) {
+        count = 0;
+    } else {
+        count++;
+        return;
+    }
+
+    //Set background color
+    SDL_SetRenderDrawColor(ren, 255, 255, 255, 0);
+    SDL_RenderClear(ren);
 
     Point2d center;
     ((Simulation*)sim)->getCenterOfMass(&center);
@@ -111,7 +146,7 @@ void Display::drawDisplay() {
     double maxX = minX;
     double maxY = minY;
 
-    SDL_SetRenderDrawColor(ren, 0, 180, 0, 0);
+    SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
 
     std::vector<Vector2d*> queued_velocities;
     
@@ -123,16 +158,16 @@ void Display::drawDisplay() {
         if((*agents)[i]->getLocationX() > maxX) maxX = (*agents)[i]->getLocationX();
         if((*agents)[i]->getLocationY() > maxX) maxY = (*agents)[i]->getLocationY();
 
-        if(i==0) SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
-        SDL_RenderFillRect(ren, &rect);
         if(i==0) SDL_SetRenderDrawColor(ren, 0, 180, 0, 0);
+        SDL_RenderFillRect(ren, &rect);
+        if(i==0) SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
 
         Vector2d v = (*agents)[i]->getVelocity();
         SDL_RenderDrawLine(ren,
                                  rect.x+1,
                                  rect.y+1,
-                                 rect.x+1+v.getX(),
-                                 rect.y+1+v.getY());
+                                 rect.x+1+v.getX()*2,
+                                 rect.y+1+v.getY()*2);
     }
 
     SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
@@ -148,6 +183,7 @@ void Display::drawDisplay() {
         }
     }
     draw_frame_number();
+    draw_int_number(speed, 5, 35);
     SDL_RenderPresent(ren);
 
     SDL_Delay(this->FRAME_DELAY);
