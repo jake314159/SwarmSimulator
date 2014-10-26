@@ -15,22 +15,22 @@ int main() {
     v->noise_weight = 0.2;
     */
 
-    /* // Birds
+     // Birds
     v->proj_weight = 0.1;
     v->align_weight = 0.75;
     v->noise_weight = 0.15;
-    */
+    
 
     /* //Ants
     v->proj_weight = 0.1;
     v->align_weight = 0.4;
     v->noise_weight = 0.5;
     */
-
+/* other fish
     v->proj_weight = 0.4;
     v->align_weight = 0.4;
     v->noise_weight = 0.2;
-
+*/
     Simulation *s = new Simulation(100, v);
 
     s->reset();

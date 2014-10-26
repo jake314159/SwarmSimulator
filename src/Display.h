@@ -32,6 +32,10 @@ class Display {
         int count;
         int speed;
 
+        std::string save_location;
+        bool print;
+        long time_of_record;
+
         void draw_frame_number();
         void draw_string(std::string text, int x, int y);
         void draw_int_number(int i, int x, int y);

@@ -1,8 +1,28 @@
 using namespace std;
 #include <iostream>
+#include <GL/gl.h>
+#include <GL/glut.h>
+#include <GL/glu.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <time.h>
 #include "Display.h"
 #include "Simulation.h"
 #include "SDL_functions.h"
+
+void Screenshot(int x, int y, int w, int h, const char * filename)
+{
+    unsigned char * pixels = new unsigned char[w*h*4]; // 4 bytes for RGBA
+    glReadPixels(x,y,w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+
+    SDL_Surface * surf = SDL_CreateRGBSurfaceFrom(pixels, w, h, 8*4, w*4, 0,0,0,0);
+    //SDL_SaveBMP(surf, filename);
+    IMG_SavePNG(surf, filename);
+
+    SDL_FreeSurface(surf);
+    delete [] pixels;
+}
 
 void Display::draw_frame_number()
 {
@@ -42,12 +62,19 @@ Display::Display(void *sim){
     camera_x = SCREEN_WIDTH/2;
     camera_y = SCREEN_HEIGHT/2;
     speed = 1;
+    print = false;
+    //TODO Take is as an argument
+    save_location = "/media/jake/9eddc7ed-66da-490b-801d-b69cfae8ec68/files/uni/y3_project/image dump/";
     //fontFile = "fonts/sample.ttf";
 }
 Display::~Display() {
     SDL_DestroyRenderer(ren);
     SDL_DestroyWindow(window);
     SDL_Quit();
+}
+
+void Display::setup_save(const char* location) {
+    
 }
 
 void Display::initDisplay() {
@@ -69,7 +96,7 @@ void Display::initDisplay() {
         SDL_WINDOWPOS_UNDEFINED,           // initial y position
         SCREEN_WIDTH,                      // width, in pixels
         SCREEN_HEIGHT,                     // height, in pixels
-        SDL_WINDOW_OPENGL                  // flags - see below
+        0//SDL_WINDOW_OPENGL                  // flags - see below
     );
 
     if (window == NULL) {
@@ -77,7 +104,7 @@ void Display::initDisplay() {
         return;
     }
 
-    ren = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    ren = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);// | SDL_RENDERER_PRESENTVSYNC); //SDL_RENDERER_ACCELERATED
 
     if (ren == NULL) {
         cout << "Could not create renderer" << endl;
@@ -96,7 +123,7 @@ void Display::initDisplay() {
 }
 
 void Display::drawDisplay() {
-
+    
     //Check the event queue
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
@@ -111,6 +138,26 @@ void Display::drawDisplay() {
                     break;
                 case SDLK_x:
                     speed++;
+                    break;
+                case SDLK_r:
+                    //cout << window << "   " << SDL_GetWindowSurface(window) << "     " <<SDL_GetError()<<endl;
+                    char buf[100];
+                    if(time_of_record == 0) {
+                        time_of_record = time(NULL);
+                        sprintf(buf, "%s%ld", save_location.c_str(), time_of_record);
+                        mkdir(buf, 0700);
+                    }
+                    print = true;
+                    break;
+                default:
+                    break;
+            }
+        } else if(e.type == SDL_KEYUP) {
+            switch (e.key.keysym.sym){
+                case SDLK_r:
+                    //cout << window << "   " << SDL_GetWindowSurface(window) << "     " <<SDL_GetError()<<endl;
+                    print = false;
+                    time_of_record = 0;
                     break;
                 default:
                     break;
@@ -184,7 +231,20 @@ void Display::drawDisplay() {
     }
     draw_frame_number();
     draw_int_number(speed, 5, 35);
+    if(print) {
+        //IMG_SavePNG(SDL_GetWindowSurface(window), "image.png");
+        char buf[100];
+        sprintf(buf, "%s%ld/%06ld.png", save_location.c_str(), time_of_record, ((Simulation*)sim)->getRunTime());
+        //saveScreenshotBMP(buf, window, ren);
+        //IMG_SavePNG(SDL_GetWindowSurface(window), "image.png");
+        Screenshot(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, buf);
+        cout <<"PRINT!! '"<<buf<<"'"<<endl; 
+        //print = false;
+    }   
     SDL_RenderPresent(ren);
+
+
+    
 
     SDL_Delay(this->FRAME_DELAY);
 }
