@@ -32,6 +32,7 @@ class Display {
         int count;
         int speed;
 
+        bool enable_record;
         std::string save_location;
         bool print;
         long time_of_record;
@@ -46,7 +47,7 @@ class Display {
         ~Display();
         void initDisplay();
         void drawDisplay();
-
+        void setup_record(std::string location);
 };
 
 #endif

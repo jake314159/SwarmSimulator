@@ -1,6 +1,6 @@
 #ifndef SIMULATION_INCLUDE_GUARD_H
 #define SIMULATION_INCLUDE_GUARD_H 1
-
+using namespace std;
 #include <vector>
 #include "SwarmValues.h"
 #include "Agent.h"
@@ -27,6 +27,7 @@ class Simulation {
         std::vector<Agent*>* getAgents();
         void addDisplay();
         long getRunTime();
+        void enableRecord(std::string location);
 };
 
 

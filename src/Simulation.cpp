@@ -26,6 +26,11 @@ void Simulation::addDisplay()
     this->display->initDisplay();
 }
 
+void Simulation::enableRecord(std::string location) {
+    if(display==NULL) cout << "ERROR: Display not initialised! Can't enable recording" << endl;
+    display->setup_record(location);
+}
+
 //TODO test
 void Simulation::getKNN(Point2d *p, Agent *knn[], int number, int ignore_index) {
     std::vector<double> knn_distance;

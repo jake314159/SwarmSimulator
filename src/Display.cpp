@@ -63,8 +63,8 @@ Display::Display(void *sim){
     camera_y = SCREEN_HEIGHT/2;
     speed = 1;
     print = false;
-    //TODO Take is as an argument
-    save_location = "/media/jake/9eddc7ed-66da-490b-801d-b69cfae8ec68/files/uni/y3_project/image dump/";
+    enable_record = false;
+    //save_location = "/media/jake/9eddc7ed-66da-490b-801d-b69cfae8ec68/files/uni/y3_project/image dump/";
     //fontFile = "fonts/sample.ttf";
 }
 Display::~Display() {
@@ -73,8 +73,11 @@ Display::~Display() {
     SDL_Quit();
 }
 
-void Display::setup_save(const char* location) {
-    
+void Display::setup_record(std::string location) {
+        enable_record = true;
+        save_location = location;
+        print = false;
+        time_of_record = 0;
 }
 
 void Display::initDisplay() {
@@ -142,9 +145,9 @@ void Display::drawDisplay() {
                 case SDLK_r:
                     //cout << window << "   " << SDL_GetWindowSurface(window) << "     " <<SDL_GetError()<<endl;
                     char buf[100];
-                    if(time_of_record == 0) {
+                    if(enable_record && time_of_record == 0) {
                         time_of_record = time(NULL);
-                        sprintf(buf, "%s%ld", save_location.c_str(), time_of_record);
+                        sprintf(buf, "%s/%ld", save_location.c_str(), time_of_record);
                         mkdir(buf, 0700);
                     }
                     print = true;
@@ -231,10 +234,10 @@ void Display::drawDisplay() {
     }
     draw_frame_number();
     draw_int_number(speed, 5, 35);
-    if(print) {
+    if(enable_record && print) {
         //IMG_SavePNG(SDL_GetWindowSurface(window), "image.png");
         char buf[100];
-        sprintf(buf, "%s%ld/%06ld.png", save_location.c_str(), time_of_record, ((Simulation*)sim)->getRunTime());
+        sprintf(buf, "%s/%ld/%06ld.png", save_location.c_str(), time_of_record, ((Simulation*)sim)->getRunTime());
         //saveScreenshotBMP(buf, window, ren);
         //IMG_SavePNG(SDL_GetWindowSurface(window), "image.png");
         Screenshot(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, buf);
