@@ -1,3 +1,6 @@
+using namespace std;
+#include <iostream>
+#include <math.h>
 // fastsin & fastcos implementation from here:
 //      http://lab.polygonal.de/?p=205
 
@@ -36,3 +39,9 @@ double fastcos(double x) {
         cos = 1.27323954 * x - 0.405284735 * x * x;
     return cos;
 }
+
+//https://stackoverflow.com/questions/3380628/fast-arc-cos-algorithm
+double fastacos(double x) {
+   return (-0.69813170079773212 * x * x - 0.87266462599716477) * x + 1.5707963267948966;
+}
+

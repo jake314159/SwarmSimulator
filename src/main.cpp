@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
         s->enableRecord(record_dir);
     }
 
-    s->runSimulation(1000000);
+    s->runSimulation(10000);
 
     delete s;
     delete v;

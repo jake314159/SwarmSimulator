@@ -81,7 +81,7 @@ double Simulation::getApearSize(unsigned int i, unsigned int j) {
     // Work out the number of bins used by this agent
     double dot_prod = other_velocity.getX()*(from.getX())+other_velocity.getY()*(from.getY());
     double cos_angle_working = dot_prod/(from.getMagnitude()*other_velocity.getMagnitude());
-    double angle = acos(cos_angle_working);
+    double angle = fastacos(cos_angle_working);
     double sin_angle = fastsin(angle+shape_dif);
     double cos_angle = fastcos(angle+shape_dif);
     double apear_size = raw_size/(sqrt(sin_angle*sin_angle + (shape_ratio*shape_ratio*cos_angle*cos_angle)));
