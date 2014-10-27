@@ -17,6 +17,8 @@ class Vector2d {
         void setVector(Vector2d *v);
         double getMagnitude();
 
+        void randomize();
+
         Vector2d& operator += (Vector2d& right);
         Vector2d& operator /= (double right);
         Vector2d& operator *= (double right);

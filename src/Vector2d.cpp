@@ -1,6 +1,7 @@
 using namespace std;
 #include <iostream>
 #include <math.h>
+#include <stdlib.h>
 #include "Vector2d.h"
 
 Vector2d::Vector2d () {
@@ -80,4 +81,16 @@ double Vector2d::getMagnitude() {
     } else {
         return sqrt (a*a + b*b);
     }
+}
+
+void Vector2d::randomize() {
+    double rand_val = (((double)rand()/(double)RAND_MAX)*2.0) -1.;
+
+    //Set Y so magnitude = 1
+    double y_val = sqrt(1.0 - rand_val*rand_val);
+    if( (rand()&1) == 0) {
+        y_val = -y_val;
+    }
+    this->setX(rand_val);
+    this->setY(y_val);
 }

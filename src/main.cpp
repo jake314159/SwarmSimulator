@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
 
     bool allow_record = false;
     bool record_dir_set = false;
-    std:string record_dir;
+    std::string record_dir;
 
     // Go over paramiters and update the settings if provided
     for(int i=1; i<argc; i++) {

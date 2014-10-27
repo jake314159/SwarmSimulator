@@ -15,7 +15,18 @@ class Simulation {
         int score;
         long runTime; //In steps
         long maxRunTime;
-        void getKNN(Point2d *p, Agent *knn[], int number, int ignore_index);
+        void getKNN(Point2d *p, Agent *knn[], int number, unsigned int ignore_index);
+        Vector2d getProjectionVector(unsigned int i, std::vector<char> &bin);
+        double getApearSize(unsigned int i, unsigned int j);
+
+        // Agent size and shape info
+        static const double raw_size = 3.;
+        static const double shape_ratio = 2;
+        static const double shape_dif = 0;//M_PI/2;
+        static const double speed = 2.0;
+
+        //How often to update the agents velocities (in frames)
+        static const int update_rate = 10;
     public:
         Simulation(int flockSize, SwarmValues *values);
         void runSimulation(long maxRunTime);
