@@ -29,8 +29,6 @@ double Point2d::distanceFrom(Point2d &p) {
         exit(2);
     }
 
-    //cout << "(a,b) ("<<a<<","<<b << ")(" << p.x << "," << p.y << ")" <<endl;
-
     if((a + b)==0.0) {
         return 0;
     } else {

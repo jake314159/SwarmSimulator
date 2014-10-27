@@ -79,7 +79,7 @@ double Vector2d::getMagnitude() {
     if((a + b) == 0.0) {
         return 0.0;
     } else {
-        return sqrt (a*a + b*b);
+        return sqrt(a*a + b*b);
     }
 }
 

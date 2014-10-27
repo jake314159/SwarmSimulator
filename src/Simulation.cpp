@@ -73,12 +73,13 @@ double Simulation::getApearSize(unsigned int i, unsigned int j) {
     l.x = agents[j]->getLocationX();
     l.y = agents[j]->getLocationY();
 
-    Vector2d* from = agents[i]->vectorFrom(&l);
+    Vector2d from;
+    agents[i]->vectorFrom(&l, &from);
     Vector2d other_velocity = agents[j]->getVelocity();
 
     // Work out the number of bins used by this agent
-    double dot_prod = other_velocity.getX()*(from->getX())+other_velocity.getY()*(from->getY());
-    double cos_angle_working = dot_prod/(from->getMagnitude()*other_velocity.getMagnitude());
+    double dot_prod = other_velocity.getX()*(from.getX())+other_velocity.getY()*(from.getY());
+    double cos_angle_working = dot_prod/(from.getMagnitude()*other_velocity.getMagnitude());
     double angle = acos(cos_angle_working);
     double sin_angle = sin(angle+shape_dif);
     double cos_angle = cos(angle+shape_dif);
@@ -102,7 +103,8 @@ Vector2d Simulation::getProjectionVector(unsigned int i, std::vector<char> &bin)
         l.x = agents[j]->getLocationX();
         l.y = agents[j]->getLocationY();
 
-        Vector2d* from = agents[i]->vectorFrom(&l);
+        Vector2d from;
+        agents[i]->vectorFrom(&l, &from);
 
         double theta;// = acos(cos_theta);
         //
@@ -113,22 +115,22 @@ Vector2d Simulation::getProjectionVector(unsigned int i, std::vector<char> &bin)
         //    3     |    4
         //
         
-        if(from->getX() >=0 && from->getY()>=0) {
+        if(from.getX() >=0 && from.getY()>=0) {
             //case 1
-            theta = atan(from->getY()/from->getX());
-        } else if(from->getX() <=0 && from->getY() >= 0) {
+            theta = atan(from.getY()/from.getX());
+        } else if(from.getX() <=0 && from.getY() >= 0) {
             //case 2
-            theta = M_PI/2 + atan((-from->getX())/from->getY());
-        } else if(from->getX() <=0 && from->getY() <=0) {
+            theta = M_PI/2 + atan((-from.getX())/from.getY());
+        } else if(from.getX() <=0 && from.getY() <=0) {
             //case 3
-            theta = M_PI + atan((-from->getY())/(-from->getX()));
-        } else { //from->getX()>=0 && y<=0
+            theta = M_PI + atan((-from.getY())/(-from.getX()));
+        } else { //from.getX()>=0 && y<=0
             //case4
-            theta = M_PI + M_PI/2 + atan(from->getX()/(-from->getY()));
+            theta = M_PI + M_PI/2 + atan(from.getX()/(-from.getY()));
         }
 
         double apear_size = getApearSize(i,j);
-        double size_angle = atan(apear_size/(agents[i]->distanceFrom(&l)));
+        double size_angle = atan(apear_size/(from.getMagnitude()));
         // The number of bins the agent fills (half as based on radius)
         int size_bins = (int)(size_angle/binSize);
 
