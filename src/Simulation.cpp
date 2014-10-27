@@ -4,6 +4,7 @@ using namespace std;
 #include <stdlib.h>
 #include <math.h>
 #include "Simulation.h"
+#include "fastMath.h"
 
 #define BIN_COUNT 100
 
@@ -81,8 +82,8 @@ double Simulation::getApearSize(unsigned int i, unsigned int j) {
     double dot_prod = other_velocity.getX()*(from.getX())+other_velocity.getY()*(from.getY());
     double cos_angle_working = dot_prod/(from.getMagnitude()*other_velocity.getMagnitude());
     double angle = acos(cos_angle_working);
-    double sin_angle = sin(angle+shape_dif);
-    double cos_angle = cos(angle+shape_dif);
+    double sin_angle = fastsin(angle+shape_dif);
+    double cos_angle = fastcos(angle+shape_dif);
     double apear_size = raw_size/(sqrt(sin_angle*sin_angle + (shape_ratio*shape_ratio*cos_angle*cos_angle)));
     return apear_size;
 }
@@ -148,8 +149,8 @@ Vector2d Simulation::getProjectionVector(unsigned int i, std::vector<char> &bin)
     for(int j=0; j<(BIN_COUNT);j++) {
         if(bin[j] != bin[(j+1)%BIN_COUNT]) {
             double theta = (j*binSize);
-            v_proj.setX(v_proj.getX() + cos(theta));
-            v_proj.setY(v_proj.getY() + sin(theta));
+            v_proj.setX(v_proj.getX() + fastcos(theta));
+            v_proj.setY(v_proj.getY() + fastsin(theta));
             boundry_count += 1.0;
         }
     }

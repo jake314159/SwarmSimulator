@@ -2,11 +2,11 @@
 
 CC = g++
 # -g for debug
-CCFLAGS = -Wall -Wno-write-strings -O3 -g
+CCFLAGS = -Wall -Wno-write-strings -O3
 LIBS = -I'/usr/local/include/SDL2' -I'/usr/include/SDL2' -lSDL2 -L/usr/local/lib -Wl,-rpath='/usr/local/lib' -lSDL2_image -lSDL2_ttf -lz -lglut -lGL
 OUTPUT = bin/SwarmSimulator
 
-FILES = main Vector2d Point2d Agent Simulation Display SDL_functions
+FILES = main Vector2d Point2d Agent Simulation Display SDL_functions fastMath
 
 OBJ_F = $(addprefix bin/,$(FILES:=.o))
 IMG_F = $(addprefix images/parts/,$(IMAGE_FILES:=.png))
