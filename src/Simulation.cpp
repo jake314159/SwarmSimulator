@@ -85,7 +85,7 @@ double Simulation::getApearSize(unsigned int i, unsigned int j) {
     double angle = fastacos(cos_angle_working);
     double sin_angle = fastsin(angle+shape_dif);
     double cos_angle = fastcos(angle+shape_dif);
-    double apear_size = raw_size/(sqrt(sin_angle*sin_angle + (shape_ratio*shape_ratio*cos_angle*cos_angle)));
+    double apear_size = raw_size/(fastsqrt(sin_angle*sin_angle + (shape_ratio*shape_ratio*cos_angle*cos_angle)));
     return apear_size;
 }
 
@@ -255,7 +255,7 @@ void Simulation::reset() {
         double d = ((double)rand()/(double)RAND_MAX)*2. -1.;
 
         //Set Y so speed = 1
-        double y_val = sqrt(1.0 - d*d);
+        double y_val = fastsqrt(1.0 - d*d);
         if( (rand()&1) == 0) {
             y_val = -y_val;
         }    

@@ -5,3 +5,4 @@ double fastsin(double x);
 double fastcos(double x);
 double fastacos(double x);
 double fastatan(double x);
+double fastsqrt( double number );
