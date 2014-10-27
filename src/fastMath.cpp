@@ -5,6 +5,7 @@ using namespace std;
 //      http://lab.polygonal.de/?p=205
 
 #define LOOKUP_TABLE_SIZE 1000
+#define LOOKUP_TABLE_SIZE_SQRT 10000
 
 double fastsin(double x) {
     double sin;
@@ -50,17 +51,18 @@ double fastacos(double x) {
 double atan_lookup_table[LOOKUP_TABLE_SIZE];
 double min_atan = -10.0;
 double max_atan = 10.0;
-double spacing; // 0.2
+double atan_spacing; // 0.2
+
 void setup_fast_math() {
-    spacing = (max_atan-min_atan)/(double)LOOKUP_TABLE_SIZE;
+    atan_spacing = (max_atan-min_atan)/(double)LOOKUP_TABLE_SIZE;
     for(int i=0; i<LOOKUP_TABLE_SIZE; i++) {
-        atan_lookup_table[i] = atan(min_atan+i*spacing);
+        atan_lookup_table[i] = atan(min_atan+i*atan_spacing);
     }
 }
 double fastatan(double x) {
     int index = 0;
     double t = ((x-min_atan));
-    if(t>0) index = t/spacing;
+    if(t>0) index = t/atan_spacing;
 
     if(index<0) index = 0;
     if(index>(LOOKUP_TABLE_SIZE-1)) index = LOOKUP_TABLE_SIZE-1;
@@ -69,21 +71,10 @@ double fastatan(double x) {
     //return atan(x);
 }
 
-//https://en.wikipedia.org/wiki/Fast_inverse_square_root
-double fastsqrt( double number )
+
+
+double fastsqrt( double x )
 {
-	long i;
-	double x2, y;
-	const double threehalfs = 1.5F;
- 
-	x2 = number * 0.5F;
-	y  = number;
-	i  = * ( long * ) &y;                       // evil floating point bit level hacking
-	i  = 0x5f3759df - ( i >> 1 );               // what the fuck?
-	y  = * ( float * ) &i;
-	y  = y * ( threehalfs - ( x2 * y * y ) );   // 1st iteration
-//      y  = y * ( threehalfs - ( x2 * y * y ) );   // 2nd iteration, this can be removed
- 
-	return y;
+    return sqrt(x);
 }
 
