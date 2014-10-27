@@ -14,6 +14,7 @@ Simulation::Simulation(int flockSize, SwarmValues *values) {
     }
     display = 0;
     this->values = values;
+    setup_fast_math();
     cout << "Created a flock of " << this->agents.size() << endl;
 }
 
@@ -118,20 +119,20 @@ Vector2d Simulation::getProjectionVector(unsigned int i, std::vector<char> &bin)
         
         if(from.getX() >=0 && from.getY()>=0) {
             //case 1
-            theta = atan(from.getY()/from.getX());
+            theta = fastatan(from.getY()/from.getX());
         } else if(from.getX() <=0 && from.getY() >= 0) {
             //case 2
-            theta = M_PI/2 + atan((-from.getX())/from.getY());
+            theta = M_PI/2 + fastatan((-from.getX())/from.getY());
         } else if(from.getX() <=0 && from.getY() <=0) {
             //case 3
-            theta = M_PI + atan((-from.getY())/(-from.getX()));
+            theta = M_PI + fastatan((-from.getY())/(-from.getX()));
         } else { //from.getX()>=0 && y<=0
             //case4
-            theta = M_PI + M_PI/2 + atan(from.getX()/(-from.getY()));
+            theta = M_PI + M_PI/2 + fastatan(from.getX()/(-from.getY()));
         }
 
         double apear_size = getApearSize(i,j);
-        double size_angle = atan(apear_size/(from.getMagnitude()));
+        double size_angle = fastatan(apear_size/(from.getMagnitude()));
         // The number of bins the agent fills (half as based on radius)
         int size_bins = (int)(size_angle/binSize);
 

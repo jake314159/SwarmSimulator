@@ -67,10 +67,10 @@ int main(int argc, char *argv[]) {
 
     Simulation *s = new Simulation(100, v);
     s->reset();
-    s->addDisplay();
+    //s->addDisplay();
 
     if(allow_record && record_dir_set) {
-        s->enableRecord(record_dir);
+    //    s->enableRecord(record_dir);
     }
 
     s->runSimulation(10000);
