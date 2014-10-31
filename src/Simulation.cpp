@@ -11,9 +11,6 @@ using namespace std;
 Simulation::Simulation(int flockSize, SwarmValues *values) {
     this->flockSize = flockSize;
     agents = new Agent[flockSize];
-   /* for(int i=flockSize; i>0; i--) {
-        this->agents.push_back(new Agent());
-    }*/
     display = 0;
     this->values = *values;
     setup_fast_math();
@@ -22,6 +19,7 @@ Simulation::Simulation(int flockSize, SwarmValues *values) {
 
 Simulation::~Simulation() {
     delete agents;
+    delete display;
 }
 
 long Simulation::getRunTime() {

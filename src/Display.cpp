@@ -17,7 +17,6 @@ void Screenshot(int x, int y, int w, int h, const char * filename)
     glReadPixels(x,y,w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 
     SDL_Surface * surf = SDL_CreateRGBSurfaceFrom(pixels, w, h, 8*4, w*4, 0,0,0,0);
-    //SDL_SaveBMP(surf, filename);
     IMG_SavePNG(surf, filename);
 
     SDL_FreeSurface(surf);
@@ -64,8 +63,6 @@ Display::Display(void *sim){
     speed = 1;
     print = false;
     enable_record = false;
-    //save_location = "/media/jake/9eddc7ed-66da-490b-801d-b69cfae8ec68/files/uni/y3_project/image dump/";
-    //fontFile = "fonts/sample.ttf";
 }
 Display::~Display() {
     SDL_DestroyRenderer(ren);
@@ -99,7 +96,7 @@ void Display::initDisplay() {
         SDL_WINDOWPOS_UNDEFINED,           // initial y position
         SCREEN_WIDTH,                      // width, in pixels
         SCREEN_HEIGHT,                     // height, in pixels
-        0//SDL_WINDOW_OPENGL                  // flags - see below
+        0                                  // flags
     );
 
     if (window == NULL) {
@@ -107,7 +104,7 @@ void Display::initDisplay() {
         return;
     }
 
-    ren = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);// | SDL_RENDERER_PRESENTVSYNC); //SDL_RENDERER_ACCELERATED
+    ren = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
 
     if (ren == NULL) {
         cout << "Could not create renderer" << endl;
@@ -143,7 +140,6 @@ void Display::drawDisplay() {
                     speed++;
                     break;
                 case SDLK_r:
-                    //cout << window << "   " << SDL_GetWindowSurface(window) << "     " <<SDL_GetError()<<endl;
                     char buf[100];
                     if(enable_record && time_of_record == 0) {
                         time_of_record = time(NULL);
@@ -158,7 +154,6 @@ void Display::drawDisplay() {
         } else if(e.type == SDL_KEYUP) {
             switch (e.key.keysym.sym){
                 case SDLK_r:
-                    //cout << window << "   " << SDL_GetWindowSurface(window) << "     " <<SDL_GetError()<<endl;
                     print = false;
                     time_of_record = 0;
                     break;
@@ -181,7 +176,6 @@ void Display::drawDisplay() {
 
     Point2d center;
     ((Simulation*)sim)->getCenterOfMass(&center);
-    //cout << "Center " << center.x << " " << center.y << endl;
 
     SDL_Rect rect = {static_cast<int>(camera_x-center.x),
                 static_cast<int>(camera_y-center.y),3,3}; 
@@ -234,14 +228,10 @@ void Display::drawDisplay() {
     draw_frame_number();
     draw_int_number(speed, 5, 35);
     if(enable_record && print) {
-        //IMG_SavePNG(SDL_GetWindowSurface(window), "image.png");
         char buf[100];
         sprintf(buf, "%s/%ld/%06ld.png", save_location.c_str(), time_of_record, ((Simulation*)sim)->getRunTime());
-        //saveScreenshotBMP(buf, window, ren);
-        //IMG_SavePNG(SDL_GetWindowSurface(window), "image.png");
         Screenshot(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, buf);
         cout <<"PRINT!! '"<<buf<<"'"<<endl; 
-        //print = false;
     }   
     SDL_RenderPresent(ren);
 
