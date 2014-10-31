@@ -120,6 +120,20 @@ TEST(Vector2d_test, set_vector_from_vector) {
     delete l;
     delete r;
 }
+
+TEST(Vector2d_test, set_vector_from_doubles) { 
+    double val_x = 2.0;
+    double val_y = 4.0;
+    double val_x_2 = 32.0;
+    double val_y_2 = 52.0;
+    Vector2d *l = new Vector2d( val_x, val_y );
+    Vector2d *r = new Vector2d( val_x_2, val_y_2 );
+    l->setVector(val_x_2, val_y_2);//
+    ASSERT_EQ(l->getX(), val_x_2);
+    ASSERT_EQ(l->getY(), val_y_2);
+    delete l;
+    delete r;
+}
  
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
