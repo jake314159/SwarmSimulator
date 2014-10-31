@@ -189,30 +189,29 @@ void Display::drawDisplay() {
     SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
     SDL_RenderFillRect(ren, &rect);
 
-    std::vector<Agent*>* agents = ((Simulation*)sim)->getAgents();
+    Agent* agents = ((Simulation*)sim)->getAgents();
+    int flockSize = ((Simulation*)sim)->flockSize;
 
-    double minX = (*agents)[0]->getLocationX();
-    double minY = (*agents)[0]->getLocationY();
+    double minX = (agents)[0].getLocationX();
+    double minY = (agents)[0].getLocationY();
     double maxX = minX;
     double maxY = minY;
 
     SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
 
-    std::vector<Vector2d*> queued_velocities;
-    
-    for(unsigned int i=0; i<agents->size(); i++) {
-        rect.x = (*agents)[i]->getLocationX()+camera_x-center.x;
-        rect.y = (*agents)[i]->getLocationY()+camera_y-center.y;
-        if((*agents)[i]->getLocationX() < minX) minX = (*agents)[i]->getLocationX();
-        if((*agents)[i]->getLocationY() < minY) minY = (*agents)[i]->getLocationY();
-        if((*agents)[i]->getLocationX() > maxX) maxX = (*agents)[i]->getLocationX();
-        if((*agents)[i]->getLocationY() > maxX) maxY = (*agents)[i]->getLocationY();
+    for(unsigned int i=(flockSize-1); i>0; i--) {
+        rect.x = (agents)[i].getLocationX()+camera_x-center.x;
+        rect.y = (agents)[i].getLocationY()+camera_y-center.y;
+        if((agents)[i].getLocationX() < minX) minX = (agents)[i].getLocationX();
+        if((agents)[i].getLocationY() < minY) minY = (agents)[i].getLocationY();
+        if((agents)[i].getLocationX() > maxX) maxX = (agents)[i].getLocationX();
+        if((agents)[i].getLocationY() > maxY) maxY = (agents)[i].getLocationY();
 
         if(i==0) SDL_SetRenderDrawColor(ren, 0, 180, 0, 0);
         SDL_RenderFillRect(ren, &rect);
         if(i==0) SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
 
-        Vector2d v = (*agents)[i]->getVelocity();
+        Vector2d v = (agents)[i].getVelocity();
         SDL_RenderDrawLine(ren,
                                  rect.x+1,
                                  rect.y+1,
@@ -245,9 +244,6 @@ void Display::drawDisplay() {
         //print = false;
     }   
     SDL_RenderPresent(ren);
-
-
-    
 
     SDL_Delay(this->FRAME_DELAY);
 }

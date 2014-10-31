@@ -12,7 +12,7 @@ class Point2d {
         Point2d ();
 
         void applyVector(Vector2d &v);
-        double distanceFrom(Point2d &p);
+        double distanceFrom(const Point2d &p);
 };
 
 #endif

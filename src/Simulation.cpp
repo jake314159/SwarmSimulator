@@ -9,13 +9,19 @@ using namespace std;
 #define BIN_COUNT 100
 
 Simulation::Simulation(int flockSize, SwarmValues *values) {
-    for(int i=flockSize; i>0; i--) {
+    this->flockSize = flockSize;
+    agents = new Agent[flockSize];
+   /* for(int i=flockSize; i>0; i--) {
         this->agents.push_back(new Agent());
-    }
+    }*/
     display = 0;
-    this->values = values;
+    this->values = *values;
     setup_fast_math();
-    cout << "Created a flock of " << this->agents.size() << endl;
+    cout << "Created a flock of " << flockSize << endl;
+}
+
+Simulation::~Simulation() {
+    delete agents;
 }
 
 long Simulation::getRunTime() {
@@ -34,33 +40,34 @@ void Simulation::enableRecord(std::string location) {
 }
 
 //TODO test
-void Simulation::getKNN(Point2d *p, Agent *knn[], int number, unsigned int ignore_index) {
+//TODO what if store index values NOT pointers?
+void Simulation::getKNN(const Point2d p, Agent *knn[], const int number, const unsigned int ignore_index) {
     std::vector<double> knn_distance;
     for(int i=0; i<number;i++) knn_distance.push_back(-1);
 
     double largest_distance = -1.0;
     int filled = 0;
-    for(unsigned int k=0; filled<number; k++) {
+    for(unsigned int k=(flockSize-1); filled<number; k--) {
         if(k == ignore_index) continue;
 
-        knn[filled] = this->agents[filled];
-        knn_distance[filled] = knn[filled]->distanceFrom(p);
+        knn[filled] = &(this->agents[filled]);
+        knn_distance[filled] = knn[filled]->distanceFrom(&p);
         if(largest_distance <0 || knn_distance[filled] > largest_distance) {
             largest_distance = knn_distance[filled];
         }
         filled++;
     }
     
-    for(unsigned int i=number; i<this->agents.size(); i++) {
+    for(unsigned int i=(flockSize-1); i>0; i--) {
         if(i == ignore_index) continue;
 
-        double distance = this->agents[i]->distanceFrom(p);
+        double distance = agents[i].distanceFrom(&p);
         // If this should be put into our knn array
         if(distance < largest_distance) {
             //Find which one we should replace
             for(int k=0; k<number; k++) {
                 if(knn_distance[k] == largest_distance) {
-                    knn[k] = this->agents[i];
+                    knn[k] = &(agents[i]);
                     knn_distance[k] = distance;
                     largest_distance = distance;
                     break;
@@ -70,14 +77,14 @@ void Simulation::getKNN(Point2d *p, Agent *knn[], int number, unsigned int ignor
     }
 }
 
-double Simulation::getApearSize(unsigned int i, unsigned int j) {
+double Simulation::getApearSize(const unsigned int i, const unsigned int j) {
     Point2d l;
-    l.x = agents[j]->getLocationX();
-    l.y = agents[j]->getLocationY();
+    l.x = agents[j].getLocationX();
+    l.y = agents[j].getLocationY();
 
     Vector2d from;
-    agents[i]->vectorFrom(&l, &from);
-    Vector2d other_velocity = agents[j]->getVelocity();
+    agents[i].vectorFrom(&l, &from);
+    Vector2d other_velocity = agents[j].getVelocity();
 
     // Work out the number of bins used by this agent
     double dot_prod = other_velocity.getX()*(from.getX())+other_velocity.getY()*(from.getY());
@@ -85,11 +92,11 @@ double Simulation::getApearSize(unsigned int i, unsigned int j) {
     double angle = fastacos(cos_angle_working);
     double sin_angle = fastsin(angle+shape_dif);
     double cos_angle = fastcos(angle+shape_dif);
-    double apear_size = raw_size/(fastsqrt(sin_angle*sin_angle + (shape_ratio*shape_ratio*cos_angle*cos_angle)));
+    double apear_size = raw_size/(sqrt(sin_angle*sin_angle + (shape_ratio*shape_ratio*cos_angle*cos_angle)));
     return apear_size;
 }
 
-Vector2d Simulation::getProjectionVector(unsigned int i, std::vector<char> &bin) {
+Vector2d Simulation::getProjectionVector(const unsigned int i, std::vector<char> &bin) {
 
     //Reset bin
     for(int j=0; j<BIN_COUNT;j++) bin[j] = false;
@@ -100,13 +107,13 @@ Vector2d Simulation::getProjectionVector(unsigned int i, std::vector<char> &bin)
     double binSize = (M_PI*2)/BIN_COUNT;
 
     Point2d l;
-    for(unsigned int j=0; j<this->agents.size(); j++) {
+    for(unsigned int j=(flockSize-1); j>0; j--) {
         if( j == i) continue; //Skip self
-        l.x = agents[j]->getLocationX();
-        l.y = agents[j]->getLocationY();
+        l.x = agents[j].getLocationX();
+        l.y = agents[j].getLocationY();
 
         Vector2d from;
-        agents[i]->vectorFrom(&l, &from);
+        agents[i].vectorFrom(&l, &from);
 
         double theta;// = acos(cos_theta);
         //
@@ -162,7 +169,7 @@ Vector2d Simulation::getProjectionVector(unsigned int i, std::vector<char> &bin)
     return v_proj;
 }
 
-void Simulation::runSimulation(long maxRunTime) {
+void Simulation::runSimulation(const long maxRunTime) {
     this->maxRunTime = maxRunTime;
     this->runTime = 0;
 
@@ -170,17 +177,18 @@ void Simulation::runSimulation(long maxRunTime) {
     std::vector<char> bin;
     for(int j=0; j<BIN_COUNT;j++) bin.push_back(false);
 
+    Agent **knn = new Agent*[4];
+
     while(this->maxRunTime >=0 && this->runTime < this->maxRunTime) {
 
         if( runTime%update_rate == 0) {
-            for(unsigned int i=0; i<this->agents.size(); i++) {
+            for(unsigned int i=(flockSize-1); i>0; i--) {
                 //Update agents[i]
 
                 Point2d p;
-                p.x = agents[i]->getLocationX();
-                p.y = agents[i]->getLocationY();
-                Agent **knn = new Agent*[4];
-                this->getKNN(&p, knn, 4, i);
+                p.x = agents[i].getLocationX();
+                p.y = agents[i].getLocationY();
+                this->getKNN(p, knn, 4, i);
 
                 Vector2d v_neig;
                 v_neig.setVector(0.0,0.0);
@@ -204,9 +212,9 @@ void Simulation::runSimulation(long maxRunTime) {
                 Vector2d v_proj = getProjectionVector(i, bin);
 
                 //Set weights
-                v_neig *= this->values->align_weight;
-                v_rand *= this->values->noise_weight;
-                v_proj *= this->values->proj_weight;
+                v_neig *= values.align_weight;
+                v_rand *= values.noise_weight;
+                v_proj *= values.proj_weight;
 
                 // Sum all vectors into the v_neig
                 v_neig.setX(v_neig.getX() + v_rand.getX());
@@ -220,14 +228,14 @@ void Simulation::runSimulation(long maxRunTime) {
                     v_neig /= v_neig.getMagnitude();
                 v_neig *= speed;
 
-                agents[i]->updateVelocity(&v_neig);
-                agents[i]->updateLocation();
+                agents[i].updateVelocity(&v_neig);
+                agents[i].updateLocation();
             }
         } else {
             // If a skip frame then don't change the velocity just move each
             // agent in the direction they were going
-            for(unsigned int i=0; i<this->agents.size(); i++) {
-                agents[i]->updateLocation();
+            for(unsigned int i=0; i<flockSize; i++) {
+                agents[i].updateLocation();
             }
         }
 
@@ -238,17 +246,19 @@ void Simulation::runSimulation(long maxRunTime) {
 
         this->runTime++;
     }
+
+    delete knn;
 }
 
 void Simulation::reset() {
     srand(time(NULL));
     double spread = 100.0;
     Vector2d *v = new Vector2d();
-    for(unsigned int i=0; i<this->agents.size(); i++) {
+    for(unsigned int i=(flockSize-1); i>0; i--) {
         double x = ((double)rand()/(double)RAND_MAX)*spread;
         double y = ((double)rand()/(double)RAND_MAX)*spread;
 
-        this->agents[i]->setLocation(
+        agents[i].setLocation(
                 x, 
                 y
             );
@@ -261,26 +271,26 @@ void Simulation::reset() {
         }    
         v->setX(d);
         v->setY(y_val);
-        this->agents[i]->updateVelocity(v);
-        this->agents[i]->updateLocation();
+        agents[i].updateVelocity(v);
+        agents[i].updateLocation();
     }
     delete v;
 }
 
-std::vector<Agent*>* Simulation::getAgents() {
-    return &(this->agents);
+Agent* Simulation::getAgents() {
+    return agents;
 }
 
 void Simulation::getCenterOfMass(Point2d *p) {
     p->x = 0;
     p->y = 0;
 
-    for(unsigned int i=0; i<this->agents.size(); i++) {
-        p->x += this->agents[i]->getLocationX();
-        p->y += this->agents[i]->getLocationY();
+    for(unsigned int i=(flockSize-1); i>0; i--) {
+        p->x += agents[i].getLocationX();
+        p->y += agents[i].getLocationY();
     }
 
-    p->x /= agents.size();
-    p->y /= agents.size();
+    p->x /= (double)flockSize;
+    p->y /= (double)flockSize;
 }
 

@@ -8,16 +8,16 @@ using namespace std;
 
 class Simulation {
     private:
-        std::vector<Agent*> agents;
-        SwarmValues *values;
+        Agent* agents;
+        SwarmValues values;
         Display *display;
         //Environment *env;
         int score;
         long runTime; //In steps
         long maxRunTime;
-        void getKNN(Point2d *p, Agent *knn[], int number, unsigned int ignore_index);
-        Vector2d getProjectionVector(unsigned int i, std::vector<char> &bin);
-        double getApearSize(unsigned int i, unsigned int j);
+        void getKNN(const Point2d p, Agent *knn[], const int number, const unsigned int ignore_index);
+        Vector2d getProjectionVector(const unsigned int i, std::vector<char> &bin);
+        double getApearSize(const unsigned int i, const unsigned int j);
 
         // Agent size and shape info
         static const double raw_size = 3.;
@@ -28,14 +28,19 @@ class Simulation {
         //How often to update the agents velocities (in frames)
         static const int update_rate = 10;
     public:
+
+        unsigned int flockSize;
+
         Simulation(int flockSize, SwarmValues *values);
-        void runSimulation(long maxRunTime);
+        ~Simulation();
+
+        void runSimulation(const long maxRunTime);
         void setSwarmValues(SwarmValues *values);
         //void setEnvironment(Environment *env);
         void reset();
         void getCenterOfMass(Point2d *p);
 
-        std::vector<Agent*>* getAgents();
+        Agent* getAgents();
         void addDisplay();
         long getRunTime();
         void enableRecord(std::string location);

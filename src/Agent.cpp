@@ -9,7 +9,7 @@ void Agent::updateLocation() {
     this->velocity.setVector(&velocity_next);
     this->location.applyVector((this->velocity));
 }
-double Agent::distanceFrom(Point2d *p) {
+double Agent::distanceFrom(const Point2d *p) {
     return this->location.distanceFrom(*p);
 }
 Vector2d* Agent::vectorFrom(Point2d *p, Vector2d *v) {

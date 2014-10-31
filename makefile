@@ -2,7 +2,7 @@
 
 CC = g++
 # -g for debug
-CCFLAGS = -Wall -Wno-write-strings -O3
+CCFLAGS = -Wall -Wno-write-strings -Ofast
 LIBS = -I'/usr/local/include/SDL2' -I'/usr/include/SDL2' -lSDL2 -L/usr/local/lib -Wl,-rpath='/usr/local/lib' -lSDL2_image -lSDL2_ttf -lz -lglut -lGL
 OUTPUT = bin/SwarmSimulator
 

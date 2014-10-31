@@ -72,9 +72,10 @@ double fastatan(double x) {
 }
 
 
-
+//http://www.phailed.me/2014/10/0x5f400000-understanding-fast-inverse-sqrt-the-easyish-way/
 double fastsqrt( double x )
 {
+
     return sqrt(x);
 }
 

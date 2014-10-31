@@ -20,7 +20,7 @@ void Point2d::applyVector(Vector2d &v) {
     this->y += v.getY();
 }
 
-double Point2d::distanceFrom(Point2d &p) {
+double Point2d::distanceFrom(const Point2d &p) {
     double a = p.x - this->x;
     double b = p.y - this->y;
 
@@ -35,3 +35,4 @@ double Point2d::distanceFrom(Point2d &p) {
         return sqrt (a*a + b*b);
     }
 }
+

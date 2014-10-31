@@ -17,7 +17,7 @@ class Agent {
         double getLocationY();
         void updateVelocity(Vector2d *v);
         void updateLocation();
-        double distanceFrom(Point2d *p);
+        double distanceFrom(const Point2d *p);
         Vector2d* vectorFrom(Point2d *p, Vector2d *v);
         Vector2d getVelocity();
 };

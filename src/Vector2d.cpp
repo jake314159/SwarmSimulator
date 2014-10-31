@@ -3,6 +3,7 @@ using namespace std;
 #include <math.h>
 #include <stdlib.h>
 #include "Vector2d.h"
+#include "fastMath.h"
 
 Vector2d::Vector2d () {
 
