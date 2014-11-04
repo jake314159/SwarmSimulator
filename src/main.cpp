@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
             if(i == argc-1) cout << "Output dir not specified"<<endl;
             record_dir = argv[++i];
             record_dir_set = true;
-        } if(!compare(argv[i], "--NoDisplay")) {
+        } else if(!compare(argv[i], "--NoDisplay")) {
             have_display = false;
         } 
     }
