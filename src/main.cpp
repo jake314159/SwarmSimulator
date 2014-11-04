@@ -52,6 +52,7 @@ char check_for_float(char *s) {
 int main(int argc, char *argv[]) {
     cout << "This will be the entry point to the program" << endl;
 
+    bool have_display = true;
     bool allow_record = false;
     bool record_dir_set = false;
     std::string record_dir;
@@ -89,7 +90,9 @@ int main(int argc, char *argv[]) {
             if(i == argc-1) cout << "Output dir not specified"<<endl;
             record_dir = argv[++i];
             record_dir_set = true;
-        }
+        } if(!compare(argv[i], "--NoDisplay")) {
+            have_display = false;
+        } 
     }
 
     SwarmValues *v = new SwarmValues();
@@ -99,10 +102,12 @@ int main(int argc, char *argv[]) {
 
     Simulation *s = new Simulation(100, v);
     s->reset();
-    s->addDisplay();
+    if(have_display) {
+        s->addDisplay();
 
-    if(allow_record && record_dir_set) {
-        s->enableRecord(record_dir);
+        if(allow_record && record_dir_set) {
+            s->enableRecord(record_dir);
+        }
     }
 
     s->runSimulation(10000000);
