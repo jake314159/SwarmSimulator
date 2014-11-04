@@ -1,5 +1,7 @@
 using namespace std;
 #include <iostream>
+#include <string>
+#include <stdlib.h>
 #include "Vector2d.h"
 #include "Simulation.h"
 #include "Display.h"
@@ -20,6 +22,33 @@ int compare(char* string1, char* string2)
     return 0; //0 for equal
 }
 
+char check_for_float(char *s) {
+    char decimalPoint = false;
+    int i;
+    for(i=0; s[i] != '\0'; i++) {
+        switch(s[i]) {
+            case '.':
+                if(decimalPoint) return false;
+                decimalPoint = true;
+                break;
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                break;
+            default:
+                return false;
+        }
+    }
+    return true;
+}
+
 int main(int argc, char *argv[]) {
     cout << "This will be the entry point to the program" << endl;
 
@@ -27,8 +56,33 @@ int main(int argc, char *argv[]) {
     bool record_dir_set = false;
     std::string record_dir;
 
-    // Go over paramiters and update the settings if provided
-    for(int i=1; i<argc; i++) {
+    if(!check_for_float(argv[1])) {
+        cout << "Error: proj_w not a number" << endl;
+        exit(44);
+    }
+    if(!check_for_float(argv[2])) {
+        cout << "Error: align_w not a number" << endl;
+        exit(44);
+    }
+
+    double proj_W_in = atof(argv[1]);
+    double align_W_in = atof(argv[2]);
+    if(proj_W_in <0) {
+        cout << "Error: proj_W <0.0" << endl;
+        exit(41);
+    }
+    if(align_W_in < 0) {
+        cout << "Error: proj_W <0.0" << endl;
+        exit(42);
+    }
+    if(proj_W_in + align_W_in >1.0) {
+        cout << "Error: proj_W+align_W>1.0" << endl;
+        exit(43);
+    }
+    double noise_W_in = 1.0 - (proj_W_in + align_W_in);
+
+    // Go over other paramiters and update the settings if provided
+    for(int i=3; i<argc; i++) {
         if(!compare(argv[i], "-R") || !compare(argv[i], "--EnableRecord")) {
             allow_record = true;
         } else if(!compare(argv[i], "-D")) {
@@ -37,43 +91,21 @@ int main(int argc, char *argv[]) {
             record_dir_set = true;
         }
     }
-    //cout << allow_record << " " << record_dir << endl;
 
     SwarmValues *v = new SwarmValues();
-
-     //Fish
-/*
-    v->proj_weight = 0.4;
-    v->align_weight = 0.4;
-    v->noise_weight = 0.2;
-    */
-
-     // Birds 
-
-    v->proj_weight = 0.1;
-    v->align_weight = 0.75;
-    v->noise_weight = 0.15;
-    
-
-     //Ants
-/*    v->proj_weight = 0.1;
-    v->align_weight = 0.4;
-    v->noise_weight = 0.5;*/
-    
- //other fish
-/*    v->proj_weight = 0.4;
-    v->align_weight = 0.4;
-    v->noise_weight = 0.2;*/
+    v->proj_weight = proj_W_in;
+    v->align_weight = align_W_in;
+    v->noise_weight = noise_W_in;
 
     Simulation *s = new Simulation(100, v);
     s->reset();
-   // s->addDisplay();
+    s->addDisplay();
 
     if(allow_record && record_dir_set) {
-   //     s->enableRecord(record_dir);
+        s->enableRecord(record_dir);
     }
 
-    s->runSimulation(10000);
+    s->runSimulation(10000000);
 
     delete s;
     delete v;
