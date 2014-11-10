@@ -233,7 +233,7 @@ void Display::drawDisplay() {
     draw_int_number(((Simulation*)sim)->getScore(), 5, 30);
     draw_int_number(speed, 5, 60);
     if(enable_record && print) {
-        char buf[100];
+        char buf[1000];
         sprintf(buf, "%s/%ld/%06ld.png", save_location.c_str(), time_of_record, ((Simulation*)sim)->getRunTime());
         Screenshot(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, buf);
         cout <<"PRINT!! '"<<buf<<"'"<<endl; 

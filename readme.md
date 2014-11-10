@@ -15,5 +15,13 @@ Command line options
 -D <dir>
     Specifies the output directory for the recording images
     Requires the display to be enabled
+
+-E <ENV_NAME>
+    Specifies the enviroment to run the simulation in
+    Default is none
+    Avalible environments:
+        - FOOD
+            Food is spread out throughout the enviroment and can be consumed by
+            agents
 ```
 

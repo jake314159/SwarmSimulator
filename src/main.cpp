@@ -91,6 +91,10 @@ int main(int argc, char *argv[]) {
     }
     double noise_W_in = 1.0 - (proj_W_in + align_W_in);
 
+    Environment *env = new Environment();
+    env->onDraw = 0;
+    env->onFrame = 0;
+
     // Go over other paramiters and update the settings if provided
     for(int i=3; i<argc; i++) {
         if(!compare(argv[i], "-R") || !compare(argv[i], "--EnableRecord")) {
@@ -101,7 +105,13 @@ int main(int argc, char *argv[]) {
             record_dir_set = true;
         } else if(!compare(argv[i], "--NoDisplay")) {
             have_display = false;
-        } 
+        } else if(!compare(argv[i], "-E")) {
+            i++;
+            if(!compare(argv[i], "FOOD")) {
+                env->onDraw = &environment_food_onDraw;
+                env->onFrame = &environment_food_onFrame;
+            }
+        }
     }
 
     SwarmValues *v = new SwarmValues();
@@ -110,9 +120,6 @@ int main(int argc, char *argv[]) {
     v->noise_weight = noise_W_in;
 
     environment_food_init(200);
-    Environment *env = new Environment();
-    env->onDraw = &environment_food_onDraw;
-    env->onFrame = &environment_food_onFrame;
 
     Simulation *s = new Simulation(100, v);
     s->reset();

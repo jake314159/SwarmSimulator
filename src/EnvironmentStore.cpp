@@ -54,6 +54,8 @@ void environment_food_onFrame(void *simulation) {
                 food[j].y = ((double)rand()/(double)RAND_MAX)*spread - spread/2;
             }
         }
+
+        //We've moved away from the food so lets move it closer
         if(minDistance > spread*spread) {
             food[j].x = ((double)rand()/(double)RAND_MAX)*spread*2 - spread + p.x;
             food[j].y = ((double)rand()/(double)RAND_MAX)*spread*2 - spread + p.y;
