@@ -304,6 +304,9 @@ void Simulation::getCenterOfMass(Point2d *p) {
 
 void Simulation::incScore(int v) {
     score += v;
-    cout << score << endl;
+}
+
+int Simulation::getScore() {
+    return score;
 }
 

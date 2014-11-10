@@ -48,6 +48,7 @@ class Simulation {
 
         void setEnvironment(Environment *env);
         void incScore(int v);
+        int getScore();
 };
 
 
