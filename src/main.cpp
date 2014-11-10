@@ -30,7 +30,7 @@ void myOnFrame(void *simulation) {
     cout << "FRAME!" << endl;
 }
 
-char check_for_float(char *s) {
+char checkForFloat(char *s) {
     char decimalPoint = false;
     int i;
     for(i=0; s[i] != '\0'; i++) {
@@ -65,11 +65,11 @@ int main(int argc, char *argv[]) {
     bool record_dir_set = false;
     std::string record_dir;
 
-    if(!check_for_float(argv[1])) {
+    if(!checkForFloat(argv[1])) {
         cout << "Error: proj_w not a number" << endl;
         exit(44);
     }
-    if(!check_for_float(argv[2])) {
+    if(!checkForFloat(argv[2])) {
         cout << "Error: align_w not a number" << endl;
         exit(44);
     }

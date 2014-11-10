@@ -243,7 +243,9 @@ void Simulation::runSimulation(const long maxRunTime) {
                 agents[i].updateLocation();
             }
         }
-        this->onFrame(this);
+        if(this->onFrame != 0) {
+            this->onFrame(this);
+        }
 
         // If there is a display then draw it
         if(/*runTime > 1500 && */display != 0) {
