@@ -302,3 +302,8 @@ void Simulation::getCenterOfMass(Point2d *p) {
     p->y /= (double)flockSize;
 }
 
+void Simulation::incScore(int v) {
+    score += v;
+    cout << score << endl;
+}
+

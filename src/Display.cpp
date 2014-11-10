@@ -179,7 +179,6 @@ void Display::drawDisplay() {
     SDL_SetRenderDrawColor(ren, 255, 255, 255, 0);
     SDL_RenderClear(ren);
 
-    Point2d center;
     ((Simulation*)sim)->getCenterOfMass(&center);
 
     SDL_Rect rect = {static_cast<int>(camera_x-center.x),
@@ -243,4 +242,11 @@ void Display::drawDisplay() {
     SDL_RenderPresent(ren);
 
     SDL_Delay(this->FRAME_DELAY);
+}
+
+void Display::drawBox(double x, double y, int size, char r, char g, char b) {
+    SDL_SetRenderDrawColor(ren, r, g, b, 0);
+    SDL_Rect rect = {static_cast<int>(x+camera_x-center.x),
+                static_cast<int>(y+camera_y-center.y),size,size}; 
+    SDL_RenderFillRect(ren, &rect);
 }

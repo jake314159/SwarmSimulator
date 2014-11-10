@@ -3,6 +3,7 @@
 
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include "Point2d.h"
 
 /*
  * DISPLAY CONTROLS
@@ -28,6 +29,7 @@ class Display {
 
         double camera_x;
         double camera_y;
+        Point2d center;
 
         int count;
         int speed;
@@ -51,6 +53,8 @@ class Display {
         void drawDisplay();
         void setup_record(std::string location);
         void setOnDrawFunction(void (*onDraw)(Display *));
+
+        void drawBox(double x, double y, int size, char r, char g, char b);
 };
 
 #endif

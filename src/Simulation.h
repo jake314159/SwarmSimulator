@@ -47,6 +47,7 @@ class Simulation {
         void enableRecord(std::string location);
 
         void setEnvironment(Environment *env);
+        void incScore(int v);
 };
 
 

@@ -6,6 +6,7 @@ using namespace std;
 #include "Simulation.h"
 #include "Display.h"
 #include "Environment.h"
+#include "EnvironmentStore.h"
 
 int compare(char* string1, char* string2) 
 {
@@ -108,9 +109,10 @@ int main(int argc, char *argv[]) {
     v->align_weight = align_W_in;
     v->noise_weight = noise_W_in;
 
+    environment_food_init(200);
     Environment *env = new Environment();
-    env->onDraw = &myOnDraw;
-    env->onFrame = &myOnFrame;
+    env->onDraw = &environment_food_onDraw;
+    env->onFrame = &environment_food_onFrame;
 
     Simulation *s = new Simulation(100, v);
     s->reset();
@@ -121,7 +123,7 @@ int main(int argc, char *argv[]) {
             s->enableRecord(record_dir);
         }
     }
-    //s->setEnvironment(env); //uncomment this to add an environment
+    s->setEnvironment(env); //uncomment this to add an environment
 
     s->runSimulation(10000000);
 
