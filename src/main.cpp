@@ -5,6 +5,7 @@ using namespace std;
 #include "Vector2d.h"
 #include "Simulation.h"
 #include "Display.h"
+#include "Environment.h"
 
 int compare(char* string1, char* string2) 
 {
@@ -20,6 +21,13 @@ int compare(char* string1, char* string2)
         i++;
     }
     return 0; //0 for equal
+}
+
+void myOnDraw(Display* d) {
+    cout << "Display" << endl;
+}
+void myOnFrame(void *simulation) {
+    cout << "FRAME!" << endl;
 }
 
 char check_for_float(char *s) {
@@ -100,6 +108,10 @@ int main(int argc, char *argv[]) {
     v->align_weight = align_W_in;
     v->noise_weight = noise_W_in;
 
+    Environment *env = new Environment();
+    env->onDraw = &myOnDraw;
+    env->onFrame = &myOnFrame;
+
     Simulation *s = new Simulation(100, v);
     s->reset();
     if(have_display) {
@@ -109,9 +121,11 @@ int main(int argc, char *argv[]) {
             s->enableRecord(record_dir);
         }
     }
+    //s->setEnvironment(env); //uncomment this to add an environment
 
     s->runSimulation(10000000);
 
     delete s;
     delete v;
+    delete env;
 }

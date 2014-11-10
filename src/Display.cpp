@@ -63,6 +63,7 @@ Display::Display(void *sim){
     speed = 1;
     print = false;
     enable_record = false;
+    onDraw = 0;
 }
 Display::~Display() {
     SDL_DestroyRenderer(ren);
@@ -75,6 +76,10 @@ void Display::setup_record(std::string location) {
         save_location = location;
         print = false;
         time_of_record = 0;
+}
+
+void Display::setOnDrawFunction(void (*onDraw)(Display *)) {
+    this->onDraw = onDraw;
 }
 
 void Display::initDisplay() {
@@ -232,7 +237,9 @@ void Display::drawDisplay() {
         sprintf(buf, "%s/%ld/%06ld.png", save_location.c_str(), time_of_record, ((Simulation*)sim)->getRunTime());
         Screenshot(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, buf);
         cout <<"PRINT!! '"<<buf<<"'"<<endl; 
-    }   
+    }
+    if(onDraw != 0)
+        onDraw(this);
     SDL_RenderPresent(ren);
 
     SDL_Delay(this->FRAME_DELAY);

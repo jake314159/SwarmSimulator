@@ -41,6 +41,8 @@ class Display {
         void draw_string(std::string text, int x, int y);
         void draw_int_number(int i, int x, int y);
         char score_buffer[30];
+
+        void (*onDraw)(Display *);
     public:
 
         Display(void *sim);
@@ -48,6 +50,7 @@ class Display {
         void initDisplay();
         void drawDisplay();
         void setup_record(std::string location);
+        void setOnDrawFunction(void (*onDraw)(Display *));
 };
 
 #endif

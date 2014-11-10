@@ -5,13 +5,14 @@ using namespace std;
 #include "SwarmValues.h"
 #include "Agent.h"
 #include "Display.h"
+#include "Environment.h"
 
 class Simulation {
     private:
         Agent* agents;
         SwarmValues values;
         Display *display;
-        //Environment *env;
+        void (*onFrame)(void *);
         int score;
         long runTime; //In steps
         long maxRunTime;
@@ -44,6 +45,8 @@ class Simulation {
         void addDisplay();
         long getRunTime();
         void enableRecord(std::string location);
+
+        void setEnvironment(Environment *env);
 };
 
 

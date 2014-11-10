@@ -37,6 +37,13 @@ void Simulation::enableRecord(std::string location) {
     display->setup_record(location);
 }
 
+void Simulation::setEnvironment(Environment *env) {
+    this->onFrame = env->onFrame;
+    if(display != 0) {
+        display->setOnDrawFunction(env->onDraw);
+    }
+}
+
 //TODO test
 //TODO what if store index values NOT pointers?
 void Simulation::getKNN(const Point2d p, Agent *knn[], const int number, const unsigned int ignore_index) {
@@ -236,6 +243,7 @@ void Simulation::runSimulation(const long maxRunTime) {
                 agents[i].updateLocation();
             }
         }
+        this->onFrame(this);
 
         // If there is a display then draw it
         if(/*runTime > 1500 && */display != 0) {
