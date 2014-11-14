@@ -12,7 +12,7 @@ void Point2d::applyVector(Vector2d&){
 }
 
 const double DISTANCE_MAGIC_NUMBER = 123.4;
-double Point2d::distanceFrom(Point2d &p) {
+double Point2d::distanceFrom(const Point2d &p) {
     return DISTANCE_MAGIC_NUMBER; // Some magic number
 }
 
@@ -35,8 +35,8 @@ Point2d::Point2d(double x, double y){
 }
 
 /* The tests! */
-TEST(Agent_test, distance_from) { 
-    
+TEST(Agent_test, distance_from) {
+
     Agent *a = new Agent();
     Point2d *p = new Point2d();
     double value = a->distanceFrom(p);
@@ -46,8 +46,8 @@ TEST(Agent_test, distance_from) {
     delete p;
 }
 
-TEST(Agent_test, update_location) { 
-    
+TEST(Agent_test, update_location) {
+
     Agent *a = new Agent();
     int cnt = apply_vector_count;
     a->updateLocation();
@@ -56,7 +56,7 @@ TEST(Agent_test, update_location) {
     delete a;
 }
 
-TEST(Agent_test, vector_from) { 
+TEST(Agent_test, vector_from) {
     double x=1.1, y=2.2;
     Agent *a = new Agent();
     Point2d *p = new Point2d(x,y);
@@ -70,7 +70,7 @@ TEST(Agent_test, vector_from) {
 }
 
 TEST(Agent_test, get_location_X) {
-    double x = 127.0; 
+    double x = 127.0;
     Agent *a = new Agent();
     a->setLocation(x, 0.0);
     ASSERT_EQ(a->getLocationX(), x);
@@ -78,7 +78,7 @@ TEST(Agent_test, get_location_X) {
 }
 
 TEST(Agent_test, get_location_Y) {
-    double y = 193.0; 
+    double y = 193.0;
     Agent *a = new Agent();
     a->setLocation(0.0, y);
     ASSERT_EQ(a->getLocationY(), y);
@@ -87,7 +87,7 @@ TEST(Agent_test, get_location_Y) {
 
 TEST(Agent_test, set_location) {
     double x = 88.0;
-    double y = 14.0; 
+    double y = 14.0;
     Agent *a = new Agent();
     a->setLocation(x, y);
     ASSERT_EQ(a->getLocationX(), x);
@@ -97,7 +97,7 @@ TEST(Agent_test, set_location) {
 
 TEST(Agent_test, update_velocity) {
     double x = 48.1;
-    double y = 994.1; 
+    double y = 994.1;
     Agent *a = new Agent();
     Vector2d *v = new Vector2d(x, y);
     a->updateVelocity(v);
@@ -112,4 +112,3 @@ int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
-
