@@ -174,6 +174,39 @@ Vector2d Simulation::getProjectionVector(const unsigned int i, std::vector<char>
     return v_proj;
 }
 
+void Simulation::combine_vectors(Vector2d &current, Vector2d &prefered) {
+    current *= 0.7;
+    current.setX(current.getX() + prefered.getX());
+    current.setY(current.getY() + prefered.getY());
+
+    /*double max_rotation = 0.4;
+
+    double angle = atan2(prefered.getX(),prefered.getY()) - atan2(current.getX(),current.getY());
+    //cout << "CUR (" << current.getX() << "," << current.getY() << ") ";
+    //cout << "PER (" << prefered.getX() << "," << prefered.getY() << ") ";  
+    //cout << "angle " << angle << endl;
+    angle = -angle;
+    if(fabs(angle)<max_rotation || rand()%1000==0) {
+        //less than max_rotation radians
+        current.setX(prefered.getX());
+        current.setY(prefered.getY());
+    } else {
+
+        if(angle>max_rotation) angle = max_rotation;
+        if(angle<-max_rotation) angle = -max_rotation;
+
+        double cs = cos(angle);
+        double sn = sin(angle);
+
+        double px = current.getX() * cs - current.getY() * sn; 
+        double py = current.getX() * sn + current.getY() * cs;
+
+        current *= 1;
+        current.setX(px);
+        current.setY(py);
+    }*/
+}
+
 void Simulation::runSimulation(const long maxRunTime) {
     this->maxRunTime = maxRunTime;
     this->runTime = 0;
@@ -233,7 +266,18 @@ void Simulation::runSimulation(const long maxRunTime) {
                     v_neig /= v_neig.getMagnitude();
                 v_neig *= speed;
 
-                agents[i].updateVelocity(&v_neig);
+                Vector2d old_velocity = agents[i].getVelocity();
+
+
+                combine_vectors(old_velocity, v_neig);
+
+                //Fix speed (again)
+                if(old_velocity.getMagnitude()>0)
+                    old_velocity /= old_velocity.getMagnitude();
+                old_velocity *= speed;
+
+                //agents[i].updateVelocity(&v_neig);
+                agents[i].updateVelocity(&old_velocity);
                 agents[i].updateLocation();
             }
         } else {
@@ -260,17 +304,21 @@ void Simulation::runSimulation(const long maxRunTime) {
 
 void Simulation::reset() {
     srand(time(NULL));
-    double spread = 100.0;
+    double spread = 40;//100.0;
     Vector2d *v = new Vector2d();
     for(unsigned int i=(flockSize-1); i>0; i--) {
-        double x = ((double)rand()/(double)RAND_MAX)*spread;
-        double y = ((double)rand()/(double)RAND_MAX)*spread;
+        spread = ((double)rand()/(double)RAND_MAX)*100;
+        double x = ((double)rand()/(double)RAND_MAX)*spread-(spread/2);
+        //double y = ((double)rand()/(double)RAND_MAX)*spread;
+        double y = sqrt(((spread/2)*(spread/2))-((x)*(x)));
+        if( (rand()&1) == 0) y= -y;
 
         agents[i].setLocation(
                 x, 
                 y
             );
         double d = ((double)rand()/(double)RAND_MAX)*2. -1.;
+        //double d = x>50 ? (y>50? 0.5 : 0.99) : (y<50? -0.5 : -0.99);
 
         //Set Y so speed = 1
         double y_val = fastsqrt(1.0 - d*d);
@@ -279,6 +327,9 @@ void Simulation::reset() {
         }    
         v->setX(d);
         v->setY(y_val);
+
+
+
         agents[i].updateVelocity(v);
         agents[i].updateLocation();
     }

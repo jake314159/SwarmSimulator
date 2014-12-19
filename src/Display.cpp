@@ -60,7 +60,7 @@ Display::Display(void *sim){
     this->sim = sim;
     camera_x = SCREEN_WIDTH/2;
     camera_y = SCREEN_HEIGHT/2;
-    speed = 1;
+    speed = 0;
     print = false;
     enable_record = false;
     onDraw = 0;
