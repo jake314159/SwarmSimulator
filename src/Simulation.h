@@ -26,10 +26,10 @@ class Simulation {
         static const double speed = 2.0;
 
         //How often to update the agents velocities (in frames)
-        static const int update_rate = 7;//10;
+        static const int update_rate = 5;//10;
     public:
-        static const double raw_size = 5.;
-        static const double shape_ratio = 7;
+        static const double raw_size = 10.;
+        static const double shape_ratio = 10;
 
         unsigned int flockSize;
 

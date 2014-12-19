@@ -142,6 +142,7 @@ Vector2d Simulation::getProjectionVector(const unsigned int i, std::vector<char>
             //case4
             theta = M_PI + M_PI/2 + fastatan(from.getX()/(-from.getY()));
         }
+        theta = atan2(from.getY(), from.getX());
 
         double apear_size = getApearSize(i,j);
         double size_angle = fastatan(apear_size/(from.getMagnitude()));
@@ -149,6 +150,7 @@ Vector2d Simulation::getProjectionVector(const unsigned int i, std::vector<char>
         int size_bins = (int)(size_angle/binSize);
 
         int bin_N = (int)((theta)/binSize);
+        if(bin_N ==0 ) bin_N = 1;
         for(int k=-size_bins; k<size_bins; k++) {
             if((bin_N+k)>=0) {
                 bin[(bin_N+k)%BIN_COUNT] = true;
@@ -175,36 +177,9 @@ Vector2d Simulation::getProjectionVector(const unsigned int i, std::vector<char>
 }
 
 void Simulation::combine_vectors(Vector2d &current, Vector2d &prefered) {
-    current *= 0.7;
+    current *= 1;
     current.setX(current.getX() + prefered.getX());
     current.setY(current.getY() + prefered.getY());
-
-    /*double max_rotation = 0.4;
-
-    double angle = atan2(prefered.getX(),prefered.getY()) - atan2(current.getX(),current.getY());
-    //cout << "CUR (" << current.getX() << "," << current.getY() << ") ";
-    //cout << "PER (" << prefered.getX() << "," << prefered.getY() << ") ";  
-    //cout << "angle " << angle << endl;
-    angle = -angle;
-    if(fabs(angle)<max_rotation || rand()%1000==0) {
-        //less than max_rotation radians
-        current.setX(prefered.getX());
-        current.setY(prefered.getY());
-    } else {
-
-        if(angle>max_rotation) angle = max_rotation;
-        if(angle<-max_rotation) angle = -max_rotation;
-
-        double cs = cos(angle);
-        double sn = sin(angle);
-
-        double px = current.getX() * cs - current.getY() * sn; 
-        double py = current.getX() * sn + current.getY() * cs;
-
-        current *= 1;
-        current.setX(px);
-        current.setY(py);
-    }*/
 }
 
 void Simulation::runSimulation(const long maxRunTime) {
