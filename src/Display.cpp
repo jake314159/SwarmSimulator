@@ -138,6 +138,10 @@ void Display::drawDisplay() {
                 case SDLK_ESCAPE:
                     exit(0);
                     break;
+                case SDLK_SPACE:
+                    if(speed == 0)  speed = 1;
+                    else            speed = 0;
+                    break;
                 case SDLK_z:
                     if(speed>1) speed--;
                     break;
@@ -166,6 +170,35 @@ void Display::drawDisplay() {
                     break;
             }
         }
+    }
+
+    //we are paused
+    if(speed == 0) {
+        bool paused = true;
+        while(paused) {
+            while (SDL_PollEvent(&e)) {
+                if (e.type == SDL_KEYDOWN) {
+                    switch (e.key.keysym.sym){
+                        case SDLK_q:
+                        case SDLK_ESCAPE:
+                            exit(0);
+                            break;
+                        case SDLK_SPACE:
+                            paused = false;
+                            speed = 1;
+                            break;
+                        case SDLK_s:
+                            //show 1 frame step
+                            paused = false;
+                            //ensure we aren't on a skipped frame
+                            count = speed+1;
+                            break;
+                    }
+                }
+            }
+            SDL_Delay(this->FRAME_DELAY);
+        }
+        
     }
 
     if(count>speed) {
@@ -197,6 +230,8 @@ void Display::drawDisplay() {
 
     SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
 
+    double agent_length = ((Simulation*)sim)->raw_size;
+    double agent_width = agent_length / ((Simulation*)sim)->shape_ratio;
     for(unsigned int i=(flockSize-1); i>0; i--) {
         rect.x = (agents)[i].getLocationX()+camera_x-center.x;
         rect.y = (agents)[i].getLocationY()+camera_y-center.y;
@@ -205,16 +240,46 @@ void Display::drawDisplay() {
         if((agents)[i].getLocationX() > maxX) maxX = (agents)[i].getLocationX();
         if((agents)[i].getLocationY() > maxY) maxY = (agents)[i].getLocationY();
 
-        if(i==0) SDL_SetRenderDrawColor(ren, 0, 180, 0, 0);
-        SDL_RenderFillRect(ren, &rect);
-        if(i==0) SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
+        //if(i==0) SDL_SetRenderDrawColor(ren, 0, 180, 0, 0);
+        //SDL_RenderFillRect(ren, &rect);
+        //if(i==0) SDL_SetRenderDrawColor(ren, 0, 0, 0, 0);
 
         Vector2d v = (agents)[i].getVelocity();
+        v /= v.getMagnitude();
+        v *= agent_length;
+
+        //float angle = atan2f(-v.getY(), v.getX());
+
+        Vector2d perp_v;
+
+        perp_v.setX( -v.getY() );//cos(angle)*agent_width );
+        perp_v.setY( v.getX() ); //sin(angle)*agent_width );
+        perp_v /= perp_v.getMagnitude();
+        perp_v *= agent_width;
+
         SDL_RenderDrawLine(ren,
                                  rect.x+1,
                                  rect.y+1,
-                                 rect.x+1+v.getX()*2,
-                                 rect.y+1+v.getY()*2);
+                                 rect.x+1-v.getX(),
+                                 rect.y+1-v.getY());
+        SDL_RenderDrawLine(ren,
+                         rect.x+1-v.getX()-perp_v.getX(),
+                         rect.y+1-v.getY()-perp_v.getY(),
+                         rect.x+1-v.getX()+perp_v.getX(),
+                         rect.y+1-v.getY()+perp_v.getY()
+                         );
+        SDL_RenderDrawLine(ren,
+                 rect.x+1,
+                 rect.y+1,
+                 rect.x+1-v.getX()+perp_v.getX(),
+                 rect.y+1-v.getY()+perp_v.getY()
+                 );
+        SDL_RenderDrawLine(ren,
+                 rect.x+1,
+                 rect.y+1,
+                 rect.x+1-v.getX()-perp_v.getX(),
+                 rect.y+1-v.getY()-perp_v.getY()
+                 );
     }
 
     SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
