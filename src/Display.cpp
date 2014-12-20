@@ -148,6 +148,12 @@ void Display::drawDisplay() {
                 case SDLK_x:
                     speed++;
                     break;
+                case SDLK_c:
+                    zoom -= 0.1;
+                    break;
+                case SDLK_v:
+                    zoom += 0.1;
+                    break;
                 case SDLK_r:
                     char buf[100];
                     if(enable_record && time_of_record == 0) {
@@ -233,8 +239,8 @@ void Display::drawDisplay() {
     double agent_length = ((Simulation*)sim)->raw_size;
     double agent_width = agent_length / ((Simulation*)sim)->shape_ratio;
     for(unsigned int i=(flockSize-1); i>0; i--) {
-        rect.x = (agents)[i].getLocationX()+camera_x-center.x;
-        rect.y = (agents)[i].getLocationY()+camera_y-center.y;
+        rect.x = (agents)[i].getLocationX()+camera_x/zoom-center.x;
+        rect.y = (agents)[i].getLocationY()+camera_y/zoom-center.y;
         if((agents)[i].getLocationX() < minX) minX = (agents)[i].getLocationX();
         if((agents)[i].getLocationY() < minY) minY = (agents)[i].getLocationY();
         if((agents)[i].getLocationX() > maxX) maxX = (agents)[i].getLocationX();
@@ -258,45 +264,47 @@ void Display::drawDisplay() {
         perp_v *= agent_width;
 
         SDL_RenderDrawLine(ren,
-                                 rect.x+1,
-                                 rect.y+1,
-                                 rect.x+1-v.getX(),
-                                 rect.y+1-v.getY());
+                         (rect.x+1)*zoom,
+                         (rect.y+1)*zoom,
+                         (rect.x+1-v.getX())*zoom,
+                         (rect.y+1-v.getY())*zoom
+                            );
         SDL_RenderDrawLine(ren,
-                         rect.x+1-v.getX()-perp_v.getX(),
-                         rect.y+1-v.getY()-perp_v.getY(),
-                         rect.x+1-v.getX()+perp_v.getX(),
-                         rect.y+1-v.getY()+perp_v.getY()
+                         (rect.x+1-v.getX()-perp_v.getX())*zoom,
+                         (rect.y+1-v.getY()-perp_v.getY())*zoom,
+                         (rect.x+1-v.getX()+perp_v.getX())*zoom,
+                         (rect.y+1-v.getY()+perp_v.getY())*zoom
                          );
         SDL_RenderDrawLine(ren,
-                 rect.x+1,
-                 rect.y+1,
-                 rect.x+1-v.getX()+perp_v.getX(),
-                 rect.y+1-v.getY()+perp_v.getY()
+                 (rect.x+1)*zoom,
+                 (rect.y+1)*zoom,
+                 (rect.x+1-v.getX()+perp_v.getX())*zoom,
+                 (rect.y+1-v.getY()+perp_v.getY())*zoom
                  );
         SDL_RenderDrawLine(ren,
-                 rect.x+1,
-                 rect.y+1,
-                 rect.x+1-v.getX()-perp_v.getX(),
-                 rect.y+1-v.getY()-perp_v.getY()
+                 (rect.x+1)*zoom,
+                 (rect.y+1)*zoom,
+                 (rect.x+1-v.getX()-perp_v.getX())*zoom,
+                 (rect.y+1-v.getY()-perp_v.getY())*zoom
                  );
     }
 
     SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
-    minX = minX-fmod(minX, 50.)-400.;
-    minY = minY-fmod(minY, 50.)-400.;
-    rect.w = 5;
-    rect.h = 5;
-    for(int x = minX; x <maxX+400; x+=50.) {
-        for(int y = minY; y < maxY+400; y+=50.) {
-            rect.x = x+camera_x-center.x;
-            rect.y = y+camera_y-center.y;
+    minX = fmod(minX, 100.)-400.;
+    minY = fmod(minY, 100.)-400.;
+    rect.w = 5*zoom;
+    rect.h = 5*zoom;
+    for(int x = minX-400; x <maxX+400; x+=100.) {
+        for(int y = minY-400; y < maxY+400; y+=100.) {
+            rect.x = x*zoom+camera_x/zoom-center.x;
+            rect.y = y*zoom+camera_y/zoom-center.y;
             SDL_RenderFillRect(ren, &rect);
         }
     }
     draw_frame_number();
     draw_int_number(((Simulation*)sim)->getScore(), 5, 30);
     draw_int_number(speed, 5, 60);
+    draw_int_number(static_cast<int>(zoom*100), 5, 90);
     if(enable_record && print) {
         char buf[1000];
         sprintf(buf, "%s/%ld/%06ld.png", save_location.c_str(), time_of_record, ((Simulation*)sim)->getRunTime());

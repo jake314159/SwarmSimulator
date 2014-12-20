@@ -21,8 +21,8 @@ class Display {
         SDL_Renderer* ren;
         TTF_Font *font;
         void *sim;
-        const static int SCREEN_WIDTH = 800;
-        const static int SCREEN_HEIGHT = 580;
+        const static int SCREEN_WIDTH = 1280;
+        const static int SCREEN_HEIGHT = 720;
         const static int fontSize = 18;
         const static int FRAME_DELAY = 30;
         char* fontFile;
@@ -45,6 +45,8 @@ class Display {
         char score_buffer[30];
 
         void (*onDraw)(Display *);
+
+        double zoom = 1.0;
     public:
 
         Display(void *sim);
