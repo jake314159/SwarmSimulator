@@ -177,7 +177,7 @@ Vector2d Simulation::getProjectionVector(const unsigned int i, std::vector<char>
 }
 
 void Simulation::combine_vectors(Vector2d &current, Vector2d &prefered) {
-    current *= 1;
+    current *= 4;
     current.setX(current.getX() + prefered.getX());
     current.setY(current.getY() + prefered.getY());
 }

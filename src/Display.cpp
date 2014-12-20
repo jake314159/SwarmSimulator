@@ -290,14 +290,14 @@ void Display::drawDisplay() {
     }
 
     SDL_SetRenderDrawColor(ren, 200, 200, 200, 0);
-    minX = fmod(minX, 100.)-400.;
-    minY = fmod(minY, 100.)-400.;
+    minX = minX-fmod(minX, 100.)-400.;
+    minY = minY-fmod(minY, 100.)-400.;
     rect.w = 5*zoom;
     rect.h = 5*zoom;
     for(int x = minX-400; x <maxX+400; x+=100.) {
         for(int y = minY-400; y < maxY+400; y+=100.) {
-            rect.x = x*zoom+camera_x/zoom-center.x;
-            rect.y = y*zoom+camera_y/zoom-center.y;
+            rect.x = (x+camera_x-center.x)*zoom;
+            rect.y = (y+camera_y-center.y)*zoom;
             SDL_RenderFillRect(ren, &rect);
         }
     }
