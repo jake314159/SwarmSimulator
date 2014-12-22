@@ -6,7 +6,7 @@ using namespace std;
 #include "Simulation.h"
 #include "fastMath.h"
 
-#define BIN_COUNT 100
+#define BIN_COUNT 600
 
 Simulation::Simulation(int flockSize, SwarmValues *values) {
     this->flockSize = flockSize;
@@ -14,7 +14,6 @@ Simulation::Simulation(int flockSize, SwarmValues *values) {
     display = 0;
     this->values = *values;
     setup_fast_math();
-    cout << "Created a flock of " << flockSize << endl;
 }
 
 Simulation::~Simulation() {
@@ -51,34 +50,39 @@ void Simulation::getKNN(const Point2d p, Agent *knn[], const int number, const u
     for(int i=0; i<number;i++) knn_distance.push_back(-1);
 
     double largest_distance = -1.0;
+    int largest_index = -1;
     int filled = 0;
-    for(unsigned int k=(flockSize-1); filled<number; k--) {
-        if(k == ignore_index) continue;
-
-        knn[filled] = &(this->agents[filled]);
-        knn_distance[filled] = knn[filled]->distanceFrom(&p);
-        if(largest_distance <0 || knn_distance[filled] > largest_distance) {
-            largest_distance = knn_distance[filled];
-        }
-        filled++;
-    }
     
     for(unsigned int i=(flockSize-1); i>0; i--) {
         if(i == ignore_index) continue;
 
-        double distance = agents[i].distanceFrom(&p);
-        // If this should be put into our knn array
-        if(distance < largest_distance) {
-            //Find which one we should replace
-            for(int k=0; k<number; k++) {
-                if(knn_distance[k] == largest_distance) {
-                    knn[k] = &(agents[i]);
-                    knn_distance[k] = distance;
-                    largest_distance = distance;
-                    break;
+        if(filled < number) {
+            //Automatically accept it as the array isn't even full yet
+            knn[filled] = &(this->agents[i]);
+            knn_distance[filled] = knn[filled]->distanceFrom(&p);
+            if(largest_distance <0 || knn_distance[filled] > largest_distance) {
+                largest_distance = knn_distance[filled];
+                largest_index = filled;
+            }
+            filled++;
+        } else {
+
+            double distance = agents[i].distanceFrom(&p);
+            // If this should be put into our knn array
+            if(distance < largest_distance) {
+                //Find which one we should replace
+                knn[largest_index] = &(agents[i]);
+                knn_distance[largest_index] = distance;
+                largest_distance = -1;
+                largest_index = -1;
+                for(int k=0; k<number; k++) {
+                    if(knn_distance[k] > largest_distance) {
+                        largest_distance = knn_distance[k];
+                        largest_index = k;
+                    }
                 }
             }
-        }        
+        }
     }
 }
 
@@ -148,9 +152,10 @@ Vector2d Simulation::getProjectionVector(const unsigned int i, std::vector<char>
         double size_angle = fastatan(apear_size/(from.getMagnitude()));
         // The number of bins the agent fills (half as based on radius)
         int size_bins = (int)(size_angle/binSize);
+        if(size_bins ==0) size_bins = 1;
 
         int bin_N = (int)((theta)/binSize);
-        if(bin_N ==0 ) bin_N = 1;
+        //if(bin_N <= 0) bin_N = 1;
         for(int k=-size_bins; k<size_bins; k++) {
             if((bin_N+k)>=0) {
                 bin[(bin_N+k)%BIN_COUNT] = true;
@@ -177,9 +182,12 @@ Vector2d Simulation::getProjectionVector(const unsigned int i, std::vector<char>
 }
 
 void Simulation::combine_vectors(Vector2d &current, Vector2d &prefered) {
-    current *= 4;
+    current *= 5;
     current.setX(current.getX() + prefered.getX());
     current.setY(current.getY() + prefered.getY());
+
+   // current.setX(prefered.getX());
+   // current.setY(prefered.getY());
 }
 
 void Simulation::runSimulation(const long maxRunTime) {
@@ -191,6 +199,8 @@ void Simulation::runSimulation(const long maxRunTime) {
     for(int j=0; j<BIN_COUNT;j++) bin.push_back(false);
 
     Agent **knn = new Agent*[4];
+    Point2d center;
+    getCenterOfMass(&center);
 
     while(this->maxRunTime >=0 && this->runTime < this->maxRunTime) {
 
@@ -201,6 +211,7 @@ void Simulation::runSimulation(const long maxRunTime) {
                 Point2d p;
                 p.x = agents[i].getLocationX();
                 p.y = agents[i].getLocationY();
+
                 this->getKNN(p, knn, 4, i);
 
                 Vector2d v_neig;
@@ -292,7 +303,7 @@ void Simulation::reset() {
                 x, 
                 y
             );
-        double d = ((double)rand()/(double)RAND_MAX)*2. -1.;
+        double d = ((double)rand()/(double)RAND_MAX)*2.0 - 1.0;
         //double d = x>50 ? (y>50? 0.5 : 0.99) : (y<50? -0.5 : -0.99);
 
         //Set Y so speed = 1
