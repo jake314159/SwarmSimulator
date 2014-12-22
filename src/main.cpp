@@ -59,8 +59,6 @@ char checkForFloat(char *s) {
 }
 
 int main(int argc, char *argv[]) {
-    cout << "This will be the entry point to the program" << endl;
-
     bool have_display = true;
     bool allow_record = false;
     bool record_dir_set = false;
@@ -95,7 +93,7 @@ int main(int argc, char *argv[]) {
     env->onDraw = 0;
     env->onFrame = 0;
 
-    // Go over other paramiters and update the settings if provided
+    // Go over other parameters and update the settings if provided
     for(int i=3; i<argc; i++) {
         if(!compare(argv[i], "-R") || !compare(argv[i], "--EnableRecord")) {
             allow_record = true;
