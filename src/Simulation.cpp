@@ -282,7 +282,7 @@ void Simulation::reset() {
     double spread = 40;//100.0;
     Vector2d *v = new Vector2d();
     for(unsigned int i=(flockSize-1); i>0; i--) {
-        spread = ((double)rand()/(double)RAND_MAX)*100;
+        spread = ((double)rand()/(double)RAND_MAX)*50 + 50;
         double x = ((double)rand()/(double)RAND_MAX)*spread-(spread/2);
         //double y = ((double)rand()/(double)RAND_MAX)*spread;
         double y = sqrt(((spread/2)*(spread/2))-((x)*(x)));
@@ -332,7 +332,7 @@ void Simulation::incScore(int v) {
     score += v;
 }
 
-int Simulation::getScore() {
+long long Simulation::getScore() {
     return score;
 }
 

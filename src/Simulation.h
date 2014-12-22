@@ -13,7 +13,7 @@ class Simulation {
         SwarmValues values;
         Display *display;
         void (*onFrame)(void *);
-        int score;
+        long long score;
         long runTime; //In steps
         long maxRunTime;
         void getKNN(const Point2d p, Agent *knn[], const int number, const unsigned int ignore_index);
@@ -29,7 +29,7 @@ class Simulation {
         static const int update_rate = 1;//10;
     public:
         static const double raw_size = 10.;
-        static const double shape_ratio = 10;
+        static const double shape_ratio = 5;
 
         unsigned int flockSize;
 
@@ -49,7 +49,7 @@ class Simulation {
 
         void setEnvironment(Environment *env);
         void incScore(int v);
-        int getScore();
+        long long getScore();
         void combine_vectors(Vector2d &current, Vector2d &prefered);
 };
 
