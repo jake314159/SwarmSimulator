@@ -43,6 +43,10 @@ void Simulation::setEnvironment(Environment *env) {
     }
 }
 
+void Simulation::setSwarmValues(SwarmValues *values) {
+    this->values = *values;
+}
+
 //TODO test
 //TODO what if store index values NOT pointers?
 void Simulation::getKNN(const Point2d p, Agent *knn[], const int number, const unsigned int ignore_index) {
@@ -347,3 +351,6 @@ long long Simulation::getScore() {
     return score;
 }
 
+void Simulation::setScore(long long score) {
+    this->score = score;
+}

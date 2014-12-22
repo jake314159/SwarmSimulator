@@ -46,7 +46,7 @@ class Display {
 
         void (*onDraw)(Display *);
 
-        double zoom = 1.0;
+        double zoom;
     public:
 
         Display(void *sim);

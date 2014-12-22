@@ -50,6 +50,7 @@ class Simulation {
         void setEnvironment(Environment *env);
         void incScore(int v);
         long long getScore();
+        void setScore(long long score);
         void combine_vectors(Vector2d &current, Vector2d &prefered);
 };
 

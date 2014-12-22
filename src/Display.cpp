@@ -64,6 +64,7 @@ Display::Display(void *sim){
     print = false;
     enable_record = false;
     onDraw = 0;
+    zoom = 1.0;
 }
 Display::~Display() {
     SDL_DestroyRenderer(ren);
