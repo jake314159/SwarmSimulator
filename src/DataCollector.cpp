@@ -3,6 +3,8 @@ using namespace std;
 #include <string>
 #include <stdlib.h>
 #include <algorithm>
+#include <time.h>
+#include <math.h>
 #include "Vector2d.h"
 #include "Simulation.h"
 #include "Display.h"
@@ -85,13 +87,24 @@ int main(int argc, char *argv[]) {
     double i, j;
     int k, grid_i;
     double step = 0.1;
-    #define SAMPLE_NUMBER 50
+    #define SAMPLE_NUMBER 10
+    #define GRID_NUMBER 6
+    #define RUN_TIME 1000
+
+    float progress = 0.0;
+    float progress_step_size = 1.0/(float)( ((1/step)*(1/step))/2 * GRID_NUMBER);
+    //                                      ^Points in a grid       ^Number of grids 
+
+    long start_time = time(NULL);
+
+    cerr << endl;
+    cerr << "                                                                   \r";
 
     cout << "[" << endl;
-    for(grid_i=5; grid_i>=0; grid_i--) {
-        cout << "[" << endl; //Grid start
+    for(grid_i=GRID_NUMBER; grid_i>0; grid_i--) {
+        cout << "  [" << endl; //Grid start
         for(i=0.0; i<1.0; i+=step) {
-            cout << "[" << endl; //Row start
+            cout << "    [" << endl; //Row start
             for(j=0.0; j<1.0; j+=step) {
                 long long value_a[SAMPLE_NUMBER] = {0};
                 if(i+j<=1.0) {
@@ -106,7 +119,7 @@ int main(int argc, char *argv[]) {
                         //environment_displacement_init(200);
                         environment_food_init(200);
                         s->setScore(0);
-                        s->runSimulation(1000);
+                        s->runSimulation(RUN_TIME);
                         environment_food_destroy();
                         //if(s->getScore() >=0) {
                            // runCount++;
@@ -115,25 +128,53 @@ int main(int argc, char *argv[]) {
                         //environment_displacement_destroy();
                     }
                     sort(value_a, value_a+SAMPLE_NUMBER);
-                    cout << "["; //COL start
+                    cout << "      ["; //COL start
                     for(int a=0; a<SAMPLE_NUMBER; a++) {
                         cout<<value_a[a];
                         if(a != SAMPLE_NUMBER-1) cout << ",";
                     }
                     cout << "]," << endl; //COL end
+
+                    //Give an indication of the progress so far
+                    progress += progress_step_size;
+
+                    long time_taken = time(NULL)-start_time;
+                    long total_time_prediction = time_taken * 1/progress;
+
+                    // Carriage return (\r) makes it re-write the line again
+                    // with the up to date information
+                    cerr << "\r Progress: ";
+
+                    fprintf(stderr, "%3.2f", progress*100 );
+                    cerr << "%   Remaining: " 
+                            << ((total_time_prediction-time_taken)/60.0)
+                            << "min       \r";
                 } else {
-                    cout << "[]," << endl;
+                    cout << "      []," << endl;
                 }
                 //cout << value << " ";
             }
-            cout << "[]"; //To fix the floating comma in the row
-            cout << "]," << endl; //ROW end
+            cout << "      []" << endl; //To fix the floating comma in the row
+            cout << "    ]," << endl; //ROW end
         }
-        cout << "[]"; //To fix the floating comma in the column
-        cout << "]" << endl; // end GRID
+        cout << "    []" << endl; //To fix the floating comma in the column
+        cout << "  ]" << endl; // end GRID
         if(grid_i != 0) cout << ",";
     }
     cout << "]" << endl;
+
+    //Print info on the time taken
+    cerr << endl << endl;
+    long time_taken = time(NULL)-start_time;
+    int hours = floor(time_taken/(60*60));
+    int mins = floor((time_taken%60)/(60));
+    int secs = floor((time_taken%(60*60)));
+    cerr << "Time taken: "
+            << hours << "h "
+            << mins  << "m "
+            << secs   << "s"
+            << "  (" << time_taken << "s)"
+            << endl;
 
     delete s;
     delete v;
