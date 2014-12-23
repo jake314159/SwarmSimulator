@@ -64,6 +64,11 @@ int main(int argc, char *argv[]) {
     bool record_dir_set = false;
     std::string record_dir;
 
+    if(argc < 3) {
+        cout << "Error: Missing arguments" << endl;
+        exit(40);
+    }
+
     if(!checkForFloat(argv[1])) {
         cout << "Error: proj_w not a number" << endl;
         exit(44);

@@ -295,7 +295,7 @@ void Display::drawDisplay() {
     minY = minY-fmod(minY, 100.)-400.;
     rect.w = 5*zoom;
     rect.h = 5*zoom;
-    for(int x = minX-400; x <maxX+400; x+=100.) {
+    for(int x = minX-800; x <maxX+800; x+=100.) {
         for(int y = minY-400; y < maxY+400; y+=100.) {
             rect.x = (x+camera_x-center.x)*zoom;
             rect.y = (y+camera_y-center.y)*zoom;
