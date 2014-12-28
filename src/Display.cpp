@@ -26,7 +26,7 @@ void Screenshot(int x, int y, int w, int h, const char * filename)
 void Display::draw_frame_number()
 {
     long timer = ((Simulation*)sim)->getRunTime();
-    sprintf(score_buffer, "%ld", timer/8); //TODO The 8 is how often the simulation updates //TODO turn into not a magic number
+    sprintf(score_buffer, "%ld", timer); //TODO The 8 is how often the simulation updates //TODO turn into not a magic number
     SDL_Color score_color = { 0, 0, 0 };
     SDL_Texture *font_image = renderText(score_buffer, font, score_color, ren);
     if (font_image == NULL){
