@@ -20,6 +20,9 @@ main: src/main.cpp $(OBJ_F)
 DataCollector: src/DataCollector.cpp $(OBJ_F)
 	$(CC) $^ -o bin/DataCollector $(LIBS) $(CCFLAGS)
 
+GA: src/ga.cpp $(OBJ_F)
+	$(CC) $^ -o bin/GA $(LIBS) $(CCFLAGS)
+
 bin/%.o: src/%.cpp
 	$(CC) -c -MD $(LIBS) $(CCFLAGS) $< -o $@
 

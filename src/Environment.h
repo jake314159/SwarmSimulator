@@ -22,6 +22,9 @@ class Environment {
          * //TODO Explicitly specify as a Simulation pointer
          */
         void (*onFrame)(void *);
+
+        void (*init)();
+        void (*destroy)();
 };
 
 #endif

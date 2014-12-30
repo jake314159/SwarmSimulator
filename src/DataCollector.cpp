@@ -145,7 +145,7 @@ int main(int argc, char *argv[]) {
                     // with the up to date information
                     cerr << "\r Progress: ";
 
-                    fprintf(stderr, "%3.2f", progress*100 );
+                    fprintf(stderr, "%5.2f", progress*100 );
                     cerr << "%   Remaining: " 
                             << ((total_time_prediction-time_taken)/60.0)
                             << "min       \r";
