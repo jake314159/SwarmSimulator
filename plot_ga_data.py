@@ -1,3 +1,22 @@
+# plot_ga_data.py
+# Plots the data from the GA
+#
+# How to use:
+#    python3 plot_ga_data.py ./data_dir
+# or
+#    python3 plot_ga_data.py ./data_dir mesh_data.json
+#
+# ./data_dir
+#     Directory containing the json data outputted from the GA program. Should
+#     be a series of files with incrementing file names from "000000.json"
+#
+# mesh_data.json
+#     Data about the search space generated from the AnalyseSearchSpace
+#     program (the stdout piped into a file) which contains information about
+#     the search space the GA was trying to optimise in
+#
+
+
 import json
 import sys
 
@@ -13,6 +32,9 @@ from matplotlib import gridspec
 
 flatten_graph = True
 path = sys.argv[1]
+mesh_data_path = None
+if len(sys.argv)>2:
+    mesh_data_path = sys.argv[2]
 
 files = [ f for f in listdir(path) if isfile(join(path,f)) ]
 files.sort()
@@ -117,7 +139,7 @@ plt.ylim([0, 1])
 plt.xlim([0, 1])
 plt.ylabel('Alignment weight')
 plt.xlabel('Projection weight')
-plt.title('Location of each individual in a population and\nwhere they are in the search space')
+plt.title('Location in the search space of each individual in a population\nfor a random mutation hill climber on the food environment')
 plt.show()
 #for v in all_values[1:-1]:
 #    plt.plot(v, color="#999999")
@@ -164,7 +186,7 @@ plt.xlim([0, r[len(max_values)-1]])
 
 plt.ylabel('Value')
 #plt.xlabel('Round')
-plt.title('Score of the best and worst individuals in the population for each round\n')
+plt.title('Score of the individuals in the population for a random mutation\nhill climber for each round on the food environment')
 #plt.show()
 
 ## Plot successful mutations per round
@@ -188,6 +210,7 @@ from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.colors import LogNorm
 
 import math
 fig = plt.figure()
@@ -202,10 +225,38 @@ ax = fig.add_subplot(111, projection='3d')
 #        linewidth=0, antialiased=False)
 #ax.set_zlim(0, 1)
 
-ax.zaxis.set_major_locator(LinearLocator(10))
-ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
 
-#fig.colorbar(surf, shrink=0.5, aspect=5)
+
+#ax.zaxis.set_major_locator(LinearLocator(10))
+#ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
+
+if mesh_data_path != None:
+    json_data=open(mesh_data_path)
+
+    data = json.load(json_data)
+    json_data.close()
+
+    scale = 0.04
+    sample_point = 2
+    #The mesh
+    def fun(x, y):
+        xi = int(x/scale)
+        yi = int(y/scale)
+        if x+y>1.0:
+            return 0
+        try:
+            return data[yi][xi][sample_point]
+        except IndexError:
+            return 0
+    x = y = np.arange(0.0, 1.0, scale)
+    X, Y = np.meshgrid(x, y)
+    zs = np.array([[fun(X[x][y],Y[x][y]) for x in range(0,len(X))] for y in range(0,len(X[0]))])
+    Z = zs.reshape(X.shape)
+
+    surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=cm.coolwarm,norm = LogNorm(),
+            linewidth=0, antialiased=False, alpha=0.5)
+#    fig.colorbar(surf)
+
 
 def plot(result, c="#000000"):
     x_vals = []
@@ -248,7 +299,10 @@ ax.set_zlim(0, None)
 
 plt.ylabel('Alignment weight')
 plt.xlabel('Projection weight')
-plt.title('Location of each individual in a population and\nwhere they are in the search space')
+plt.title('Location in the search space of each individual in a population\nfor a random mutation hill climber on the food environment')
+
+
+
 
 plt.show()
 

@@ -23,6 +23,9 @@ DataCollector: src/DataCollector.cpp $(OBJ_F)
 GA: src/ga.cpp $(OBJ_F)
 	$(CC) $^ -o bin/GA $(LIBS) $(CCFLAGS)
 
+AnalyseSearchSpace: src/AnalyseSearchSpace.cpp $(OBJ_F)
+	$(CC) $^ -o bin/AnalyseSearchSpace $(LIBS) $(CCFLAGS)
+
 bin/%.o: src/%.cpp
 	$(CC) -c -MD $(LIBS) $(CCFLAGS) $< -o $@
 
