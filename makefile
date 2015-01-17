@@ -9,7 +9,7 @@ LIBS = -I'/usr/local/include/SDL2' -I'/usr/include/SDL2' -lSDL2 -L/usr/local/lib
 UNAME := $(shell uname)
 
 ifneq ($(UNAME), Darwin)
-LIBS = $(LIBS) -lglut -lGL
+LIBS += $(LIBS) -lglut -lGL
 endif
 
 ifeq ($(UNAME), Darwin)
