@@ -13,6 +13,10 @@ Simulation::Simulation(int flockSize, SwarmValues *values) {
     agents = new Agent[flockSize];
     display = 0;
     this->values = *values;
+    this->shape_dif = 0;
+    this->speed = 4.3;
+    this->raw_size = 10.;
+    this->shape_ratio = 10;
     setup_fast_math();
 }
 

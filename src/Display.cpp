@@ -1,8 +1,15 @@
 using namespace std;
 #include <iostream>
-#include <GL/gl.h>
-#include <GL/glut.h>
-#include <GL/glu.h>
+#ifdef __APPLE__
+    #include <OpenGL/gl.h>
+    #include <GLUT/glut.h>
+    #include <OpenGL/glu.h>
+#else
+    #include <GL/gl.h>
+    #include <GL/glut.h>
+    #include <GL/glu.h>
+#endif
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>

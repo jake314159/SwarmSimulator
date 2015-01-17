@@ -22,14 +22,14 @@ class Simulation {
 
         // Agent size and shape info
 
-        static const double shape_dif = 0;//M_PI/2;
-        static const double speed = 4.3;
+         double shape_dif;//M_PI/2;
+         double speed;
 
         //How often to update the agents velocities (in frames)
         static const int update_rate = 1;//10;
     public:
-        static const double raw_size = 10.;
-        static const double shape_ratio = 10;
+         double raw_size;
+         double shape_ratio;
 
         unsigned int flockSize;
 
