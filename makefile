@@ -12,10 +12,13 @@ ifneq ($(UNAME), Darwin)
 LIBS = $(LIBS) -lglut -lGL
 endif
 
+ifeq ($(UNAME), Darwin)
+LIBS_EXTRA = -framework GLUT -framework OpenGL
+endif
+
 
 OUTPUT = bin/SwarmSimulator
 
-OSX_LIBS = -framework GLUT -framework OpenGL
 
 FILES = Vector2d Point2d Agent Simulation Display SDL_functions Environment EnvironmentStore fastMath
 
@@ -25,15 +28,15 @@ IMG_F = $(addprefix images/parts/,$(IMAGE_FILES:=.png))
 SCREENSHOT_DIR = PNG_savesurf/
 
 main: src/main.cpp $(OBJ_F)
-	$(CC) $^ -o $(OUTPUT) $(OSX_LIBS) $(LIBS) $(CCFLAGS)
+	$(CC) $^ -o $(OUTPUT) $(LIBS_EXTRA) $(LIBS) $(CCFLAGS)
 
-DataCollector: src/DataCollector.cpp $(OBJ_F)
+DataCollector: src/DataCollector.cpp $(LIBS_EXTRA) $(OBJ_F)
 	$(CC) $^ -o bin/DataCollector $(LIBS) $(CCFLAGS)
 
 GA: src/ga.cpp $(OBJ_F)
-	$(CC) $^ -o bin/GA $(LIBS) $(CCFLAGS)
+	$(CC) $^ -o bin/GA $(LIBS_EXTRA) $(LIBS) $(CCFLAGS)
 
-AnalyseSearchSpace: src/AnalyseSearchSpace.cpp $(OBJ_F)
+AnalyseSearchSpace: src/AnalyseSearchSpace.cpp $(LIBS_EXTRA) $(OBJ_F)
 	$(CC) $^ -o bin/AnalyseSearchSpace $(LIBS) $(CCFLAGS)
 
 bin/%.o: src/%.cpp
