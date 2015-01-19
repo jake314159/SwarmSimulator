@@ -59,6 +59,8 @@ char checkForFloat(char *s) {
 }
 
 int main(int argc, char *argv[]) {
+    srand(time(NULL));
+
     bool have_display = true;
     bool allow_record = false;
     bool record_dir_set = false;
