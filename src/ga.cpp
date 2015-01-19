@@ -68,24 +68,24 @@ void save_round(int round_number, std::vector<POPULATION> *pop) {
 	}
 
 	json << "{";
-	json << "    \"round\":\"" << round_number << "\"," << endl;
+	json << "    \"round\":" << round_number << "," << endl;
 	//json << "    \"\":\""<< << "\"," << endl;
-	json << "    \"Environment\":\""<< env_id<< "\"," << endl;
-	json << "    \"save time\":\""<< time(NULL) << "\"," << endl;
-	json << "    \"sample number\":\""<< sample_number<< "\"," << endl;
-	json << "    \"flock_size\":\""<< flock_size<< "\"," << endl;
-	json << "    \"frames\":\""<< frame_number << "\"," << endl;
-	json << "    \"mutation rate\":\""<< mutation_rate << "\"," << endl;
+	json << "    \"Environment\":"<< env_id<< "," << endl;
+	json << "    \"save time\":"<< time(NULL) << "," << endl;
+	json << "    \"sample number\":"<< sample_number<< "\"," << endl;
+	json << "    \"flock_size\":"<< flock_size<< "," << endl;
+	json << "    \"frames:"<< frame_number << "," << endl;
+	json << "    \"mutation rate\":"<< mutation_rate << "," << endl;
 
 
 	//Output the population
 	json << "    \"population\":[" << endl;
 	for(unsigned int i=0; i<pop->size(); i++) {
 		json << "        {" << endl;
-		json << "            \"proj_weight\":\""<< (*pop)[i].proj_w << "\"," << endl;
-		json << "            \"align_weight\":\""<< (*pop)[i].align_w << "\"," << endl;
-		json << "            \"noise_weight\":\""<< (*pop)[i].noise_w << "\"," << endl;
-		json << "            \"score\":\""<< (*pop)[i].score << "\"," << endl;
+		json << "            \"proj_weight\":"<< (*pop)[i].proj_w << "," << endl;
+		json << "            \"align_weight\":"<< (*pop)[i].align_w << "," << endl;
+		json << "            \"noise_weight\":"<< (*pop)[i].noise_w << "," << endl;
+		json << "            \"score\":"<< (*pop)[i].score << "," << endl;
 
 		json << "            \"source\":\"";
 		switch((*pop)[i].source_info) {
@@ -101,7 +101,7 @@ void save_round(int round_number, std::vector<POPULATION> *pop) {
 		}
 		json << "\"," << endl;
 
-		json << "            \"seed\":\""<< (*pop)[i].seed << "\"" << endl;
+		json << "            \"seed\":"<< (*pop)[i].seed << "" << endl;
 		json << "        }";
 		if(i != pop->size()-1) json << ",";
 		json << endl;
