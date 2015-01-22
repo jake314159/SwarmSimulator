@@ -1,9 +1,16 @@
 using namespace std;
 #include <iostream>
 #include <string>
+#include <stdio.h>
 #include <stdlib.h>
 #include <fstream>
 #include <algorithm>
+
+#include "rapidjson/document.h"
+#include "rapidjson/prettywriter.h" // for stringify JSON
+#include "rapidjson/writer.h"   // for stringify JSON
+#include "rapidjson/filestream.h"   // wrapper of C stream for prettywriter as output
+
 #include "Vector2d.h"
 #include "Simulation.h"
 #include "Environment.h"
@@ -24,6 +31,22 @@ typedef struct {
 	int source_info;
 } POPULATION;
 
+int compare(char* string1, char* string2) 
+{
+    int i = 0;
+    while(string1[i] != '\0' && string2[i] != '\0') {
+        if(string1[i] != string2[i]) {
+            if(string1[i] < string2[i]) {
+                return 1;
+            } else {
+                return -1;
+            }
+        }
+        i++;
+    }
+    return 0; //0 for equal
+}
+
 // Important values
 int flock_size = 50;
 int frame_number = 1000;
@@ -35,6 +58,7 @@ double mutation_rate = 0.03;
 
 int population_size = 15;
 
+int roundN = 0;
 int round_limit = 100;
 
 Environment env;
@@ -52,6 +76,50 @@ double rand_f() {
 }
 bool pop_sort_function(POPULATION i, POPULATION j) { return i.score > j.score; }
 
+/*
+ * Takes as a argument a path to a json output file from a previous run
+ * of the GA. It then initiates the global variables with the correct
+ * values for the GA run AND sets pop and pop_new (which are args)
+ * ready to continue the work of the GA
+*/
+void load_json(string filename, std::vector<POPULATION> &pop, 
+					std::vector<POPULATION> &pop_new) {
+	char *a=new char[filename.size()+1];
+	a[filename.size()]=0;
+	memcpy(a,filename.c_str(),filename.size());
+
+
+	FILE * pFile = fopen (a, "r");
+	rapidjson::FileStream is(pFile);
+	rapidjson::Document document;
+	document.ParseStream<0>(is);
+
+	cout << "DONE! Round " << document["round"].GetInt() << endl;
+
+	roundN = document["round"].GetInt()+1;
+	env_id = document["Environment"].GetInt();
+	sample_number = document["sample number"].GetInt();
+	flock_size = document["flock_size"].GetInt();
+	frame_number = document["frames"].GetInt();
+	mutation_rate = document["mutation rate"].GetDouble();
+
+	// Init the population
+	for (rapidjson::SizeType i = 0; i < document["population"].Size(); i++) {
+
+		POPULATION p;
+
+		p.proj_w = document["population"][i]["proj_weight"].GetDouble();
+		p.align_w = document["population"][i]["noise_weight"].GetDouble();
+		p.noise_w = 1.0 - (p.proj_w+p.align_w);
+		p.score = document["population"][i]["score"].GetDouble();
+		p.time_tested = 0;
+		p.time_taken = 0;
+		p.source_info = 69;
+		pop.push_back(p);
+		pop_new.push_back(p);
+	}
+
+}
 
 void save_round(int round_number, std::vector<POPULATION> *pop) {
 	char buff[200];
@@ -95,6 +163,9 @@ void save_round(int round_number, std::vector<POPULATION> *pop) {
 			case 1:
 				json << "mutate";
 				break;
+			case 69:
+				json << "json";
+				break;
 			default:
 				json << "unknown";
 				break;
@@ -113,8 +184,11 @@ void save_round(int round_number, std::vector<POPULATION> *pop) {
 
 int main(int argc, char *argv[]) {
 	json_dir = argv[1];
+	char * cont_json = 0;
 
-	int roundN = 0;
+	if(argc>3 && !compare(argv[2], "--continue")) {
+		cont_json = argv[3];
+	}
 
 	SwarmValues *v = new SwarmValues();
     v->proj_weight = 0.4;
@@ -127,6 +201,39 @@ int main(int argc, char *argv[]) {
    	std::vector<long long> score_store;
    	std::vector<unsigned int> seed_store;
 
+	int i;
+   	//TODO Not-constant json file location
+   	//TODO Specify json file through paramiters
+   	//TODO only do this if specified
+   	//TODO don't do the other pop init code below if json file is specified
+   	//TODO test
+   	if(cont_json != NULL) {
+		load_json(cont_json, pop, pop_new);
+	} else {
+	   	// Init the population
+
+		for(i=0; i<population_size; i++) {
+			POPULATION p;
+			// Loop until random weights are valid
+			do {
+				p.proj_w = rand_f();
+				p.align_w = rand_f();
+			} while((p.proj_w+p.align_w)>1.0);
+			p.noise_w = 1.0 - (p.proj_w+p.align_w);
+			p.score = 0;
+			p.time_tested = 0;
+			p.time_taken = 0;
+			p.source_info = -1;
+			pop.push_back(p);
+			pop_new.push_back(p);
+		}
+	}
+
+	for(i=0; i<sample_number; i++) {
+		score_store.push_back(-1);
+		seed_store.push_back(-1);
+	}
+
 	switch(env_id) {
 		case 1:
 			//FOOD
@@ -137,29 +244,6 @@ int main(int argc, char *argv[]) {
 			break;
 	}
 
-
-	// Init the population
-	int i;
-	for(i=0; i<population_size; i++) {
-		POPULATION p;
-		// Loop until random weights are valid
-		do {
-			p.proj_w = rand_f();
-			p.align_w = rand_f();
-		} while((p.proj_w+p.align_w)>1.0);
-		p.noise_w = 1.0 - (p.proj_w+p.align_w);
-		p.score = 0;
-		p.time_tested = 0;
-		p.time_taken = 0;
-		p.source_info = -1;
-		pop.push_back(p);
-		pop_new.push_back(p);
-	}
-
-	for(i=0; i<sample_number; i++) {
-		score_store.push_back(-1);
-		seed_store.push_back(-1);
-	}
 
 	Simulation *s = new Simulation(flock_size, v);
     s->reset();

@@ -52,7 +52,6 @@ void Simulation::setSwarmValues(SwarmValues *values) {
 }
 
 //TODO test
-//TODO what if store index values NOT pointers?
 void Simulation::getKNN(const Point2d p, Agent *knn[], const int number, const unsigned int ignore_index) {
     std::vector<double> knn_distance;
     for(int i=0; i<number;i++) knn_distance.push_back(-1);
