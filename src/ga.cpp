@@ -202,16 +202,10 @@ int main(int argc, char *argv[]) {
    	std::vector<unsigned int> seed_store;
 
 	int i;
-   	//TODO Not-constant json file location
-   	//TODO Specify json file through paramiters
-   	//TODO only do this if specified
-   	//TODO don't do the other pop init code below if json file is specified
-   	//TODO test
    	if(cont_json != NULL) {
 		load_json(cont_json, pop, pop_new);
 	} else {
 	   	// Init the population
-
 		for(i=0; i<population_size; i++) {
 			POPULATION p;
 			// Loop until random weights are valid
