@@ -182,6 +182,26 @@ void save_round(int round_number, std::vector<POPULATION> *pop) {
 	json.close();
 }
 
+long long fitness_function(Simulation *s, int run_time) {
+   	std::vector<long long> score_store;
+	for(int sample=0; sample<sample_number; sample++) {
+        
+        s->reset();
+        if(env.init != NULL)
+        	env.init();
+        s->setScore(0);
+        s->runSimulation(run_time);
+        if(env.destroy != NULL)
+        	env.destroy();
+
+        score_store.push_back(s->getScore());
+    }
+    //cout << endl;
+    sort(score_store.begin(), score_store.end());
+
+    return score_store[sample_method];
+}
+
 int main(int argc, char *argv[]) {
 	json_dir = argv[1];
 	char * cont_json = 0;

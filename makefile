@@ -36,6 +36,9 @@ DataCollector: src/DataCollector.cpp $(LIBS_EXTRA) $(OBJ_F)
 GA: src/ga.cpp $(OBJ_F)
 	$(CC) $^ -o bin/GA $(LIBS_EXTRA) $(LIBS) $(CCFLAGS)
 
+timer: src/timer.cpp $(OBJ_F)
+	$(CC) $^ -o bin/timer $(LIBS_EXTRA) $(LIBS) $(CCFLAGS)
+
 AnalyseSearchSpace: src/AnalyseSearchSpace.cpp $(LIBS_EXTRA) $(OBJ_F)
 	$(CC) $^ -o bin/AnalyseSearchSpace $(LIBS) $(CCFLAGS)
 
