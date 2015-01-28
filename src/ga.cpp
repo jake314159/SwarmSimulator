@@ -182,6 +182,7 @@ void save_round(int round_number, std::vector<POPULATION> *pop) {
 	json.close();
 }
 
+//TODO still uses variables visible globally (when it really doesn't need too)
 long long fitness_function(Simulation *s, int run_time) {
    	std::vector<long long> score_store;
 	for(int sample=0; sample<sample_number; sample++) {
@@ -271,8 +272,6 @@ int main(int argc, char *argv[]) {
     		// Create the new population
     		char success = false;
     		do {
-	    		//double delta = (rand_f()/(mutation_rate*2))-mutation_rate;
-	    		//double delta = ((rand()&1) ? mutation_rate : -mutation_rate);// * (1-(roundN/(round_limit+1)));
 	    		double delta = ((rand()&1) ? mutation_rate : -mutation_rate) 
 	    						+ ((rand()&1) ? (mutation_rate/5)*rand_f() : (-mutation_rate/5))*rand_f();
 	    		if((rand() & 1) == 0) {
@@ -303,28 +302,9 @@ int main(int argc, char *argv[]) {
 		    v->noise_weight = pop_new[i].noise_w;
 			s->setSwarmValues(v);
 
-			for(int sample=0; sample<sample_number; sample++) {
+	        pop_new[i].score = fitness_function(s, frame_number);
+	        pop_new[i].seed = 0; //Seed is no longer used
 
-				unsigned int seed = time(NULL) ^ (roundN<<24) ^ (i<<16) ^ (sample<<8);
-		        srand(seed);
-		        s->reset();
-		        if(env.init != NULL)
-		        	env.init();
-		        s->setScore(0);
-	            s->runSimulation(frame_number);
-	            if(env.destroy != NULL)
-	            	env.destroy();
-
-	            score_store[sample] = s->getScore();
-	            //cout << "" << score_store[sample] << ", ";
-	            seed_store[sample] = seed;
-	        }
-	        //cout << endl;
-	        sort(score_store.begin(), score_store.end());
-
-            pop_new[i].score = score_store[sample_method];
-            //TODO seed is incorrect!
-            pop_new[i].seed = seed_store[sample_method];
             pop_new[i].source_info = 1; //mutate
 
             if(pop_new[i].score < pop[i].score) {
@@ -360,22 +340,11 @@ int main(int argc, char *argv[]) {
 		        }
 		        sort(score_store.begin(), score_store.end());
 		        pop_new[i].score = (pop[i].score*9+score_store[sample_method])/10;
-		        //cout << pop[i].score << " and " <<score_store[sample_method] << " makes " << pop_new[i].score << endl;
 	        }
-
-            //cout << "Score: " << pop_new[i].score << " with seed\t" << pop_new[i].seed << endl;
     	}
 
     	pop = pop_new;
-		/*for(i=0; i<pop.size(); i++) {
-    		pop[i].proj_w  = pop_new[i].proj_w;
-		    pop[i].align_w = pop_new[i].align_w;
-		    pop[i].noise_w = pop_new[i].noise_w;
-		    pop[i].score = pop_new[i].score;
-		    pop[i].seed = pop_new[i].seed;
-		    pop[i].source_info = pop_new[i].source_info;
-		}*/
-		//sort(pop.begin(), pop.end(), pop_sort_function);
+
 
     	long long best_score = 0;
     	int best_index = 0;
