@@ -17,11 +17,14 @@ Command line options
     Requires the display to be enabled
 
 -E <ENV_NAME>
-    Specifies the enviroment to run the simulation in
+    Specifies the environment to run the simulation in
     Default is none
-    Avalible environments:
+    Available environments:
         - FOOD
-            Food is spread out throughout the enviroment and can be consumed by
+            Food is spread out throughout the environment and can be consumed by
             agents
+            
+--RunTime <FRAMES>
+    Specifies the number of frames to run the simulation for
 ```
 

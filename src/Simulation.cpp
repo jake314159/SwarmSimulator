@@ -296,6 +296,8 @@ void Simulation::runSimulation(const long maxRunTime) {
 }
 
 void Simulation::reset() {
+    this->setScore(0);
+
     double spread = 40;//100.0;
     Vector2d *v = new Vector2d();
     for(unsigned int i=(flockSize-1); i>0; i--) {

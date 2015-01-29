@@ -7,9 +7,9 @@ using namespace std;
 #include <algorithm>
 
 #include "rapidjson/document.h"
-#include "rapidjson/prettywriter.h" // for stringify JSON
-#include "rapidjson/writer.h"   // for stringify JSON
-#include "rapidjson/filestream.h"   // wrapper of C stream for prettywriter as output
+#include "rapidjson/prettywriter.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/filestream.h"
 
 #include "Vector2d.h"
 #include "Simulation.h"
@@ -190,8 +190,9 @@ long long fitness_function(Simulation *s, int run_time) {
         s->reset();
         if(env.init != NULL)
         	env.init();
-        s->setScore(0);
+
         s->runSimulation(run_time);
+        
         if(env.destroy != NULL)
         	env.destroy();
 

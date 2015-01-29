@@ -1,4 +1,4 @@
-using namespace std;
+
 #include <iostream>
 #include <string>
 #include <stdlib.h>
@@ -7,6 +7,8 @@ using namespace std;
 #include "Display.h"
 #include "Environment.h"
 #include "EnvironmentStore.h"
+
+using namespace std;
 
 int compare(char* string1, char* string2) 
 {
@@ -60,6 +62,9 @@ char checkForFloat(char *s) {
 
 int main(int argc, char *argv[]) {
     srand(time(NULL));
+
+    //A very large number by default
+    long run_time = 1000000000;
 
     bool have_display = true;
     bool allow_record = false;
@@ -116,6 +121,8 @@ int main(int argc, char *argv[]) {
                 env->onDraw = &environment_food_onDraw;
                 env->onFrame = &environment_food_onFrame;
             }
+        } else if(!compare(argv[i], "--RunTime")) {
+            run_time = atoi(argv[++i]);
         }
     }
 
@@ -137,7 +144,8 @@ int main(int argc, char *argv[]) {
     }
     s->setEnvironment(env); //uncomment this to add an environment
 
-    s->runSimulation(10000000);
+    s->runSimulation(run_time);
+    cout << "Final score: " << s->getScore() << endl;
 
     delete s;
     delete v;
