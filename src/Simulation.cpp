@@ -8,6 +8,20 @@ using namespace std;
 
 #define BIN_COUNT 600
 
+
+double rand_f_() {
+    return static_cast <double> (rand()) / static_cast <double> (RAND_MAX);
+}
+double mutate_rate = 0.1;
+
+double mutate_f(double f) {
+    if((rand()&1)==0) {
+        return f += rand_f_()*mutate_rate;
+    } else {
+        return f -= rand_f_()*mutate_rate;
+    }
+}
+
 Simulation::Simulation(int flockSize, SwarmValues *values) {
     this->flockSize = flockSize;
     agents = new Agent[flockSize];
@@ -243,9 +257,9 @@ void Simulation::runSimulation(const long maxRunTime) {
                 Vector2d v_proj = getProjectionVector(i, bin);
 
                 //Set weights
-                v_neig *= values.align_weight;
-                v_rand *= values.noise_weight;
-                v_proj *= values.proj_weight;
+                v_neig *= agents[i].values.align_weight;
+                v_rand *= agents[i].values.noise_weight;
+                v_proj *= agents[i].values.proj_weight;
 
                 // Sum all vectors into the v_neig
                 v_neig.setX(v_neig.getX() + v_rand.getX());
@@ -272,6 +286,42 @@ void Simulation::runSimulation(const long maxRunTime) {
                 //agents[i].updateVelocity(&v_neig);
                 agents[i].updateVelocity(&old_velocity);
                 agents[i].updateLocation();
+            }
+
+            if((this->getRunTime()%100)==0) {
+                //Sort worst first
+                std::sort(agents, agents+flockSize);
+                cout << "#### Best params (" << agents[flockSize-1].values.align_weight << "," 
+                    << agents[flockSize-1].values.proj_weight << ") @ "
+                    << agents[flockSize-1].score << endl;
+
+                for(int bad_i = flockSize/5; bad_i>=0; bad_i=bad_i-1) {
+                    agents[bad_i].score = 0;
+                    agents[bad_i].setLocation(agents[flockSize-bad_i].getLocationX(),agents[flockSize-bad_i].getLocationY());
+                    do{
+                        agents[bad_i].values.align_weight = mutate_f(agents[flockSize-bad_i].values.align_weight);
+                        agents[bad_i].values.proj_weight = mutate_f(agents[flockSize-bad_i].values.proj_weight);
+                        if(agents[bad_i].values.align_weight<0) agents[bad_i].values.align_weight = 0.001;
+                        else if(agents[bad_i].values.align_weight>1.0) agents[bad_i].values.align_weight = 0.999;
+                        if(agents[bad_i].values.proj_weight<0) agents[bad_i].values.proj_weight = 0.001;
+                        else if(agents[bad_i].values.proj_weight>1.0) agents[bad_i].values.proj_weight = 0.999;
+                    } while(agents[bad_i].values.align_weight+agents[bad_i].values.proj_weight >= 1.0);
+                    agents[bad_i].values.noise_weight = 1.0 - (agents[bad_i].values.align_weight+agents[bad_i].values.proj_weight);
+                }
+
+                for(int bad_i = (flockSize/5)*4; bad_i>=(flockSize/5)*2; bad_i=bad_i-1) {
+                    agents[bad_i].score = 0;
+                    do{
+                        agents[bad_i].values.align_weight = mutate_f(agents[bad_i].values.align_weight);
+                        agents[bad_i].values.proj_weight = mutate_f(agents[bad_i].values.proj_weight);
+                        if(agents[bad_i].values.align_weight<0) agents[bad_i].values.align_weight = 0.001;
+                        else if(agents[bad_i].values.align_weight>1.0) agents[bad_i].values.align_weight = 0.999;
+                        if(agents[bad_i].values.proj_weight<0) agents[bad_i].values.proj_weight = 0.001;
+                        else if(agents[bad_i].values.proj_weight>1.0) agents[bad_i].values.proj_weight = 0.999;
+                    } while(agents[bad_i].values.align_weight+agents[bad_i].values.proj_weight >= 1.0);
+
+                    agents[bad_i].values.noise_weight = 1.0 - (agents[bad_i].values.align_weight+agents[bad_i].values.proj_weight);
+                }
             }
         } else {
             // If a skip frame then don't change the velocity just move each

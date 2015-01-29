@@ -3,6 +3,7 @@
 
 #include "Point2d.h"
 #include "Vector2d.h"
+#include "SwarmValues.h"
 
 class Agent {
     private:
@@ -12,6 +13,9 @@ class Agent {
     public:
         Agent();
 
+        SwarmValues values;
+        long long score;
+
         void setLocation(double x, double y);
         double getLocationX();
         double getLocationY();
@@ -20,6 +24,13 @@ class Agent {
         double distanceFrom(const Point2d *p);
         Vector2d* vectorFrom(Point2d *p, Vector2d *v);
         Vector2d getVelocity();
+
+        bool operator< (const Agent &other) const {
+            return score < other.score;
+        }
+        bool operator> (const Agent &other) const {
+            return score > other.score;
+        }
 };
 
 #endif

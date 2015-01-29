@@ -1,6 +1,17 @@
 #include "Agent.h"
+#include <stdlib.h>
+
+double rand_f() {
+    return static_cast <double> (rand()) / static_cast <double> (RAND_MAX);
+}
 
 Agent::Agent () {
+    do {
+        this->values.proj_weight = rand_f();
+        this->values.align_weight = rand_f();
+    } while((this->values.proj_weight+this->values.align_weight)>1.0);
+    this->values.noise_weight = 1.0 - (this->values.proj_weight+this->values.align_weight);
+
 }
 
 void Agent::updateVelocity(Vector2d *v){

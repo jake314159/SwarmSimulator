@@ -4,7 +4,28 @@ using namespace std;
 #include "Display.h"
 #include "Simulation.h"
 
+void environment_scan_init(){}
+void environment_scan_destroy(){}
+void environment_scan_onDraw(Display* d){}
+void environment_scan_onFrame(void *simulation) {
+    Simulation *s = (Simulation*)simulation;
+    Agent* agents = s->getAgents();
+    long frame = s->getRunTime();
+
+    int index = -1;
+    double x_val = 0;
+    for(unsigned int i=0; i<s->flockSize; i++) {
+        double x = agents[i].getLocationX();
+        if(index < 0 || ((frame&1)==0 && x < x_val) || ((frame&1)!=0 && x > x_val)){
+            x_val = x;
+            index = i;
+        }
+    }
+    agents[index].score += -1;
+}
+
 /* Food */
+/*
 typedef struct {
     double x, y;
 } FOOD;
@@ -62,4 +83,4 @@ void environment_food_onFrame(void *simulation) {
         }
     }
 }
-
+*/

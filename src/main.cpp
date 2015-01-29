@@ -117,9 +117,13 @@ int main(int argc, char *argv[]) {
             have_display = false;
         } else if(!compare(argv[i], "-E")) {
             i++;
-            if(!compare(argv[i], "FOOD")) {
+            /*if(!compare(argv[i], "FOOD")) {
                 env->onDraw = &environment_food_onDraw;
                 env->onFrame = &environment_food_onFrame;
+            }*/
+            if(!compare(argv[i], "SCAN")) {
+                env->onDraw = &environment_scan_onDraw;
+                env->onFrame = &environment_scan_onFrame;
             }
         } else if(!compare(argv[i], "--RunTime")) {
             run_time = atoi(argv[++i]);
@@ -131,7 +135,7 @@ int main(int argc, char *argv[]) {
     v->align_weight = align_W_in;
     v->noise_weight = noise_W_in;
 
-    environment_food_init(200);
+    //environment_food_init(200);
 
     Simulation *s = new Simulation(100, v);
     s->reset();
