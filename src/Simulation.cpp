@@ -310,7 +310,6 @@ void Simulation::runSimulation(const long maxRunTime) {
                 }
 
                 for(int bad_i = (flockSize/5)*4; bad_i>=(flockSize/5)*2; bad_i=bad_i-1) {
-                    agents[bad_i].score = 0;
                     do{
                         agents[bad_i].values.align_weight = mutate_f(agents[bad_i].values.align_weight);
                         agents[bad_i].values.proj_weight = mutate_f(agents[bad_i].values.proj_weight);
@@ -321,6 +320,10 @@ void Simulation::runSimulation(const long maxRunTime) {
                     } while(agents[bad_i].values.align_weight+agents[bad_i].values.proj_weight >= 1.0);
 
                     agents[bad_i].values.noise_weight = 1.0 - (agents[bad_i].values.align_weight+agents[bad_i].values.proj_weight);
+                }
+
+                for(int bad_i = flockSize-1; bad_i>=0; bad_i=bad_i-1) {
+                    agents[bad_i].score = 0;
                 }
             }
         } else {
