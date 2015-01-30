@@ -2,6 +2,7 @@ using namespace std;
 #include <iostream>
 #include <time.h>
 #include <stdlib.h>
+#include <fstream>
 #include <math.h>
 #include "Simulation.h"
 #include "fastMath.h"
@@ -12,7 +13,9 @@ using namespace std;
 double rand_f_() {
     return static_cast <double> (rand()) / static_cast <double> (RAND_MAX);
 }
-double mutate_rate = 0.1;
+
+//TODO This doesn't need to be global.
+double mutate_rate = 0.01;
 
 double mutate_f(double f) {
     if((rand()&1)==0) {
@@ -20,6 +23,64 @@ double mutate_f(double f) {
     } else {
         return f -= rand_f_()*mutate_rate;
     }
+}
+
+void Simulation::save_round(int round_number, Agent *pop, int flockSize) {
+    char buff[256];
+
+    sprintf(buff, "%s/%06d.json", json_dir, round_number);
+    cout << "Write to '" << buff << "'" << endl;
+
+    ofstream json;
+    json.open (buff);
+
+    if (!json.is_open()) {
+        cerr << "Error: File not able to be opened" << endl;
+        return;
+    }
+
+    json << "{";
+    json << "    \"round\":" << round_number << "," << endl;
+    //json << "    \"\":\""<< << "\"," << endl;
+    json << "    \"Environment\":"<< this->env_id<< "," << endl;
+    json << "    \"save time\":"<< time(NULL) << "," << endl;
+    json << "    \"flock_size\":"<< flockSize<< "," << endl;
+    json << "    \"frames\":"<< this->runTime << "," << endl;
+    json << "    \"mutation rate\":"<< mutate_rate << "," << endl;
+
+
+    //Output the population
+    json << "    \"population\":[" << endl;
+    for(unsigned int i=0; i<flockSize; i++) {
+        json << "        {" << endl;
+        json << "            \"proj_weight\":"<< pop[i].values.proj_weight << "," << endl;
+        json << "            \"align_weight\":"<< pop[i].values.align_weight << "," << endl;
+        json << "            \"noise_weight\":"<< pop[i].values.noise_weight << "," << endl;
+        json << "            \"score\":"<< pop[i].score << "," << endl;
+
+        json << "            \"source\":\"";
+        switch(pop[i].source_info) {
+            case 0:
+                json << "copy";
+                break;
+            case 1:
+                json << "mutate";
+                break;
+            case 69:
+                json << "json";
+                break;
+            default:
+                json << "unknown";
+                break;
+        }
+
+        json << "\"" << endl << "        }";
+        if(i != flockSize-1) json << ",";
+        json << endl;
+    }
+    json << "    ]" << endl;
+    json << "}";
+    json.close();
 }
 
 Simulation::Simulation(int flockSize, SwarmValues *values) {
@@ -31,6 +92,8 @@ Simulation::Simulation(int flockSize, SwarmValues *values) {
     this->speed = 4.3;
     this->raw_size = 10.;
     this->shape_ratio = 10;
+    this->env_id = -1;
+    json_dir = NULL;
     setup_fast_math();
 }
 
@@ -55,6 +118,7 @@ void Simulation::enableRecord(std::string location) {
 }
 
 void Simulation::setEnvironment(Environment *env) {
+    this->env_id = env->id;
     this->onFrame = env->onFrame;
     if(display != 0) {
         display->setOnDrawFunction(env->onDraw);
@@ -340,6 +404,11 @@ void Simulation::runSimulation(const long maxRunTime) {
                         else if(agents[bad_i].values.proj_weight>1.0) agents[bad_i].values.proj_weight = 0.998;
                     } while(agents[bad_i].values.align_weight+agents[bad_i].values.proj_weight >= 1.0);
                     agents[bad_i].values.noise_weight = 1.0 - (agents[bad_i].values.align_weight+agents[bad_i].values.proj_weight);
+                }
+
+                // Save the round data (if a dir is set)
+                if(json_dir != NULL) {
+                    save_round((this->getRunTime()/300), agents, flockSize);
                 }
 
                 for(int bad_i = flockSize-1; bad_i>=0; bad_i=bad_i-1) {

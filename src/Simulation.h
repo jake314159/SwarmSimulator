@@ -27,11 +27,15 @@ class Simulation {
 
         //How often to update the agents velocities (in frames)
         static const int update_rate = 1;//10;
+
+        int env_id;
     public:
          double raw_size;
          double shape_ratio;
 
         unsigned int flockSize;
+
+        char* json_dir;
 
         Simulation(int flockSize, SwarmValues *values);
         ~Simulation();
@@ -52,6 +56,8 @@ class Simulation {
         long long getScore();
         void setScore(long long score);
         void combine_vectors(Vector2d &current, Vector2d &prefered);
+
+        void save_round(int round_number, Agent *pop, int flockSize);
 };
 
 

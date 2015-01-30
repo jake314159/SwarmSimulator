@@ -7,6 +7,8 @@
 class Environment {
     public:
 
+        int id;
+
         /*
          * Runs after a frame has been drawn but hasn't been
          * presented. Allows the environment to add something

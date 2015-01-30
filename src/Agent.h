@@ -11,6 +11,10 @@ class Agent {
         Vector2d velocity;
         Vector2d velocity_next;
     public:
+
+        int source_info;
+
+
         Agent();
 
         SwarmValues values;

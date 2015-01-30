@@ -6,6 +6,7 @@ double rand_f() {
 }
 
 Agent::Agent () {
+    source_info = -1; //Unknown by default
     do {
         this->values.proj_weight = rand_f();
         this->values.align_weight = rand_f();

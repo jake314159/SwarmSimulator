@@ -70,6 +70,7 @@ int main(int argc, char *argv[]) {
     bool allow_record = false;
     bool record_dir_set = false;
     std::string record_dir;
+    char* json_dir = NULL;
 
     if(argc < 3) {
         cout << "Error: Missing arguments" << endl;
@@ -122,11 +123,14 @@ int main(int argc, char *argv[]) {
                 env->onFrame = &environment_food_onFrame;
             }*/
             if(!compare(argv[i], "SCAN")) {
+                env->id = 10;
                 env->onDraw = &environment_scan_onDraw;
                 env->onFrame = &environment_scan_onFrame;
             }
         } else if(!compare(argv[i], "--RunTime")) {
             run_time = atoi(argv[++i]);
+        } else if(!compare(argv[i], "--jsonDir")) {
+            json_dir = argv[++i];
         }
     }
 
@@ -138,6 +142,7 @@ int main(int argc, char *argv[]) {
     //environment_food_init(200);
 
     Simulation *s = new Simulation(100, v);
+    s->json_dir = json_dir;
     s->reset();
     if(have_display) {
         s->addDisplay();
