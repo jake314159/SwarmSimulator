@@ -15,6 +15,10 @@ class Agent {
 
         SwarmValues values;
         long long score;
+        SwarmValues values_past;
+        long long score_past;
+        void tryValues(double proj_w, double align_w);
+        void revertValues();
 
         void setLocation(double x, double y);
         double getLocationX();

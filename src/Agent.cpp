@@ -50,3 +50,27 @@ void Agent::setLocation(double x, double y) {
 Vector2d Agent::getVelocity() {
     return (this->velocity);
 }
+
+void Agent::tryValues(double proj_w, double align_w) {
+    //Fix invalid values
+    if(align_w<0) align_w = 0.001;
+    else if(align_w>1.0) align_w = 0.998;
+    if(proj_w<0) proj_w = 0.001;
+    else if(proj_w>1.0) proj_w = 0.998;
+
+    do {
+        align_w -= 0.01;
+        proj_w -= 0.01;
+    } while(proj_w+align_w > 1.0);
+
+    this->values_past = this->values;
+    this->score_past = score;
+    this->values.proj_weight = proj_w;
+    this->values.align_weight = align_w;
+    this->values.noise_weight = 1.0 - (proj_w + align_w);
+}
+void Agent::revertValues() {
+    if(score_past > score) {
+        this->values = values_past;
+    }
+}

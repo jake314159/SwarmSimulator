@@ -4,24 +4,114 @@ using namespace std;
 #include "Display.h"
 #include "Simulation.h"
 
+#define SCAN_N 8
+#define SCAN_PENALTY_POW 4
+
+struct S_IND
+{
+    int index;
+    double x;
+};
+
+
+void scan_array_fill(Agent* agents, unsigned int flockSize, vector<struct S_IND> &l, double (*getValue)(Agent*)) {
+
+    for(unsigned int i=0; i<flockSize; i++) {
+        if(l.size()<SCAN_N) {
+            bool success = false;
+            for(unsigned int j=0; j<l.size(); j++) {
+                if(getValue(&agents[i])>l[j].x) {
+                    struct S_IND ind;
+                    ind.x = getValue(&agents[i]);
+                    ind.index = i;
+                    l.insert(l.begin() + j, ind);
+                    break;
+                }
+            }
+            if(!success) {
+                struct S_IND ind;
+                ind.x = getValue(&agents[i]);
+                ind.index = i;
+                l.push_back(ind);
+            }
+        } else {
+            for(unsigned int j=0; j<l.size(); j++) {
+                if(getValue(&agents[i])>l[j].x) {
+                    struct S_IND ind;
+                    ind.x = getValue(&agents[i]);
+                    ind.index = i;
+                    l.insert(l.begin() + j, ind);
+                    l.pop_back();
+                    break;
+                }
+            }
+        }
+    }
+}
+
 void environment_scan_init(){}
 void environment_scan_destroy(){}
 void environment_scan_onDraw(Display* d){}
+
+double agent_X_left(Agent *a) {return a->getLocationX();}
+double agent_X_right(Agent *a) {return -a->getLocationX();}
+double agent_Y_left(Agent *a) {return a->getLocationY();}
+double agent_Y_right(Agent *a) {return -a->getLocationY();}
 void environment_scan_onFrame(void *simulation) {
     Simulation *s = (Simulation*)simulation;
     Agent* agents = s->getAgents();
     long frame = s->getRunTime();
 
-    int index = -1;
-    double x_val = 0;
-    for(unsigned int i=0; i<s->flockSize; i++) {
-        double x = agents[i].getLocationX();
-        if(index < 0 || ((frame&1)==0 && x < x_val) || ((frame&1)!=0 && x > x_val)){
-            x_val = x;
-            index = i;
-        }
+    // X LEFT
+    vector<struct S_IND> l;
+    scan_array_fill(agents, s->flockSize, l, 
+        &agent_X_left
+        );
+
+    int delta = pow(2,SCAN_N);
+    for(unsigned int j=0; j<l.size(); j++) {
+        agents[l[j].index].score -= delta;
+        delta /= 2;
     }
-    agents[index].score += -1;
+
+    //X RIGHT
+    l.empty();
+        scan_array_fill(agents, s->flockSize, l, 
+        &agent_X_right
+        );
+
+
+    delta = pow(SCAN_PENALTY_POW,SCAN_N);
+    for(unsigned int j=0; j<l.size(); j++) {
+        agents[l[j].index].score -= delta;
+        delta /= SCAN_PENALTY_POW;
+    }
+
+    // Y LEFT
+    l.empty();
+    scan_array_fill(agents, s->flockSize, l, 
+        &agent_Y_left
+        );
+
+    delta = pow(2,SCAN_N);
+    for(unsigned int j=0; j<l.size(); j++) {
+        agents[l[j].index].score -= delta;
+        delta /= 2;
+    }
+
+    //Y RIGHT
+    l.empty();
+        scan_array_fill(agents, s->flockSize, l, 
+        &agent_Y_right
+        );
+
+
+    delta = pow(SCAN_PENALTY_POW,SCAN_N);
+    for(unsigned int j=0; j<l.size(); j++) {
+        agents[l[j].index].score -= delta;
+        delta /= SCAN_PENALTY_POW;
+    }
+
 }
 
 /* Food */

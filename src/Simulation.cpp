@@ -288,44 +288,66 @@ void Simulation::runSimulation(const long maxRunTime) {
                 agents[i].updateLocation();
             }
 
-            if((this->getRunTime()%100)==0) {
-                //Sort worst first
-                std::sort(agents, agents+flockSize);
+            //TODO Move this into own function? (It's so awful)
+            if((this->getRunTime()%300)==0) {
+
+                
+                if(this->getRunTime()%600==0) {
+                    // Revert any bad mutations from the last round
+                    for(int bad_i = (flockSize/5)*4; bad_i>=(flockSize/5); bad_i=bad_i-1) {
+                        agents[bad_i].revertValues();
+                    }
+                    //Sort worst first
+                    std::sort(agents, agents+flockSize);
+                } else {
+
+                    //Sort worst first
+                    std::sort(agents, agents+flockSize);
+
+                    for(int bad_i = (flockSize/5)*4; bad_i>=(flockSize/5); bad_i=bad_i-1) {
+                        if((rand()&2)==0) {
+                            agents[bad_i].tryValues(
+                                    mutate_f(agents[bad_i].values.align_weight), 
+                                    mutate_f(agents[bad_i].values.proj_weight)
+                                );
+                        } else {
+                            //Don't mutate
+                            agents[bad_i].tryValues(
+                                    (agents[bad_i].values.align_weight), 
+                                    (agents[bad_i].values.proj_weight)
+                                );
+                        }
+                    }
+                }
+
                 cout << "#### Best params (" << agents[flockSize-1].values.align_weight << "," 
                     << agents[flockSize-1].values.proj_weight << ") @ "
-                    << agents[flockSize-1].score << endl;
+                    << agents[flockSize-1].score
+                    << " on round " << (this->getRunTime()/300) << endl;
 
-                for(int bad_i = flockSize/5; bad_i>=0; bad_i=bad_i-1) {
+                for(int bad_i = flockSize/10; bad_i>=0; bad_i=bad_i-1) {
                     agents[bad_i].score = 0;
-                    agents[bad_i].setLocation(agents[flockSize-bad_i].getLocationX(),agents[flockSize-bad_i].getLocationY());
+                    agents[bad_i].setLocation((agents[flockSize-bad_i].getLocationX()),
+                        (agents[flockSize-bad_i].getLocationY()));
                     do{
                         agents[bad_i].values.align_weight = mutate_f(agents[flockSize-bad_i].values.align_weight);
                         agents[bad_i].values.proj_weight = mutate_f(agents[flockSize-bad_i].values.proj_weight);
-                        if(agents[bad_i].values.align_weight<0) agents[bad_i].values.align_weight = 0.001;
-                        else if(agents[bad_i].values.align_weight>1.0) agents[bad_i].values.align_weight = 0.999;
-                        if(agents[bad_i].values.proj_weight<0) agents[bad_i].values.proj_weight = 0.001;
-                        else if(agents[bad_i].values.proj_weight>1.0) agents[bad_i].values.proj_weight = 0.999;
-                    } while(agents[bad_i].values.align_weight+agents[bad_i].values.proj_weight >= 1.0);
-                    agents[bad_i].values.noise_weight = 1.0 - (agents[bad_i].values.align_weight+agents[bad_i].values.proj_weight);
-                }
 
-                for(int bad_i = (flockSize/5)*4; bad_i>=(flockSize/5)*2; bad_i=bad_i-1) {
-                    do{
-                        agents[bad_i].values.align_weight = mutate_f(agents[bad_i].values.align_weight);
-                        agents[bad_i].values.proj_weight = mutate_f(agents[bad_i].values.proj_weight);
+                        //Fix invalid values
                         if(agents[bad_i].values.align_weight<0) agents[bad_i].values.align_weight = 0.001;
-                        else if(agents[bad_i].values.align_weight>1.0) agents[bad_i].values.align_weight = 0.999;
+                        else if(agents[bad_i].values.align_weight>1.0) agents[bad_i].values.align_weight = 0.998;
                         if(agents[bad_i].values.proj_weight<0) agents[bad_i].values.proj_weight = 0.001;
-                        else if(agents[bad_i].values.proj_weight>1.0) agents[bad_i].values.proj_weight = 0.999;
+                        else if(agents[bad_i].values.proj_weight>1.0) agents[bad_i].values.proj_weight = 0.998;
                     } while(agents[bad_i].values.align_weight+agents[bad_i].values.proj_weight >= 1.0);
-
                     agents[bad_i].values.noise_weight = 1.0 - (agents[bad_i].values.align_weight+agents[bad_i].values.proj_weight);
                 }
 
                 for(int bad_i = flockSize-1; bad_i>=0; bad_i=bad_i-1) {
                     agents[bad_i].score = 0;
                 }
+
             }
+
         } else {
             // If a skip frame then don't change the velocity just move each
             // agent in the direction they were going
