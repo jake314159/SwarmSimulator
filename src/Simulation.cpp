@@ -357,7 +357,7 @@ void Simulation::runSimulation(const long maxRunTime) {
             if((this->getRunTime()%300)==0) {
 
                 
-                if(this->getRunTime()%600==0) {
+                if((this->getRunTime()%600)==0 && this->getRunTime()>0) {
                     // Revert any bad mutations from the last round
                     for(int bad_i = (flockSize/5)*4; bad_i>=(flockSize/10); bad_i=bad_i-1) {
                         agents[bad_i].revertValues();
@@ -371,8 +371,8 @@ void Simulation::runSimulation(const long maxRunTime) {
 
                     for(int bad_i = (flockSize/5)*4; bad_i>=(flockSize/10); bad_i=bad_i-1) {
                         agents[bad_i].tryValues(
-                                mutate_f(agents[bad_i].values.align_weight), 
-                                mutate_f(agents[bad_i].values.proj_weight)
+                                mutate_f(agents[bad_i].values.proj_weight), 
+                                mutate_f(agents[bad_i].values.align_weight)
                             );
                     }
                 }
