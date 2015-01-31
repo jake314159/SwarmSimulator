@@ -358,7 +358,7 @@ void Simulation::runSimulation(const long maxRunTime) {
                 
                 if(this->getRunTime()%600==0) {
                     // Revert any bad mutations from the last round
-                    for(int bad_i = (flockSize/5)*4; bad_i>=(flockSize/5); bad_i=bad_i-1) {
+                    for(int bad_i = (flockSize/5)*4; bad_i>=(flockSize/10); bad_i=bad_i-1) {
                         agents[bad_i].revertValues();
                     }
                     //Sort worst first
@@ -368,19 +368,11 @@ void Simulation::runSimulation(const long maxRunTime) {
                     //Sort worst first
                     std::sort(agents, agents+flockSize);
 
-                    for(int bad_i = (flockSize/5)*4; bad_i>=(flockSize/5); bad_i=bad_i-1) {
-                        if((rand()&2)==0) {
-                            agents[bad_i].tryValues(
-                                    mutate_f(agents[bad_i].values.align_weight), 
-                                    mutate_f(agents[bad_i].values.proj_weight)
-                                );
-                        } else {
-                            //Don't mutate
-                            agents[bad_i].tryValues(
-                                    (agents[bad_i].values.align_weight), 
-                                    (agents[bad_i].values.proj_weight)
-                                );
-                        }
+                    for(int bad_i = (flockSize/5)*4; bad_i>=(flockSize/10); bad_i=bad_i-1) {
+                        agents[bad_i].tryValues(
+                                mutate_f(agents[bad_i].values.align_weight), 
+                                mutate_f(agents[bad_i].values.proj_weight)
+                            );
                     }
                 }
 
