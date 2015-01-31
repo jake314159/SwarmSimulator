@@ -4,6 +4,7 @@ using namespace std;
 #include <stdlib.h>
 #include <fstream>
 #include <math.h>
+#include <algorithm>
 #include "Simulation.h"
 #include "fastMath.h"
 
@@ -362,11 +363,11 @@ void Simulation::runSimulation(const long maxRunTime) {
                         agents[bad_i].revertValues();
                     }
                     //Sort worst first
-                    std::sort(agents, agents+flockSize);
+                    sort(agents, agents+flockSize);
                 } else {
 
                     //Sort worst first
-                    std::sort(agents, agents+flockSize);
+                    sort(agents, agents+flockSize);
 
                     for(int bad_i = (flockSize/5)*4; bad_i>=(flockSize/10); bad_i=bad_i-1) {
                         agents[bad_i].tryValues(
