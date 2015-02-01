@@ -363,6 +363,8 @@ void Simulation::runSimulation(const long maxRunTime) {
             //TODO Move this into own function? (It's so awful)
             if((this->getRunTime()%round_length)==0) {
 
+                if(this->env->roundEnd != NULL) this->env->roundEnd(this);
+
                 if((this->getRunTime()%(round_length*2))==0 && this->getRunTime()>0) {
                     // Revert any bad mutations from the last round
                     for(int bad_i = (flockSize/5)*4; bad_i>=(flockSize/10); bad_i=bad_i-1) {
@@ -415,7 +417,6 @@ void Simulation::runSimulation(const long maxRunTime) {
                 }
 
                 if(this->env->roundStart != NULL) this->env->roundStart(this);
-                if(this->env->roundEnd != NULL) this->env->roundEnd(this);
 
             }
 

@@ -126,6 +126,10 @@ int main(int argc, char *argv[]) {
                 env->id = 10;
                 env->onDraw = &environment_scan_onDraw;
                 env->onFrame = &environment_scan_onFrame;
+            } else if(!compare(argv[i], "FOOD")) {
+                env->id = 11;
+                env->onFrame = &environment_food_onFrame;
+                env->roundStart = &environment_food_round_start;
             }
         } else if(!compare(argv[i], "--RunTime")) {
             run_time = atoi(argv[++i]);

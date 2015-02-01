@@ -114,63 +114,50 @@ void environment_scan_onFrame(void *simulation) {
 
 }
 
-/* Food */
-/*
-typedef struct {
-    double x, y;
-} FOOD;
 
-int foodCount;
-double spread = 400;
-FOOD *food;
-void environment_food_init(int numberOfFood) {
-    int i;
-    foodCount = numberOfFood;
-    food = (FOOD*)malloc(sizeof(FOOD)*foodCount);
-    for(i=0; i<foodCount; i++) {
-        food[i].x = ((double)rand()/(double)RAND_MAX)*spread*2 - spread;
-        food[i].y = ((double)rand()/(double)RAND_MAX)*spread*2 - spread;
-    }
+//////////////////////////////////////////
+//////////// FOOD ENVIRONMENT ////////////
+//////////////////////////////////////////
+
+#define GRID_RESOLUTION 10.0
+#define GRID_SIZE 1000
+bool food_grid[GRID_SIZE][GRID_SIZE] = {{false}};
+
+void environment_food_init() {
+
 }
 
 void environment_food_destroy() {
-    free(food);
+
 }
 
-void environment_food_onDraw(Display* d) {
-    int i;
-    for(i=0; i<foodCount; i++) {
-        d->drawBox(food[i].x, food[i].y, 3, 255, 0, 0);
+void environment_food_round_start(void *simulation) {
+    for(int x=0; x<GRID_SIZE; x++) {
+        for(int y=0; y<GRID_SIZE; y++) {
+            food_grid[x][y] = false;
+        }
     }
+}
+
+int convert_to_grid_index(double d) {
+    return (int)( (d+(GRID_RESOLUTION*(GRID_SIZE/2))) / (GRID_RESOLUTION) );
 }
 
 void environment_food_onFrame(void *simulation) {
     Simulation *s = (Simulation*)simulation;
     Agent* agents = s->getAgents();
-    Point2d p;
-    s->getCenterOfMass(&p);
-    unsigned int i,j;
-    for(j=0; j<foodCount; j++) {
-        double minDistance = -1;
-        for(i=0; i<s->flockSize; i++) {
-            double d = ((agents[i].getLocationX()-food[j].x)*(agents[i].getLocationX()-food[j].x)+
-                (agents[i].getLocationY()-food[j].y)*(agents[i].getLocationY()-food[j].y));
+    int flockSize = s->flockSize;
+    for(unsigned int i=0; i<flockSize; i++) {
+        int x = convert_to_grid_index(agents[i].getLocationX());
+        int y = convert_to_grid_index(agents[i].getLocationY());
 
-            if(minDistance <0 || minDistance > d) {
-                minDistance = d;
-            }
-            if( d<3 ) {
-                s->incScore(1);
-                food[j].x = ((double)rand()/(double)RAND_MAX)*spread - spread/2;
-                food[j].y = ((double)rand()/(double)RAND_MAX)*spread - spread/2;
-            }
-        }
+        //Check they are on the grid first
+        if(x<0 || x>GRID_SIZE || y<0 || y>GRID_SIZE) continue;
 
-        //We've moved away from the food so lets move it closer
-        if(minDistance > spread*spread) {
-            food[j].x = ((double)rand()/(double)RAND_MAX)*spread*2 - spread + p.x;
-            food[j].y = ((double)rand()/(double)RAND_MAX)*spread*2 - spread + p.y;
+        if( !food_grid[x][y] ) {
+            agents[i].score += 1;
+            food_grid[x][y] = true;
         }
     }
 }
-*/
+
