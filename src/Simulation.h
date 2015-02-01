@@ -22,7 +22,6 @@ class Simulation {
         double getApearSize(const unsigned int i, const unsigned int j);
 
         // Agent size and shape info
-
          double shape_dif;//M_PI/2;
          double speed;
 
@@ -33,8 +32,8 @@ class Simulation {
 
         int round_length;
     public:
-         double raw_size;
-         double shape_ratio;
+        double raw_size;
+        double shape_ratio;
 
         unsigned int flockSize;
 
@@ -45,7 +44,7 @@ class Simulation {
 
         void runSimulation(const long maxRunTime);
         void setSwarmValues(SwarmValues *values);
-        //void setEnvironment(Environment *env);
+
         void reset();
         void getCenterOfMass(Point2d *p);
 
