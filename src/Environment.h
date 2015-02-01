@@ -1,11 +1,16 @@
+
 #include "Display.h"
 #include "Simulation.h"
+
+using namespace std;
 
 #ifndef ENVIRONMENT_INCLUDE_GUARD_H
 #define ENVIRONMENT_INCLUDE_GUARD_H 1
 
 class Environment {
     public:
+
+        Environment();
 
         int id;
 
@@ -25,7 +30,37 @@ class Environment {
          */
         void (*onFrame)(void *);
 
+        /* 
+         * Runs at the start of every round. Should be used
+         * to init everything needed for the environment
+         * The argument is of type Simulation*
+         */
+        void (*roundStart)(void *);
+
+        /*
+         * Runs at the end of every round. Used to clean
+         * up any memory used during the round. Bear in 
+         * mind that destroy is also availble as a method
+         * of clearing memory
+         * The pointer is of type Simulation*
+         */
+        void (*roundEnd)(void *);
+
+        /*
+         * Runs once at the start of the simulation and
+         * and is used to set-up anything that is needed
+         * as part of the environment
+         */
         void (*init)();
+
+        /*
+         * Runs at the end of the simulation and is used to
+         * to clear up any memory allocations left over
+         *
+         * IMPORTANT: This is NOT guarentted to be run and
+         * often wont be if the simulation has been killed
+         * by the user
+         */
         void (*destroy)();
 };
 

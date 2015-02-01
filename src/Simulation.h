@@ -13,6 +13,7 @@ class Simulation {
         SwarmValues values;
         Display *display;
         void (*onFrame)(void *);
+        Environment *env;
         long long score;
         long runTime; //In steps
         long maxRunTime;
@@ -29,6 +30,8 @@ class Simulation {
         static const int update_rate = 1;//10;
 
         int env_id;
+
+        int round_length;
     public:
          double raw_size;
          double shape_ratio;

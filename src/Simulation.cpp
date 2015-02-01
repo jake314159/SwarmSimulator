@@ -95,6 +95,9 @@ Simulation::Simulation(int flockSize, SwarmValues *values) {
     this->shape_ratio = 10;
     this->env_id = -1;
     json_dir = NULL;
+    this->round_length = 300;
+    this->onFrame = 0;
+    this->env = 0;
     setup_fast_math();
 }
 
@@ -121,6 +124,7 @@ void Simulation::enableRecord(std::string location) {
 void Simulation::setEnvironment(Environment *env) {
     this->env_id = env->id;
     this->onFrame = env->onFrame;
+    this->env = env;
     if(display != 0) {
         display->setOnDrawFunction(env->onDraw);
     }
@@ -288,6 +292,9 @@ void Simulation::runSimulation(const long maxRunTime) {
     Point2d center;
     getCenterOfMass(&center);
 
+    if(this->env->init != NULL) this->env->init();
+    if(this->env->roundStart != NULL) this->env->roundStart(this);
+
     while(this->maxRunTime >=0 && this->runTime < this->maxRunTime) {
 
         if( runTime%update_rate == 0) {
@@ -354,10 +361,9 @@ void Simulation::runSimulation(const long maxRunTime) {
             }
 
             //TODO Move this into own function? (It's so awful)
-            if((this->getRunTime()%300)==0) {
+            if((this->getRunTime()%round_length)==0) {
 
-                
-                if((this->getRunTime()%600)==0 && this->getRunTime()>0) {
+                if((this->getRunTime()%(round_length*2))==0 && this->getRunTime()>0) {
                     // Revert any bad mutations from the last round
                     for(int bad_i = (flockSize/5)*4; bad_i>=(flockSize/10); bad_i=bad_i-1) {
                         agents[bad_i].revertValues();
@@ -401,12 +407,15 @@ void Simulation::runSimulation(const long maxRunTime) {
 
                 // Save the round data (if a dir is set)
                 if(json_dir != NULL) {
-                    save_round((this->getRunTime()/300), agents, flockSize);
+                    save_round((this->getRunTime()/round_length), agents, flockSize);
                 }
 
                 for(int bad_i = flockSize-1; bad_i>=0; bad_i=bad_i-1) {
                     agents[bad_i].score = 0;
                 }
+
+                if(this->env->roundStart != NULL) this->env->roundStart(this);
+                if(this->env->roundEnd != NULL) this->env->roundEnd(this);
 
             }
 
@@ -428,6 +437,9 @@ void Simulation::runSimulation(const long maxRunTime) {
 
         this->runTime++;
     }
+
+    if(this->env->roundEnd != NULL) this->env->roundEnd(this);
+    if(this->env->destroy != NULL) this->env->destroy();
 
     delete knn;
 }
