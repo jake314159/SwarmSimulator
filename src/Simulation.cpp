@@ -16,7 +16,7 @@ double rand_f_() {
 }
 
 //TODO This doesn't need to be global.
-double mutate_rate = 0.01;
+double mutate_rate = 0.002;
 
 double mutate_f(double f) {
     if((rand()&1)==0) {
