@@ -434,8 +434,8 @@ void Simulation::runSimulation(const long maxRunTime) {
                     agents[bad_i].setLocation((agents[flockSize-bad_i-1].getLocationX()),
                         (agents[flockSize-bad_i-1].getLocationY()));
                     do{
-                        agents[bad_i].values.align_weight = mutate_f(agents[flockSize-bad_i].values.align_weight);
-                        agents[bad_i].values.proj_weight = mutate_f(agents[flockSize-bad_i].values.proj_weight);
+                        agents[bad_i].values.align_weight = mutate_f(agents[flockSize-bad_i-1].values.align_weight);
+                        agents[bad_i].values.proj_weight = mutate_f(agents[flockSize-bad_i-1].values.proj_weight);
 
                         //Fix invalid values
                         if(agents[bad_i].values.align_weight<0) agents[bad_i].values.align_weight = 0.001;
