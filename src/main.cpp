@@ -69,6 +69,7 @@ int main(int argc, char *argv[]) {
     bool have_display = true;
     bool allow_record = false;
     bool record_dir_set = false;
+    bool evolve = true;
     std::string record_dir;
     char* json_dir = NULL;
 
@@ -110,6 +111,8 @@ int main(int argc, char *argv[]) {
     for(int i=3; i<argc; i++) {
         if(!compare(argv[i], "-R") || !compare(argv[i], "--EnableRecord")) {
             allow_record = true;
+        } else if(!compare(argv[i], "--NoEvo")) {
+            evolve = false;
         } else if(!compare(argv[i], "-D")) {
             if(i == argc-1) cout << "Output dir not specified"<<endl;
             record_dir = argv[++i];
@@ -130,6 +133,12 @@ int main(int argc, char *argv[]) {
                 env->id = 11;
                 env->onFrame = &environment_food_onFrame;
                 env->roundStart = &environment_food_round_start;
+            } else if(!compare(argv[i], "M_DESC")) {
+                env->id = 101;
+                env->roundStart = &measure_describe_round_start;
+                env->roundEnd = &measure_describe_round_end;
+                env->init = &measure_describe_init;
+                env->destroy = &measure_describe_destroy;
             }
         } else if(!compare(argv[i], "--RunTime")) {
             run_time = atoi(argv[++i]);
@@ -147,6 +156,7 @@ int main(int argc, char *argv[]) {
 
     Simulation *s = new Simulation(100, v);
     s->json_dir = json_dir;
+    s->setEvolve(evolve);
     s->reset();
     if(have_display) {
         s->addDisplay();

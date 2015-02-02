@@ -29,6 +29,7 @@ class Simulation {
         static const int update_rate = 1;//10;
 
         int env_id;
+        bool evolve; //Should we evolve better solutions?
 
         int round_length;
     public:
@@ -58,6 +59,8 @@ class Simulation {
         long long getScore();
         void setScore(long long score);
         void combine_vectors(Vector2d &current, Vector2d &prefered);
+
+        void setEvolve(bool evolve);
 
         void save_round(int round_number, Agent *pop, int flockSize);
 };

@@ -16,7 +16,7 @@ double rand_f_() {
 }
 
 //TODO This doesn't need to be global.
-double mutate_rate = 0.002;
+double mutate_rate = 0.005;
 
 double mutate_f(double f) {
     if((rand()&1)==0) {
@@ -95,6 +95,7 @@ Simulation::Simulation(int flockSize, SwarmValues *values) {
     this->shape_ratio = 10;
     this->env_id = -1;
     json_dir = NULL;
+    this->evolve = false;
     this->round_length = 300;
     this->onFrame = 0;
     this->env = 0;
@@ -507,4 +508,8 @@ long long Simulation::getScore() {
 
 void Simulation::setScore(long long score) {
     this->score = score;
+}
+
+void Simulation::setEvolve(bool e) {
+    this->evolve = e;
 }

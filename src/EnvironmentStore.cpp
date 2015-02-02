@@ -161,3 +161,71 @@ void environment_food_onFrame(void *simulation) {
     }
 }
 
+
+//////////////////////////////////////////
+//////////// MEASURE DESCRIBE ////////////
+//////////////////////////////////////////
+
+double MEASURE_DECR_SUM_SPREAD = 0.0;
+double MEASURE_DECR_SUM_SPEED = 0.0;
+int MEASURE_DECR_COUNT = 0;
+
+Point2d MEASURE_DECR_CENTER_LAST; //x and y
+
+void measure_describe_init() {
+    MEASURE_DECR_SUM_SPREAD = 0.0;
+    MEASURE_DECR_SUM_SPEED = 0.0;
+    MEASURE_DECR_COUNT = 0;
+}
+
+void measure_describe_round_start(void *simulation) {
+    Simulation *s = (Simulation*)simulation;
+    s->getCenterOfMass(&MEASURE_DECR_CENTER_LAST);
+}
+
+void measure_describe_round_end(void *simulation) {
+    Simulation *s = (Simulation*)simulation;
+    Agent* agents = s->getAgents();
+    long frame = s->getRunTime();
+
+    if(frame < 1000 || frame > 3000) return;
+
+    Point2d new_center;
+    s->getCenterOfMass(&new_center);
+
+
+    //Spread
+    double spread_temp = 0.0;
+    int flockSize = s->flockSize;
+    for(unsigned int i=0; i<flockSize; i++) {
+        double x = (agents[i].getLocationX() - new_center.x);
+        double y = (agents[i].getLocationY() - new_center.y);
+
+        spread_temp += sqrt( x*x + y*y );
+    }
+    spread_temp /= (double)flockSize;
+    MEASURE_DECR_SUM_SPREAD += spread_temp;
+
+    //Speed
+
+    double a = new_center.x - MEASURE_DECR_CENTER_LAST.x;
+    double b = new_center.y - MEASURE_DECR_CENTER_LAST.y;
+    double position_change = sqrt( a*a + b*b )/((double)flockSize);
+
+    MEASURE_DECR_SUM_SPEED += position_change;
+
+
+    MEASURE_DECR_COUNT++;
+}
+
+void measure_describe_get_vals(double *spread, double *speed) {
+    *spread = MEASURE_DECR_SUM_SPREAD/((double)MEASURE_DECR_COUNT);
+    *speed = MEASURE_DECR_SUM_SPEED/((double)MEASURE_DECR_COUNT);
+}
+
+void measure_describe_destroy() {
+    double a,b;
+    measure_describe_get_vals(&a, &b);
+    double speed = 4.3; //We can't access this so it's hard coded :'(
+    cout << "Measure describe = (" << a << "," << (b/speed)*100 << ")" << endl;
+}
