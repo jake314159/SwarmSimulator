@@ -5,6 +5,12 @@ using namespace std;
 #include <fstream>
 #include <math.h>
 #include <algorithm>
+
+#include "rapidjson/document.h"
+#include "rapidjson/prettywriter.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/filestream.h"
+
 #include "Simulation.h"
 #include "fastMath.h"
 
@@ -82,6 +88,44 @@ void Simulation::save_round(int round_number, Agent *pop, int flockSize) {
     json << "    ]" << endl;
     json << "}";
     json.close();
+}
+
+/*
+ * Takes as a argument a path to a json output file from a previous run
+ * of the GA. It then initiates the global variables with the correct
+ * values for the GA run AND sets pop and pop_new (which are args)
+ * ready to continue the work of the GA
+*/
+void Simulation::load_json(string filename) {
+    char *a=new char[filename.size()+1];
+    a[filename.size()]=0;
+    memcpy(a,filename.c_str(),filename.size());
+
+
+    FILE * pFile = fopen (a, "r");
+    rapidjson::FileStream is(pFile);
+    rapidjson::Document document;
+    document.ParseStream<0>(is);
+
+    cout << "DONE! Round " << document["round"].GetInt() << endl;
+
+    env_id = document["Environment"].GetInt();
+    flockSize = document["flock_size"].GetInt();
+    runTime = document["frames"].GetInt()+1;
+    mutate_rate = document["mutation rate"].GetDouble();
+
+    // Init the population
+    for (rapidjson::SizeType i = 0; i < document["population"].Size(); i++) {
+
+        Agent p;
+
+        p.values.proj_weight = document["population"][i]["proj_weight"].GetDouble();
+        p.values.align_weight = document["population"][i]["align_weight"].GetDouble();
+        p.values.noise_weight = 1.0 - (p.values.proj_weight+p.values.align_weight);
+        p.score = document["population"][i]["score"].GetDouble();
+        p.source_info = 22;
+        agents[i] = (p);
+    }
 }
 
 Simulation::Simulation(int flockSize, SwarmValues *values) {
@@ -366,35 +410,29 @@ void Simulation::runSimulation(const long maxRunTime) {
 
                 if(this->env->roundEnd != NULL) this->env->roundEnd(this);
 
-                if((this->getRunTime()%(round_length*2))==0 && this->getRunTime()>0) {
-                    // Revert any bad mutations from the last round
-                    for(int bad_i = (flockSize/5)*4; bad_i>=(flockSize/10); bad_i=bad_i-1) {
-                        agents[bad_i].revertValues();
-                    }
-                    //Sort worst first
-                    sort(agents, agents+flockSize);
-                } else {
-
-                    //Sort worst first
-                    sort(agents, agents+flockSize);
-
-                    for(int bad_i = (flockSize/5)*4; bad_i>=(flockSize/10); bad_i=bad_i-1) {
-                        agents[bad_i].tryValues(
-                                mutate_f(agents[bad_i].values.proj_weight), 
-                                mutate_f(agents[bad_i].values.align_weight)
-                            );
-                    }
+                // Revert any bad mutations from the last round
+                for(int bad_i = (flockSize/10)*9; bad_i>=(flockSize/10); bad_i=bad_i-1) {
+                    agents[bad_i].revertValues();
                 }
+
+                //Sort worst first
+                sort(agents, agents+flockSize);
 
                 cout << "#### Best params (" << agents[flockSize-1].values.align_weight << "," 
                     << agents[flockSize-1].values.proj_weight << ") @ "
                     << agents[flockSize-1].score
                     << " on round " << (this->getRunTime()/300) << endl;
 
+                for(int bad_i = (flockSize/10)*9; bad_i>=(flockSize/10); bad_i=bad_i-1) {
+                    agents[bad_i].tryValues(
+                            mutate_f(agents[bad_i].values.proj_weight), 
+                            mutate_f(agents[bad_i].values.align_weight)
+                        );
+                }
+
                 for(int bad_i = flockSize/10; bad_i>=0; bad_i=bad_i-1) {
-                    agents[bad_i].score = 0;
-                    agents[bad_i].setLocation((agents[flockSize-bad_i].getLocationX()),
-                        (agents[flockSize-bad_i].getLocationY()));
+                    agents[bad_i].setLocation((agents[flockSize-bad_i-1].getLocationX()),
+                        (agents[flockSize-bad_i-1].getLocationY()));
                     do{
                         agents[bad_i].values.align_weight = mutate_f(agents[flockSize-bad_i].values.align_weight);
                         agents[bad_i].values.proj_weight = mutate_f(agents[flockSize-bad_i].values.proj_weight);

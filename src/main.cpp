@@ -72,6 +72,7 @@ int main(int argc, char *argv[]) {
     bool evolve = true;
     std::string record_dir;
     char* json_dir = NULL;
+    char *start_json_file = NULL;
 
     if(argc < 3) {
         cout << "Error: Missing arguments" << endl;
@@ -144,6 +145,8 @@ int main(int argc, char *argv[]) {
             run_time = atoi(argv[++i]);
         } else if(!compare(argv[i], "--jsonDir")) {
             json_dir = argv[++i];
+        } else if(!compare(argv[i], "--startFromJson")) {
+            start_json_file = argv[++i];
         }
     }
 
@@ -156,6 +159,9 @@ int main(int argc, char *argv[]) {
 
     Simulation *s = new Simulation(100, v);
     s->json_dir = json_dir;
+    if(start_json_file != NULL) {
+        s->load_json(start_json_file);
+    }
     s->setEvolve(evolve);
     s->reset();
     if(have_display) {

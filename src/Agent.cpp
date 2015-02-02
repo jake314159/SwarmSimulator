@@ -78,5 +78,6 @@ void Agent::tryValues(double proj_w, double align_w) {
 void Agent::revertValues() {
     if(score_past > score) {
         this->values = this->values_past;
+        this->score = this->score_past;
     }
 }

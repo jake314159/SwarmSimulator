@@ -63,6 +63,7 @@ class Simulation {
         void setEvolve(bool evolve);
 
         void save_round(int round_number, Agent *pop, int flockSize);
+        void load_json(string filename);
 };
 
 
