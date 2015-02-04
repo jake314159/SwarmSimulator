@@ -175,6 +175,9 @@ void Simulation::setEnvironment(Environment *env) {
 
 void Simulation::setSwarmValues(SwarmValues *values) {
     this->values = *values;
+    for(unsigned int i=(flockSize-1); i>0; i--) {
+        agents[i].values = *values;
+    }
 }
 
 //TODO test

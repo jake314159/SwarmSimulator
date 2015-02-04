@@ -80,30 +80,40 @@ int main(int argc, char *argv[]) {
         exit(40);
     }
 
-    if(!checkForFloat(argv[1])) {
-        cout << "Error: proj_w not a number" << endl;
-        exit(44);
-    }
-    if(!checkForFloat(argv[2])) {
-        cout << "Error: align_w not a number" << endl;
-        exit(44);
-    }
+    double proj_W_in = 0.0;
+    double align_W_in = 0.0;
+    double noise_W_in = 0.0;
+    bool specify_params = true;
+    if(argv[1][0] == 'X' || argv[2][0] == 'X') {
+        specify_params = false;
+    } else {
 
-    double proj_W_in = atof(argv[1]);
-    double align_W_in = atof(argv[2]);
-    if(proj_W_in <0) {
-        cout << "Error: proj_W <0.0" << endl;
-        exit(41);
+        if(!checkForFloat(argv[1])) {
+            cout << "Error: proj_w not a number" << endl;
+            exit(44);
+        }
+        if(!checkForFloat(argv[2])) {
+            cout << "Error: align_w not a number" << endl;
+            exit(44);
+        }
+
+        proj_W_in = atof(argv[1]);
+        align_W_in = atof(argv[2]);
+        if(proj_W_in <0) {
+            cout << "Error: proj_W <0.0" << endl;
+            exit(41);
+        }
+        if(align_W_in < 0) {
+            cout << "Error: proj_W <0.0" << endl;
+            exit(42);
+        }
+        if(proj_W_in + align_W_in >1.0) {
+            cout << "Error: proj_W+align_W>1.0" << endl;
+            exit(43);
+        }
+        noise_W_in = 1.0 - (proj_W_in + align_W_in);
+
     }
-    if(align_W_in < 0) {
-        cout << "Error: proj_W <0.0" << endl;
-        exit(42);
-    }
-    if(proj_W_in + align_W_in >1.0) {
-        cout << "Error: proj_W+align_W>1.0" << endl;
-        exit(43);
-    }
-    double noise_W_in = 1.0 - (proj_W_in + align_W_in);
 
     Environment *env = new Environment();
     env->onDraw = 0;
@@ -166,6 +176,11 @@ int main(int argc, char *argv[]) {
     Simulation *s = new Simulation(100, v);
     s->json_dir = json_dir;
     s->reset();
+
+    if(specify_params) {
+        s->setSwarmValues(v);
+    }
+
     if(start_json_file != NULL) {
         s->load_json(start_json_file);
     }

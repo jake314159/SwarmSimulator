@@ -1,6 +1,14 @@
 SwarmSimulator
 ==================
 
+Example of running with simplest possible settings
+```
+# Run with the values 0.35 and 0.45
+./bin/SwarmSimulator 0.35 0.45
+
+# Run with random values (different for each agent)
+./bin/SwarmSimulator X X
+```
 
 Command line options
 ---------------
