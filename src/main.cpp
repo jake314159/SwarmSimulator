@@ -64,6 +64,7 @@ int main(int argc, char *argv[]) {
     srand(time(NULL));
 
     //A very large number by default
+    int roundNumber = -1;
     long run_time = 1000000000;
 
     bool have_display = true;
@@ -143,6 +144,8 @@ int main(int argc, char *argv[]) {
             }
         } else if(!compare(argv[i], "--RunTime")) {
             run_time = atoi(argv[++i]);
+        } else if(!compare(argv[i], "--RoundN")) {
+            roundNumber = atoi(argv[++i]);
         } else if(!compare(argv[i], "--jsonDir")) {
             json_dir = argv[++i];
         } else if(!compare(argv[i], "--startFromJson")) {
@@ -159,11 +162,16 @@ int main(int argc, char *argv[]) {
 
     Simulation *s = new Simulation(100, v);
     s->json_dir = json_dir;
+    s->reset();
     if(start_json_file != NULL) {
         s->load_json(start_json_file);
     }
     s->setEvolve(evolve);
-    s->reset();
+
+    if(roundNumber>=0) {
+        run_time = (s->getRoundLength() * roundNumber) + 1;
+    }
+    
     if(have_display) {
         s->addDisplay();
 

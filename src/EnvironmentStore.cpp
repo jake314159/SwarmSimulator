@@ -214,7 +214,6 @@ void measure_describe_round_end(void *simulation) {
 
     MEASURE_DECR_SUM_SPEED += position_change;
 
-
     MEASURE_DECR_COUNT++;
 }
 

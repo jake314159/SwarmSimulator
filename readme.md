@@ -26,5 +26,9 @@ Command line options
             
 --RunTime <FRAMES>
     Specifies the number of frames to run the simulation for
+
+--RoundN <NUMBER_OF_ROUNDS>
+    Specified the run time in terms of the number of evolution rounds to use
+    Takes precedence over the '--RunTime' argument
 ```
 

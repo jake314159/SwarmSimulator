@@ -101,7 +101,7 @@ for i in range(len(all_results)):
 plt.plot(linePoints, color="#000000")
 
 #plt.ylim([0, 1])
-plt.xlim([0, 80])
+#plt.xlim([0, 80])
 plt.ylabel('Total score')
 plt.xlabel('Round')
 plt.title('How the total score of the flock changes for each round of the hill climber\n')

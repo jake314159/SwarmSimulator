@@ -110,21 +110,19 @@ void Simulation::load_json(string filename) {
     cout << "DONE! Round " << document["round"].GetInt() << endl;
 
     env_id = document["Environment"].GetInt();
-    flockSize = document["flock_size"].GetInt();
-    runTime = document["frames"].GetInt()+1;
+    //flockSize = document["flock_size"].GetInt();
+    //runTime = document["frames"].GetInt()+1;
     mutate_rate = document["mutation rate"].GetDouble();
 
     // Init the population
     for (rapidjson::SizeType i = 0; i < document["population"].Size(); i++) {
-
-        Agent p;
-
-        p.values.proj_weight = document["population"][i]["proj_weight"].GetDouble();
-        p.values.align_weight = document["population"][i]["align_weight"].GetDouble();
-        p.values.noise_weight = 1.0 - (p.values.proj_weight+p.values.align_weight);
-        p.score = document["population"][i]["score"].GetDouble();
-        p.source_info = 22;
-        agents[i] = (p);
+        
+        agents[i].values.proj_weight = document["population"][i]["proj_weight"].GetDouble();
+        agents[i].values.align_weight = document["population"][i]["align_weight"].GetDouble();
+        agents[i].values.noise_weight = 1.0 - (agents[i].values.proj_weight+agents[i].values.align_weight);
+        agents[i].score = document["population"][i]["score"].GetDouble();
+        agents[i].source_info = 22;
+        cout << "Loading agent "<< i <<"(" << agents[i].values.proj_weight << "," <<agents[i].values.align_weight << endl;
     }
 }
 
@@ -421,7 +419,7 @@ void Simulation::runSimulation(const long maxRunTime) {
                 cout << "#### Best params (" << agents[flockSize-1].values.align_weight << "," 
                     << agents[flockSize-1].values.proj_weight << ") @ "
                     << agents[flockSize-1].score
-                    << " on round " << (this->getRunTime()/300) << endl;
+                    << " on round " << (this->getRunTime()/round_length) << endl;
 
                 for(int bad_i = (flockSize/10)*9; bad_i>=(flockSize/10); bad_i=bad_i-1) {
                     agents[bad_i].tryValues(
@@ -551,3 +549,8 @@ void Simulation::setScore(long long score) {
 void Simulation::setEvolve(bool e) {
     this->evolve = e;
 }
+
+int Simulation::getRoundLength(){
+    return this->round_length;
+}
+
