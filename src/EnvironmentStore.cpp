@@ -161,6 +161,38 @@ void environment_food_onFrame(void *simulation) {
     }
 }
 
+//////////////////////////////////////////
+///////// INTERSECT ENVIRONMENT //////////
+//////////////////////////////////////////
+
+double calc_intersection(double x1, double y1, double x2, double y2, double r) {
+    double r2 = r*r;
+    double distance = sqrt( (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+    double theta = 2 * acos( (0.5*distance)/(r) );
+    return r2 * (theta - sin(theta));
+}
+
+void environment_intersect_onFrame(void *simulation) {
+    Simulation *s = (Simulation*)simulation;
+    Agent* agents = s->getAgents();
+    int flockSize = s->flockSize;
+
+    //Raius (How close you need to be to see an agent)
+    double r = 100;
+
+    for(unsigned int i=0; i<flockSize; i++) {
+        for(unsigned int j=0; j<flockSize; j++) {
+            if(i != j) {
+                double intersect = calc_intersection(agents[i].getLocationX(), agents[i].getLocationY(),
+                                        agents[j].getLocationX(), agents[j].getLocationY(), r);
+                if(intersect > 0) {
+                    agents[i].score += intersect;
+                }
+            }
+        }
+    }
+}
+
 
 //////////////////////////////////////////
 //////////// MEASURE DESCRIBE ////////////

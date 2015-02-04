@@ -135,6 +135,9 @@ int main(int argc, char *argv[]) {
                 env->id = 11;
                 env->onFrame = &environment_food_onFrame;
                 env->roundStart = &environment_food_round_start;
+            } else if(!compare(argv[i], "INTER")) {
+                env->id = 12;
+                env->onFrame = &environment_intersect_onFrame;
             } else if(!compare(argv[i], "M_DESC")) {
                 env->id = 101;
                 env->roundStart = &measure_describe_round_start;

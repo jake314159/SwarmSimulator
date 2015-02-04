@@ -11,6 +11,8 @@ void environment_food_destroy();
 void environment_food_round_start(void *simulation);
 void environment_food_onFrame(void *simulation);
 
+void environment_intersect_onFrame(void *simulation);
+
 void measure_describe_init();
 void measure_describe_round_start(void *simulation);
 void measure_describe_round_end(void *simulation);
