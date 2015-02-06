@@ -407,7 +407,7 @@ void Simulation::runSimulation(const long maxRunTime) {
             }
 
             //TODO Move this into own function? (It's so awful)
-            if((this->getRunTime()%round_length)==0) {
+            if(evolve && (this->getRunTime()%round_length)==0) {
 
                 if(this->env->roundEnd != NULL) this->env->roundEnd(this);
 
