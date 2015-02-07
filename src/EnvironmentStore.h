@@ -19,6 +19,11 @@ void environment_intersect_onFrame(void *simulation);
 void environment_spread_setMinimise(bool mini);
 void environment_spread_onFrame(void *simulation);
 
+/* displacement min/max */
+//Should we minimise center displacement (true) or maximise (false)??
+void environment_center_disp_setMinimise(bool mini);
+void environment_center_disp_onFrame(void *simulation);
+
 void measure_describe_init();
 void measure_describe_round_start(void *simulation);
 void measure_describe_round_end(void *simulation);

@@ -217,6 +217,43 @@ void environment_spread_onFrame(void *simulation) {
     }
 }
 
+//////////////////////////////////////////
+//// CENTER DISPLACEMENT ENVIRONMENT /////
+//////////////////////////////////////////
+
+/* displacement min/max */
+//Should we minimise center displacement (true) or maximise (false)??
+bool ENVIRONMENT_CENTER_DISP_MIN = true;
+void environment_center_disp_setMinimise(bool mini) {
+    ENVIRONMENT_CENTER_DISP_MIN = mini;
+}
+
+Point2d last_center;
+void environment_center_disp_onFrame(void *simulation) {
+    Simulation *s = (Simulation*)simulation;
+    Agent* agents = s->getAgents();
+    int flockSize = s->flockSize;
+    Point2d center;
+    s->getCenterOfMass(&center);
+
+    // Vector for the movement of the center of mass
+    double vx = center.x - last_center.x;
+    double vy = center.y - last_center.y;
+
+    for(unsigned int i=0; i<flockSize; i++) {
+        Vector2d a = agents[i].getVelocity();
+        // A small angle means the agent helped cause the center of mass to move
+        // * 100 makes it a large number as it will be converted to an int soon
+        double angle = fabs(atan2(a.getY(),a.getX()) - atan2(vy,vx));
+        angle *= 100;
+        //cout << angle << endl;
+        if(!ENVIRONMENT_SPREAD_MIN) angle *= -1;
+        agents[i].score += angle;
+    }
+
+    last_center = center;
+}
+
 
 //////////////////////////////////////////
 //////////// MEASURE DESCRIBE ////////////

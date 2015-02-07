@@ -32,6 +32,12 @@ Command line options
             Minimises the distance of each agent from the center of mass
         - SPREAD_MAX
             Maximises the distance of each agent from the center of mass
+        - DISP_MIN
+            Minimises the displacement of the center of mass of the flock
+            by penalising the agents that cause it
+        - DISP_MAX
+            Maximises the displacement of the center of mass of the flock
+            by penalising the agents that cause it
 
         - FOOD
             Food is spread out throughout the environment and can be consumed by

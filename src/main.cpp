@@ -157,6 +157,14 @@ int main(int argc, char *argv[]) {
                 env->id = 14;
                 environment_spread_setMinimise(false);
                 env->onFrame = &environment_spread_onFrame;
+            } else if(!compare(argv[i], "DISP_MIN")) {
+                env->id = 15;
+                environment_center_disp_setMinimise(true);
+                env->onFrame = &environment_center_disp_onFrame;
+            } else if(!compare(argv[i], "DISP_MAX")) {
+                env->id = 16;
+                environment_center_disp_setMinimise(false);
+                env->onFrame = &environment_center_disp_onFrame;
             } else if(!compare(argv[i], "M_DESC")) {
                 env->id = 101;
                 env->roundStart = &measure_describe_round_start;
