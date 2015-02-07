@@ -138,6 +138,7 @@ Simulation::Simulation(int flockSize, SwarmValues *values) {
     this->env_id = -1;
     json_dir = NULL;
     this->evolve = false;
+    this->one_direction = false;
     this->round_length = 300;
     this->onFrame = 0;
     this->env = 0;
@@ -497,20 +498,25 @@ void Simulation::reset() {
         double y = sqrt(((spread/2)*(spread/2))-((x)*(x)));
         if( (rand()&1) == 0) y= -y;
 
-        agents[i].setLocation(
-                x, 
-                y
-            );
-        double d = ((double)rand()/(double)RAND_MAX)*2.0 - 1.0;
-        //double d = x>50 ? (y>50? 0.5 : 0.99) : (y<50? -0.5 : -0.99);
+        if(one_direction) {
+            v->setX(1);
+            v->setY(0);
+        } else {
+            agents[i].setLocation(
+                    x, 
+                    y
+                );
+            double d = ((double)rand()/(double)RAND_MAX)*2.0 - 1.0;
+            //double d = x>50 ? (y>50? 0.5 : 0.99) : (y<50? -0.5 : -0.99);
 
-        //Set Y so speed = 1
-        double y_val = fastsqrt(1.0 - d*d);
-        if( (rand()&1) == 0) {
-            y_val = -y_val;
-        }    
-        v->setX(d);
-        v->setY(y_val);
+            //Set Y so speed = 1
+            double y_val = fastsqrt(1.0 - d*d);
+            if( (rand()&1) == 0) {
+                y_val = -y_val;
+            }    
+            v->setX(d);
+            v->setY(y_val);
+        }
 
 
 
@@ -551,6 +557,10 @@ void Simulation::setScore(long long score) {
 
 void Simulation::setEvolve(bool e) {
     this->evolve = e;
+}
+
+void Simulation::setOneDirection(bool one_direction) {
+    this->one_direction = one_direction;
 }
 
 int Simulation::getRoundLength(){

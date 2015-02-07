@@ -30,6 +30,7 @@ class Simulation {
 
         int env_id;
         bool evolve; //Should we evolve better solutions?
+        bool one_direction; //Should all agents start in one direction?
 
         int round_length;
     public:
@@ -61,6 +62,7 @@ class Simulation {
         void combine_vectors(Vector2d &current, Vector2d &prefered);
 
         void setEvolve(bool evolve);
+        void setOneDirection(bool one_direction);
 
         void save_round(int round_number, Agent *pop, int flockSize);
         void load_json(string filename);

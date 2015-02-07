@@ -71,6 +71,7 @@ int main(int argc, char *argv[]) {
     bool allow_record = false;
     bool record_dir_set = false;
     bool evolve = true;
+    bool one_direction = false;
     std::string record_dir;
     char* json_dir = NULL;
     char *start_json_file = NULL;
@@ -174,6 +175,10 @@ int main(int argc, char *argv[]) {
             json_dir = argv[++i];
         } else if(!compare(argv[i], "--startFromJson")) {
             start_json_file = argv[++i];
+        } else if(!compare(argv[i], "--OneDirection") || !compare(argv[i], "--Harry") 
+                || !compare(argv[i], "--Zayn") || !compare(argv[i], "--Niall") 
+                || !compare(argv[i], "--Liam") || !compare(argv[i], "--Louis")) {
+            one_direction = true;
         }
     }
 
@@ -186,6 +191,8 @@ int main(int argc, char *argv[]) {
 
     Simulation *s = new Simulation(100, v);
     s->json_dir = json_dir;
+
+    s->setOneDirection(one_direction);
     s->reset();
 
     if(specify_params) {
@@ -196,6 +203,7 @@ int main(int argc, char *argv[]) {
         s->load_json(start_json_file);
     }
     s->setEvolve(evolve);
+    
 
     if(roundNumber>=0) {
         run_time = (s->getRoundLength() * roundNumber) + 1;
