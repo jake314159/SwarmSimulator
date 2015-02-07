@@ -247,7 +247,7 @@ void environment_center_disp_onFrame(void *simulation) {
         double angle = fabs(atan2(a.getY(),a.getX()) - atan2(vy,vx));
         angle *= 100;
         //cout << angle << endl;
-        if(!ENVIRONMENT_SPREAD_MIN) angle *= -1;
+        if(!ENVIRONMENT_CENTER_DISP_MIN) angle *= -1;
         agents[i].score += angle;
     }
 
