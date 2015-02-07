@@ -212,7 +212,7 @@ void environment_spread_onFrame(void *simulation) {
         double xd = center.x - agents[i].getLocationX();
         double yd = center.y - agents[i].getLocationY();
         double distance_sq = xd*xd + yd*yd;
-        if(!ENVIRONMENT_SPREAD_MIN) distance_sq *= -1;
+        if(ENVIRONMENT_SPREAD_MIN) distance_sq *= -1;
         agents[i].score += distance_sq;
     }
 }
