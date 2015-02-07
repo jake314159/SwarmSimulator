@@ -28,9 +28,22 @@ Command line options
     Specifies the environment to run the simulation in
     Default is none
     Available environments:
+        - SPREAD_MIN
+            Minimises the distance of each agent from the center of mass
+        - SPREAD_MAX
+            Maximises the distance of each agent from the center of mass
+
         - FOOD
             Food is spread out throughout the environment and can be consumed by
             agents
+        - SCAN
+            Scans across and penalises agents on the outside of the swarm
+        - INTER
+            Agents are encouraged to share as much of their line of sight with
+            other agents as possible
+
+        - M_DESC
+            Measures the 'describe' parameters (spread & speed)
             
 --RunTime <FRAMES>
     Specifies the number of frames to run the simulation for

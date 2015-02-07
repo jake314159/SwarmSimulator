@@ -60,7 +60,6 @@ double agent_Y_right(Agent *a) {return -a->getLocationY();}
 void environment_scan_onFrame(void *simulation) {
     Simulation *s = (Simulation*)simulation;
     Agent* agents = s->getAgents();
-    long frame = s->getRunTime();
 
     // X LEFT
     vector<struct S_IND> l;
@@ -190,6 +189,31 @@ void environment_intersect_onFrame(void *simulation) {
                 }
             }
         }
+    }
+}
+
+
+//////////////////////////////////////////
+/////////// SPREAD ENVIRONMENT ///////////
+//////////////////////////////////////////
+bool ENVIRONMENT_SPREAD_MIN = true;
+void environment_spread_setMinimise(bool mini) {
+    ENVIRONMENT_SPREAD_MIN = mini;
+}
+
+void environment_spread_onFrame(void *simulation) {
+    Simulation *s = (Simulation*)simulation;
+    Agent* agents = s->getAgents();
+    int flockSize = s->flockSize;
+    Point2d center;
+    s->getCenterOfMass(&center);
+
+    for(unsigned int i=0; i<flockSize; i++) {
+        double xd = center.x - agents[i].getLocationX();
+        double yd = center.y - agents[i].getLocationY();
+        double distance_sq = xd*xd + yd*yd;
+        if(!ENVIRONMENT_SPREAD_MIN) distance_sq *= -1;
+        agents[i].score += distance_sq;
     }
 }
 

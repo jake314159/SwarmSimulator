@@ -148,12 +148,23 @@ int main(int argc, char *argv[]) {
             } else if(!compare(argv[i], "INTER")) {
                 env->id = 12;
                 env->onFrame = &environment_intersect_onFrame;
+            } else if(!compare(argv[i], "SPREAD_MIN")) {
+                env->id = 13;
+                environment_spread_setMinimise(true);
+                env->onFrame = &environment_spread_onFrame;
+            } else if(!compare(argv[i], "SPREAD_MAX")) {
+                env->id = 14;
+                environment_spread_setMinimise(false);
+                env->onFrame = &environment_spread_onFrame;
             } else if(!compare(argv[i], "M_DESC")) {
                 env->id = 101;
                 env->roundStart = &measure_describe_round_start;
                 env->roundEnd = &measure_describe_round_end;
                 env->init = &measure_describe_init;
                 env->destroy = &measure_describe_destroy;
+            } else {
+                cout << "UNKOWN ENVIRONMENT!!" << endl;
+                exit(199);
             }
         } else if(!compare(argv[i], "--RunTime")) {
             run_time = atoi(argv[++i]);
