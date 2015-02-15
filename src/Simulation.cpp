@@ -328,42 +328,14 @@ void Simulation::combine_vectors(Vector2d &current, Vector2d &prefered) {
     current.setY(current.getY() + prefered.getY());
 }
 
-double get_mutate_rate_delta_hack(long numberOfRounds) {
-    cout << "Number of rounds: "<<numberOfRounds << endl;
-    /*
-    Calculated in python (which does get the correct answer)
-    using the code:
-        import math
-        N = ???
-        math.exp(math.log(0.00001/0.2)/N)
-    */
-
-    double precomputed_mutate_delta;
-    if(numberOfRounds <= 1500) {
-        //1000 round answer
-        precomputed_mutate_delta = 0.9901453904928679;
-    } else if(numberOfRounds <= 2500) {
-        //2000 round answer
-        precomputed_mutate_delta = 0.9950604958960374;
-    } else if(numberOfRounds <= 3500){
-        //3000 round answer
-        precomputed_mutate_delta = 0.9967042803285844;
-    } else {
-        //4000 round answer
-        precomputed_mutate_delta = 0.9975271905547424;
-    }
-    return precomputed_mutate_delta;
-}
-
 
 void Simulation::runSimulation(const long maxRunTime) {
     this->maxRunTime = maxRunTime;
     this->runTime = 0;
 
-    //mutate_rate_delta = exp(log(mutate_rate_min/mutate_rate_max)/(maxRunTime/round_length));
+    mutate_rate_delta = exp(log(mutate_rate_min/mutate_rate_max)/(maxRunTime/round_length));
     //mutate_rate_delta = 1 + (log(mutate_rate_min/mutate_rate_max)/(maxRunTime/round_length));
-    mutate_rate_delta = get_mutate_rate_delta_hack((maxRunTime/round_length));
-    cout << mutate_rate_delta << endl;
+    cout << "Mutate rate delta: " << mutate_rate_delta << endl;
     mutate_rate = mutate_rate_max;
 
     for(int a=0; a<3000; a++) {
