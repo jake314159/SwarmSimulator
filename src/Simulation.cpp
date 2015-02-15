@@ -23,6 +23,9 @@ double rand_f_() {
 
 //TODO This doesn't need to be global.
 double mutate_rate = 0.005;
+double mutate_rate_max = 0.2;
+double mutate_rate_min = 0.00001;
+double mutate_rate_delta;
 
 double mutate_f(double f) {
     if((rand()&1)==0) {
@@ -33,13 +36,13 @@ double mutate_f(double f) {
 }
 
 void Simulation::save_round(int round_number, Agent *pop, int flockSize) {
-    char buff[256];
+    char buff[1024];
 
     sprintf(buff, "%s/%06d.json", json_dir, round_number);
     cout << "Write to '" << buff << "'" << endl;
 
     ofstream json;
-    json.open (buff);
+    json.open(buff);
 
     if (!json.is_open()) {
         cerr << "Error: File not able to be opened" << endl;
@@ -142,6 +145,7 @@ Simulation::Simulation(int flockSize, SwarmValues *values) {
     this->round_length = 300;
     this->onFrame = 0;
     this->env = 0;
+
     setup_fast_math();
 }
 
@@ -328,6 +332,9 @@ void Simulation::runSimulation(const long maxRunTime) {
     this->maxRunTime = maxRunTime;
     this->runTime = 0;
 
+    mutate_rate_delta = exp(log(mutate_rate_min/mutate_rate_max)/(maxRunTime/round_length));
+    mutate_rate = mutate_rate_max;
+
     //Make the bins for finding the projection
     std::vector<char> bin;
     for(int j=0; j<BIN_COUNT;j++) bin.push_back(false);
@@ -454,6 +461,8 @@ void Simulation::runSimulation(const long maxRunTime) {
                     agents[bad_i].score = 0;
                 }
 
+                //Reduce the mutation rate slowly 
+                mutate_rate *= mutate_rate_delta;
                 if(this->env->roundStart != NULL) this->env->roundStart(this);
 
             }
