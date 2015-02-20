@@ -72,6 +72,7 @@ int main(int argc, char *argv[]) {
     bool record_dir_set = false;
     bool evolve = true;
     bool one_direction = false;
+    bool hill_climb = false;
     std::string record_dir;
     char* json_dir = NULL;
     char *start_json_file = NULL;
@@ -190,6 +191,8 @@ int main(int argc, char *argv[]) {
                 || !compare(argv[i], "--Zayn") || !compare(argv[i], "--Niall") 
                 || !compare(argv[i], "--Liam") || !compare(argv[i], "--Louis")) {
             one_direction = true;
+        } else if(!compare(argv[i], "--HillClimb")) {
+            hill_climb = true;
         }
     }
 
@@ -204,6 +207,7 @@ int main(int argc, char *argv[]) {
     s->json_dir = json_dir;
 
     s->setOneDirection(one_direction);
+    s->setHillClimb(hill_climb);
     s->reset();
 
     if(specify_params) {

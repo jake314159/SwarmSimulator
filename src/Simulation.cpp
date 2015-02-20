@@ -142,6 +142,7 @@ Simulation::Simulation(int flockSize, SwarmValues *values) {
     json_dir = NULL;
     this->evolve = false;
     this->one_direction = false;
+    this->hill_climb = false;
     this->round_length = 300;
     this->onFrame = 0;
     this->env = 0;
@@ -427,9 +428,11 @@ void Simulation::runSimulation(const long maxRunTime) {
 
                 if(this->env->roundEnd != NULL) this->env->roundEnd(this);
 
-                // Revert any bad mutations from the last round
-                for(int bad_i = (flockSize/10)*9; bad_i>=(flockSize/10); bad_i=bad_i-1) {
-                    agents[bad_i].revertValues();
+                if(hill_climb) {
+                     // Revert any bad mutations from the last round
+                    for(int bad_i = (flockSize/10)*9; bad_i>=(flockSize/10); bad_i=bad_i-1) {
+                        agents[bad_i].revertValues();
+                    }
                 }
 
                 //Sort worst first
@@ -578,6 +581,10 @@ void Simulation::setEvolve(bool e) {
 
 void Simulation::setOneDirection(bool one_direction) {
     this->one_direction = one_direction;
+}
+
+void Simulation::setHillClimb(bool hill_climb) {
+    this->hill_climb = hill_climb;
 }
 
 int Simulation::getRoundLength(){

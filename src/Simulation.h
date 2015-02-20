@@ -31,6 +31,7 @@ class Simulation {
         int env_id;
         bool evolve; //Should we evolve better solutions?
         bool one_direction; //Should all agents start in one direction?
+        bool hill_climb;
 
         int round_length;
     public:
@@ -63,6 +64,7 @@ class Simulation {
 
         void setEvolve(bool evolve);
         void setOneDirection(bool one_direction);
+        void setHillClimb(bool hill_climb);
 
         void save_round(int round_number, Agent *pop, int flockSize);
         void load_json(string filename);
