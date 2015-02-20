@@ -1,6 +1,7 @@
 using namespace std;
 #include <stdlib.h>
 #include <iostream>
+#include <math.h>
 #include "Display.h"
 #include "Simulation.h"
 
@@ -192,6 +193,121 @@ void environment_intersect_onFrame(void *simulation) {
     }
 }
 
+//////////////////////////////////////////
+/////////// VORTEX ENVIRONMENT ///////////
+//////////////////////////////////////////
+
+// From https://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
+double pDistance(double x, double y, double x1, double y1, double x2, double y2) {
+
+  double A = x - x1;
+  double B = y - y1;
+  double C = x2 - x1;
+  double D = y2 - y1;
+
+  double dot = A * C + B * D;
+  double len_sq = C * C + D * D;
+  double param = -1;
+  if (len_sq != 0) //in case of 0 length line
+      param = dot / len_sq;
+
+  double xx, yy;
+
+  if (param < 0) {
+    xx = x1;
+    yy = y1;
+  }
+  else if (param > 1) {
+    xx = x2;
+    yy = y2;
+  }
+  else {
+    xx = x1 + param * C;
+    yy = y1 + param * D;
+  }
+
+  double dx = x - xx;
+  double dy = y - yy;
+  return sqrt(dx * dx + dy * dy);
+}
+
+// x = the value to calulate the prob of
+// when the mean = mu
+// and the standard deviation = sd
+double gaussien_PDF(double x, double mu, double sd) {
+    double pi2_sqrt = sqrt(2*M_PI);
+    double x_min_mu = x-mu;
+    return (1/(sd*pi2_sqrt)) * exp( (-(x_min_mu*x_min_mu)) / (2*sd*sd));
+}
+
+double get_benefit(double Dis) {
+    Dis /= 20;
+    double mu, sd, scale;
+    if(Dis>0) {
+        // Infront
+        mu = 0.48;
+        sd = 0.3;
+        scale = 66*0.3;
+    } else {
+        // Behind
+        mu = -0.75;
+        sd = 0.4;
+        scale = 45*0.7;
+    }
+    return gaussien_PDF(Dis, mu, sd) * scale;
+}
+
+void environment_votex_onFrame(void *simulation) {
+    Simulation *s = (Simulation*)simulation;
+    Agent* agents = s->getAgents();
+    int flockSize = s->flockSize;
+
+    for(unsigned int i=0; i<flockSize; i++) {
+        // Find the nearest neighbour to i
+        Agent *nn; 
+        int nn_index = -1;
+        double best_distance = -1;
+
+        Point2d p; //Point where agent i is
+        p.x = agents[i].getLocationX();
+        p.y = agents[i].getLocationY();
+        for(unsigned int j=0; j<flockSize; j++) {
+            if(i==j) continue;
+
+            double d = agents[j].distanceFrom(&p);
+            if(nn_index<0 || d < best_distance) {
+                best_distance = d;
+                nn_index = j;
+            }
+        }
+
+        nn = &agents[nn_index];
+
+        //Get angle between velocities
+        Vector2d v1 = agents[i].getVelocity();
+        Vector2d v2 = nn->getVelocity();
+        double angle = fabs(atan2(v2.getY(), v2.getX()) - atan2(v1.getY(), v1.getX()));
+
+        //Find percentage of the velocity that is in the same direction
+        double angle_percent = cos(angle);
+
+        // Calculate distance from line Dis
+
+        double Dis = pDistance( agents[i].getLocationX(), agents[i].getLocationY(),
+                    nn->getLocationX(), nn->getLocationY(),
+                    //Note these are permendicular
+                    (nn->getLocationX()+v1.getY())*-1, nn->getLocationY()+v1.getX()
+         );
+
+        //Calculate how our position benefits us (as a maximum)
+        double benefit = get_benefit(Dis);
+        //cout << "Dis = " << Dis << "\t\tBenefit = "<< benefit << endl;
+
+        //Multiply by 10 as it will be converted to an int so will lose anything after the dp.
+        cout << 10 * benefit*angle_percent << endl;
+        agents[i].score += 10 * benefit*angle_percent;
+    }
+}
 
 //////////////////////////////////////////
 /////////// SPREAD ENVIRONMENT ///////////

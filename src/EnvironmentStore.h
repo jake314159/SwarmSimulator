@@ -13,6 +13,7 @@ void environment_food_onFrame(void *simulation);
 
 void environment_intersect_onFrame(void *simulation);
 
+void environment_votex_onFrame(void *simulation);
 
 /* Spread min/max */
 //Should we minimise spread (true) or maximise (false)??
