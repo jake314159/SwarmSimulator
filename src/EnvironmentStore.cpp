@@ -334,6 +334,48 @@ void environment_spread_onFrame(void *simulation) {
 }
 
 //////////////////////////////////////////
+///////////// NND ENVIRONMENT ////////////
+//////////////////////////////////////////
+bool ENVIRONMENT_NND_MIN = true;
+void environment_nnd_setMinimise(bool mini) {
+    ENVIRONMENT_NND_MIN = mini;
+}
+
+void environment_nnd_onFrame(void *simulation) {
+    Simulation *s = (Simulation*)simulation;
+    Agent* agents = s->getAgents();
+    int flockSize = s->flockSize;
+    Point2d center;
+    s->getCenterOfMass(&center);
+
+    for(unsigned int i=0; i<flockSize; i++) {
+        // Find the nearest neighbour to i
+        Agent *nn; 
+        int nn_index = -1;
+        double best_distance = -1;
+
+        Point2d p; //Point where agent i is
+        p.x = agents[i].getLocationX();
+        p.y = agents[i].getLocationY();
+        for(unsigned int j=0; j<flockSize; j++) {
+            if(i==j) continue;
+
+            double d = agents[j].distanceFrom(&p);
+            if(nn_index<0 || d < best_distance) {
+                best_distance = d;
+                nn_index = j;
+            }
+        }
+
+        nn = &agents[nn_index];
+
+
+        if(ENVIRONMENT_NND_MIN) best_distance *= -1;
+        agents[i].score += best_distance;
+    }
+}
+
+//////////////////////////////////////////
 //// CENTER DISPLACEMENT ENVIRONMENT /////
 //////////////////////////////////////////
 

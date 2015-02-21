@@ -175,6 +175,14 @@ int main(int argc, char *argv[]) {
                 env->roundEnd = &measure_describe_round_end;
                 env->init = &measure_describe_init;
                 env->destroy = &measure_describe_destroy;
+            } else if(!compare(argv[i], "NND_MIN")) {
+                env->id = 18;
+                environment_nnd_setMinimise(true);
+                env->onFrame = &environment_nnd_onFrame;
+            } else if(!compare(argv[i], "NND_MAX")) {
+                env->id = 19;
+                environment_nnd_setMinimise(false);
+                env->onFrame = &environment_nnd_onFrame;
             } else {
                 cout << "UNKOWN ENVIRONMENT!!" << endl;
                 exit(199);
