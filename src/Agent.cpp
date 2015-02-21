@@ -81,3 +81,7 @@ void Agent::revertValues() {
         this->score = this->score_past;
     }
 }
+
+void Agent::setVelocity(double x, double y) {
+    velocity.setVector(x,y);
+}

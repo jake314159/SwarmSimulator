@@ -4,6 +4,7 @@ using namespace std;
 #include <math.h>
 #include "Display.h"
 #include "Simulation.h"
+#include "fastMath.h"
 
 #define SCAN_N 8
 #define SCAN_PENALTY_POW 4
@@ -308,6 +309,153 @@ void environment_votex_onFrame(void *simulation) {
         agents[i].score += 10 * benefit*angle_percent;
     }
 }
+
+//////////////////////////////////////////
+///////// CONFUSION ENVIRONMENT //////////
+//////////////////////////////////////////
+
+#define BIN_COUNT 600
+
+
+//From the POV of i what size is j
+double CONF_getApearSize(Agent *i, Agent *j) {
+    // These should be taken from the simulation not hard coded
+    // sorry
+    double shape_dif = 0;
+    double raw_size = 10.;
+    double shape_ratio = 10;
+
+    Point2d l;
+    l.x = j->getLocationX();
+    l.y = j->getLocationY();
+
+    Vector2d from;
+    i->vectorFrom(&l, &from);
+    Vector2d other_velocity = j->getVelocity();
+
+    // Work out the number of bins used by this agent
+    double dot_prod = other_velocity.getX()*(from.getX())+other_velocity.getY()*(from.getY());
+    double cos_angle_working = dot_prod/(from.getMagnitude()*other_velocity.getMagnitude());
+    double angle = fastacos(cos_angle_working);
+    double sin_angle = fastsin(angle+shape_dif);
+    double cos_angle = fastcos(angle+shape_dif);
+    double apear_size = raw_size/(sqrt(sin_angle*sin_angle + (shape_ratio*shape_ratio*cos_angle*cos_angle)));
+    return apear_size;
+}
+
+//From the POV of i
+void CONF_getProjectionVector(Agent *i, Agent* agents, unsigned int flockSize, std::vector<char> &bin) {
+
+    //Reset bin
+    for(int j=0; j<BIN_COUNT;j++) bin[j] = false;
+
+    Vector2d v_proj;
+    v_proj.setVector(0.0,0.0);
+
+    double binSize = (M_PI*2)/BIN_COUNT;
+
+    Point2d l;
+    for(unsigned int j=(flockSize-1); j>0; j--) {
+        //if( j == i) continue; //Skip self
+        l.x = agents[j].getLocationX();
+        l.y = agents[j].getLocationY();
+
+        Vector2d from;
+        i->vectorFrom(&l, &from);
+
+        double theta;// = acos(cos_theta);
+        //
+        //    2     |    1
+        //          |
+        //  --------+--------
+        //          |
+        //    3     |    4
+        //
+        
+        if(from.getX() >=0 && from.getY()>=0) {
+            //case 1
+            theta = fastatan(from.getY()/from.getX());
+        } else if(from.getX() <=0 && from.getY() >= 0) {
+            //case 2
+            theta = M_PI/2 + fastatan((-from.getX())/from.getY());
+        } else if(from.getX() <=0 && from.getY() <=0) {
+            //case 3
+            theta = M_PI + fastatan((-from.getY())/(-from.getX()));
+        } else { //from.getX()>=0 && y<=0
+            //case4
+            theta = M_PI + M_PI/2 + fastatan(from.getX()/(-from.getY()));
+        }
+        theta = atan2(from.getY(), from.getX()); //WTF why are there lines above?
+
+        double apear_size = CONF_getApearSize(i,&agents[j]);
+        double size_angle = fastatan(apear_size/(from.getMagnitude()));
+        // The number of bins the agent fills (half as based on radius)
+        int size_bins = (int)(size_angle/binSize);
+        if(size_bins ==0) size_bins = 1;
+
+        int bin_N = (int)((theta)/binSize);
+        //if(bin_N <= 0) bin_N = 1;
+        for(int k=-size_bins; k<size_bins; k++) {
+            if((bin_N+k)>=0) {
+                bin[(bin_N+k)%BIN_COUNT] = true;
+            } else {
+                bin[(bin_N+k+BIN_COUNT)%BIN_COUNT] = true;
+            }
+        }
+    }
+/*
+    double boundry_count = 0.0;
+    for(int j=0; j<(BIN_COUNT);j++) {
+        if(bin[j] != bin[(j+1)%BIN_COUNT]) {
+            double theta = (j*binSize);
+            v_proj.setX(v_proj.getX() + fastcos(theta));
+            v_proj.setY(v_proj.getY() + fastsin(theta));
+            boundry_count += 1.0;
+        }
+    }
+
+    if(v_proj.getMagnitude()>0)
+        v_proj /= v_proj.getMagnitude();
+
+    return v_proj;*/
+}
+
+void environment_confusion_onFrame(void *simulation) {
+    Simulation *s = (Simulation*)simulation;
+    Agent* agents = s->getAgents();
+    int flockSize = s->flockSize;
+
+    //Make the bins for finding the projection
+    std::vector<char> bin;
+    for(int j=0; j<BIN_COUNT;j++) bin.push_back(false);
+
+    Agent a;
+    a.setVelocity(-1, 0); //Look left
+
+    double pred_dis = 500;
+
+    for(unsigned int i=0; i<flockSize; i++) {
+        //Place predator to right of agent
+        a.setLocation(agents[i].getLocationX()+pred_dis, agents[i].getLocationY());
+        CONF_getProjectionVector(&a, agents, flockSize, bin);
+
+        //HACK (aka. bug)
+        if( bin[BIN_COUNT/2]==0) bin[BIN_COUNT/2] = 1;
+
+        int j=BIN_COUNT/2;
+        while(j>=0 && bin[j]!=0) j--;
+        int left = j;
+        j++;
+        while(j<BIN_COUNT && bin[j]!=0) j++;
+        int right = j;
+
+        int size = right-left;
+        //cout << "SIZE " << size << endl;
+
+        agents[i].score += size;
+    }
+}
+
 
 //////////////////////////////////////////
 /////////// SPREAD ENVIRONMENT ///////////

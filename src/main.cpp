@@ -153,6 +153,9 @@ int main(int argc, char *argv[]) {
             } else if(!compare(argv[i], "VORTEX")) {
                 env->id = 17;
                 env->onFrame = &environment_votex_onFrame;
+            } else if(!compare(argv[i], "CONF")) {
+                env->id = 22;
+                env->onFrame = &environment_confusion_onFrame;
             } else if(!compare(argv[i], "SPREAD_MIN")) {
                 env->id = 13;
                 environment_spread_setMinimise(true);
