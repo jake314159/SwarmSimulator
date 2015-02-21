@@ -29,6 +29,10 @@ void environment_center_disp_onFrame(void *simulation);
 void environment_nnd_setMinimise(bool mini);
 void environment_nnd_onFrame(void *simulation);
 
+/* Polarity min/max */
+void environment_polarity_setMinimise(bool mini);
+void environment_polarity_onFrame(void *simulation);
+
 void measure_describe_init();
 void measure_describe_round_start(void *simulation);
 void measure_describe_round_end(void *simulation);

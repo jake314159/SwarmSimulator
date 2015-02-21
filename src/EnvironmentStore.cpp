@@ -376,6 +376,47 @@ void environment_nnd_onFrame(void *simulation) {
 }
 
 //////////////////////////////////////////
+/////////// POLARITY ENVIRONMENT /////////
+//////////////////////////////////////////
+bool ENVIRONMENT_POL_MIN = true;
+void environment_polarity_setMinimise(bool mini) {
+    ENVIRONMENT_POL_MIN = mini;
+}
+
+void environment_polarity_onFrame(void *simulation) {
+    Simulation *s = (Simulation*)simulation;
+    Agent* agents = s->getAgents();
+    int flockSize = s->flockSize;
+    Point2d center;
+    s->getCenterOfMass(&center);
+
+    Vector2d aV; //Average velocity
+
+    for(unsigned int i=0; i<flockSize; i++) {
+        Vector2d v = agents[i].getVelocity();
+        aV += v;
+
+        //if(ENVIRONMENT_NND_MIN) best_distance *= -1;
+        //agents[i].score += best_distance;
+    }
+
+    aV /= flockSize;
+    aV /= aV.getMagnitude();
+
+    for(unsigned int i=0; i<flockSize; i++) {
+        Vector2d v = agents[i].getVelocity();
+        v /= v.getMagnitude();
+        double dot = aV.getX()*v.getX() + aV.getY()*v.getY();
+        double pol = acos(dot);
+        double HALF_PI = M_PI/2;
+        double pol_star = (HALF_PI-pol)/HALF_PI;
+
+        if(ENVIRONMENT_POL_MIN) pol_star *= -1;
+        agents[i].score += pol_star;
+    }
+}
+
+//////////////////////////////////////////
 //// CENTER DISPLACEMENT ENVIRONMENT /////
 //////////////////////////////////////////
 

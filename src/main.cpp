@@ -183,6 +183,14 @@ int main(int argc, char *argv[]) {
                 env->id = 19;
                 environment_nnd_setMinimise(false);
                 env->onFrame = &environment_nnd_onFrame;
+            } else if(!compare(argv[i], "POL_MIN")) {
+                env->id = 20;
+                environment_polarity_setMinimise(true);
+                env->onFrame = &environment_polarity_onFrame;
+            } else if(!compare(argv[i], "POL_MAX")) {
+                env->id = 21;
+                environment_polarity_setMinimise(false);
+                env->onFrame = &environment_polarity_onFrame;
             } else {
                 cout << "UNKOWN ENVIRONMENT!!" << endl;
                 exit(199);
