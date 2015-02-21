@@ -412,7 +412,9 @@ void environment_polarity_onFrame(void *simulation) {
         double pol_star = (HALF_PI-pol)/HALF_PI;
 
         if(ENVIRONMENT_POL_MIN) pol_star *= -1;
-        agents[i].score += pol_star;
+
+        //MUST *1000 as it's being rounded to an int and the range is 0-1
+        agents[i].score += pol_star*1000;
     }
 }
 
