@@ -18,6 +18,9 @@ void environment_votex_onFrame(void *simulation);
 
 void environment_confusion_onFrame(void *simulation);
 
+void environment_cope_round_start(void *simulation);
+void environment_cope_onFrame(void *simulation);
+
 /* Spread min/max */
 //Should we minimise spread (true) or maximise (false)??
 void environment_spread_setMinimise(bool mini);

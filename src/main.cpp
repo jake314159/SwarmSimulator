@@ -156,6 +156,10 @@ int main(int argc, char *argv[]) {
             } else if(!compare(argv[i], "CONF")) {
                 env->id = 22;
                 env->onFrame = &environment_confusion_onFrame;
+            } else if(!compare(argv[i], "COPE")) {
+                env->id = 23;
+                env->onFrame = &environment_cope_onFrame;
+                env->roundStart = &environment_cope_round_start;
             } else if(!compare(argv[i], "SPREAD_MIN")) {
                 env->id = 13;
                 environment_spread_setMinimise(true);
