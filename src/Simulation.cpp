@@ -266,6 +266,8 @@ Vector2d Simulation::getProjectionVector(const unsigned int i, std::vector<char>
         Vector2d from;
         agents[i].vectorFrom(&l, &from);
 
+        if(from.getMagnitude() > 1000) continue;
+
         double theta;// = acos(cos_theta);
         //
         //    2     |    1
