@@ -138,6 +138,8 @@ Simulation::Simulation(int flockSize, SwarmValues *values) {
     this->speed = 4.3;
     this->raw_size = 10.;
     this->shape_ratio = 10;
+    this->visibility = -1; //Can see to infinity by default
+
     this->env_id = -1;
     json_dir = NULL;
     this->evolve = false;
@@ -190,6 +192,7 @@ void Simulation::setSwarmValues(SwarmValues *values) {
 void Simulation::getKNN(const Point2d p, Agent *knn[], const int number, const unsigned int ignore_index) {
     std::vector<double> knn_distance;
     for(int i=0; i<number;i++) knn_distance.push_back(-1);
+    for(int i=0; i<number;i++) knn[i] = NULL;
 
     double largest_distance = -1.0;
     int largest_index = -1;
@@ -200,27 +203,39 @@ void Simulation::getKNN(const Point2d p, Agent *knn[], const int number, const u
 
         if(filled < number) {
             //Automatically accept it as the array isn't even full yet
-            knn[filled] = &(this->agents[i]);
-            knn_distance[filled] = knn[filled]->distanceFrom(&p);
-            if(largest_distance <0 || knn_distance[filled] > largest_distance) {
-                largest_distance = knn_distance[filled];
-                largest_index = filled;
+
+            double d = this->agents[i].distanceFrom(&p);
+
+            if(visibility>=0 && d>visibility) {continue;}
+            else {
+                
+                knn[filled] = &(this->agents[i]);
+
+                knn_distance[filled] = d;
+                if(largest_distance <0 || knn_distance[filled] > largest_distance) {
+                    largest_distance = knn_distance[filled];
+                    largest_index = filled;
+                }
+                filled++;
             }
-            filled++;
         } else {
 
             double distance = agents[i].distanceFrom(&p);
-            // If this should be put into our knn array
-            if(distance < largest_distance) {
-                //Find which one we should replace
-                knn[largest_index] = &(agents[i]);
-                knn_distance[largest_index] = distance;
-                largest_distance = -1;
-                largest_index = -1;
-                for(int k=0; k<number; k++) {
-                    if(knn_distance[k] > largest_distance) {
-                        largest_distance = knn_distance[k];
-                        largest_index = k;
+
+            if(visibility>=0 && distance>visibility) {continue;}
+            else {
+                // If this should be put into our knn array
+                if(distance < largest_distance) {
+                    //Find which one we should replace
+                    knn[largest_index] = &(agents[i]);
+                    knn_distance[largest_index] = distance;
+                    largest_distance = -1;
+                    largest_index = -1;
+                    for(int k=0; k<number; k++) {
+                        if(knn_distance[k] > largest_distance) {
+                            largest_distance = knn_distance[k];
+                            largest_index = k;
+                        }
                     }
                 }
             }
@@ -266,7 +281,7 @@ Vector2d Simulation::getProjectionVector(const unsigned int i, std::vector<char>
         Vector2d from;
         agents[i].vectorFrom(&l, &from);
 
-        if(from.getMagnitude() > 1000) continue;
+        if(visibility>=0 && from.getMagnitude() > visibility) continue;
 
         double theta;// = acos(cos_theta);
         //
@@ -376,6 +391,8 @@ void Simulation::runSimulation(const long maxRunTime) {
                 v_neig.setVector(0.0,0.0);
                 double mag = 0.0;
                 for(int j=0; j<4; j++) {
+                    if(knn[j] == NULL) continue;
+
                     Vector2d v2 = (knn[j]->getVelocity());
                     v_neig.setX(v_neig.getX()+v2.getX());
                     v_neig.setY(v_neig.getY()+v2.getY());

@@ -34,6 +34,8 @@ class Simulation {
         bool hill_climb;
 
         int round_length;
+
+        double visibility; //How far can agents see?
     public:
         double raw_size;
         double shape_ratio;
