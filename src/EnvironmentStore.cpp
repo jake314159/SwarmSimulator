@@ -372,7 +372,7 @@ void environment_votex_onFrame(void *simulation) {
 ///////// CONFUSION ENVIRONMENT //////////
 //////////////////////////////////////////
 
-#define BIN_COUNT 6000
+#define BIN_COUNT 600
 
 
 //From the POV of i what size is j
