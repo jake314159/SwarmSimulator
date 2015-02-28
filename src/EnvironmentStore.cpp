@@ -372,7 +372,7 @@ void environment_votex_onFrame(void *simulation) {
 ///////// CONFUSION ENVIRONMENT //////////
 //////////////////////////////////////////
 
-#define BIN_COUNT 600
+#define BIN_COUNT 6000
 
 
 //From the POV of i what size is j
@@ -498,7 +498,7 @@ void environment_confusion_onFrame(void *simulation) {
         CONF_getProjectionVector(&a, agents, flockSize, bin);
 
         //HACK (aka. bug)
-        if( bin[BIN_COUNT/2]==0) bin[BIN_COUNT/2] = 1;
+        //if( bin[BIN_COUNT/2]==0) bin[BIN_COUNT/2] = 1;
 
         int j=BIN_COUNT/2;
         while(j>=0 && bin[j]!=0) j--;
@@ -523,6 +523,7 @@ void environment_spread_setMinimise(bool mini) {
     ENVIRONMENT_SPREAD_MIN = mini;
 }
 
+#define ENV_SPREAD_SWARM_SIZE 30
 void environment_spread_onFrame(void *simulation) {
     Simulation *s = (Simulation*)simulation;
     Agent* agents = s->getAgents();
@@ -530,7 +531,30 @@ void environment_spread_onFrame(void *simulation) {
     Point2d center;
     s->getCenterOfMass(&center);
 
+    Agent *knn[ENV_SPREAD_SWARM_SIZE];
+
     for(unsigned int i=0; i<flockSize; i++) {
+        Point2d p;
+        p.x = agents[i].getLocationX();
+        p.y = agents[i].getLocationY();
+
+        //Find the center of mass for the nearest 30 individuals
+        s->getKNN(p, knn, ENV_SPREAD_SWARM_SIZE, -1);
+        center.x = 0;
+        center.y = 0;
+        int count = 0;
+        for(int j=0; j<ENV_SPREAD_SWARM_SIZE; j++) {
+            if(knn[j] != NULL) {
+                center.x += knn[j]->getLocationX();
+                center.y += knn[j]->getLocationY();
+                count++;
+            }
+        }
+        if(count >=0) {
+            center.x /= ENV_SPREAD_SWARM_SIZE;
+            center.y /= ENV_SPREAD_SWARM_SIZE;
+        }
+
         double xd = center.x - agents[i].getLocationX();
         double yd = center.y - agents[i].getLocationY();
         double distance_sq = xd*xd + yd*yd;
