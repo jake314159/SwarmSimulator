@@ -17,7 +17,7 @@ class Simulation {
         long long score;
         long runTime; //In steps
         long maxRunTime;
-        void getKNN(const Point2d p, Agent *knn[], const int number, const unsigned int ignore_index);
+        
         Vector2d getProjectionVector(const unsigned int i, std::vector<char> &bin);
         double getApearSize(const unsigned int i, const unsigned int j);
 
@@ -52,6 +52,8 @@ class Simulation {
 
         void reset();
         void getCenterOfMass(Point2d *p);
+
+        void getKNN(const Point2d p, Agent *knn[], const int number, const unsigned int ignore_index);
 
         Agent* getAgents();
         void addDisplay();
