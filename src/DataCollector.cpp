@@ -67,10 +67,12 @@ int main(int argc, char *argv[]) {
     v->align_weight = 0;
     v->noise_weight = 1-v->proj_weight-v->align_weight;
 
-    environment_food_init(200);
+    environment_center_disp_setMinimise(false);
     Environment *env = new Environment();
-    env->onDraw = &environment_food_onDraw;
-    env->onFrame = &environment_food_onFrame;
+    env->onDraw = 0;
+    env->onFrame = 0;
+    env->onFrame = &environment_center_disp_onFrame;
+
 
 /*
     //environment_food_init(200);
@@ -82,14 +84,17 @@ int main(int argc, char *argv[]) {
     s->reset();
     s->setEnvironment(env); //uncomment this to add an environment
 
+    s->setHillClimb(false);
+    s->setEvolve(false);
+
     //s->runSimulation(10000);
 
     double i, j;
     int k, grid_i;
-    double step = 0.1;
+    double step = 0.05;
     #define SAMPLE_NUMBER 10
-    #define GRID_NUMBER 6
-    #define RUN_TIME 1000
+    #define GRID_NUMBER 1
+    #define RUN_TIME 3000
 
     float progress = 0.0;
     float progress_step_size = 1.0/(float)( ((1/step)*(1/step))/2 * GRID_NUMBER);
@@ -116,8 +121,7 @@ int main(int argc, char *argv[]) {
                         v->align_weight = j;
                         v->noise_weight = 1 - v->proj_weight - v->align_weight;
                         s->setSwarmValues(v);
-                        //environment_displacement_init(200);
-                        environment_food_init(200);
+  
                         s->setScore(0);
                         s->runSimulation(RUN_TIME);
                         environment_food_destroy();

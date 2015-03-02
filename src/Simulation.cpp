@@ -110,8 +110,6 @@ void Simulation::load_json(string filename) {
     rapidjson::Document document;
     document.ParseStream<0>(is);
 
-    cout << "DONE! Round " << document["round"].GetInt() << endl;
-
     env_id = document["Environment"].GetInt();
     //flockSize = document["flock_size"].GetInt();
     //runTime = document["frames"].GetInt()+1;
@@ -125,7 +123,6 @@ void Simulation::load_json(string filename) {
         agents[i].values.noise_weight = 1.0 - (agents[i].values.proj_weight+agents[i].values.align_weight);
         agents[i].score = document["population"][i]["score"].GetDouble();
         agents[i].source_info = 22;
-        cout << "Loading agent "<< i <<"(" << agents[i].values.proj_weight << "," <<agents[i].values.align_weight << endl;
     }
 }
 
@@ -353,14 +350,11 @@ void Simulation::runSimulation(const long maxRunTime) {
 
     mutate_rate_delta = exp(log(mutate_rate_min/mutate_rate_max)/(maxRunTime/round_length));
     //mutate_rate_delta = 1 + (log(mutate_rate_min/mutate_rate_max)/(maxRunTime/round_length));
-    cout << "Mutate rate delta: " << mutate_rate_delta << endl;
     mutate_rate = mutate_rate_max;
 
     for(int a=0; a<3000; a++) {
-        if(a%500==0) cout << a << "::" << mutate_rate << endl;
         mutate_rate *= mutate_rate_delta;
     }
-    cout << "end" << "::" << mutate_rate << endl;
 
     mutate_rate = mutate_rate_max;
 
@@ -587,6 +581,10 @@ void Simulation::incScore(int v) {
 }
 
 long long Simulation::getScore() {
+    long long score = 0;
+    for(unsigned int i=(flockSize-1); i>0; i--) {
+        score += agents[i].score;
+    }
     return score;
 }
 
