@@ -338,7 +338,7 @@ Vector2d Simulation::getProjectionVector(const unsigned int i, std::vector<char>
 }
 
 void Simulation::combine_vectors(Vector2d &current, Vector2d &prefered) {
-    current *= 4;
+    current *= 3.4;
     current.setX(current.getX() + prefered.getX());
     current.setY(current.getY() + prefered.getY());
 }
@@ -436,10 +436,10 @@ void Simulation::runSimulation(const long maxRunTime) {
                 agents[i].updateLocation();
             }
 
+            if(this->env->roundEnd != NULL && (this->getRunTime()%round_length)==0) this->env->roundEnd(this);
+
             //TODO Move this into own function? (It's so awful)
             if(evolve && (this->getRunTime()%round_length)==0) {
-
-                if(this->env->roundEnd != NULL) this->env->roundEnd(this);
 
                 if(hill_climb) {
                      // Revert any bad mutations from the last round
@@ -490,9 +490,9 @@ void Simulation::runSimulation(const long maxRunTime) {
 
                 //Reduce the mutation rate slowly 
                 mutate_rate *= mutate_rate_delta;
-                if(this->env->roundStart != NULL) this->env->roundStart(this);
-
             }
+
+        if(this->env->roundStart != NULL && (this->getRunTime()%round_length)==0) this->env->roundStart(this);
 
         } else {
             // If a skip frame then don't change the velocity just move each

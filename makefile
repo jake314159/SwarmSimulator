@@ -30,6 +30,9 @@ SCREENSHOT_DIR = PNG_savesurf/
 main: src/main.cpp $(OBJ_F)
 	$(CC) $^ -o $(OUTPUT) $(LIBS_EXTRA) $(LIBS) $(CCFLAGS)
 
+Describe: src/Describe.cpp $(OBJ_F)
+	$(CC) $^ -o bin/Describe $(LIBS_EXTRA) $(LIBS) $(CCFLAGS)
+
 DataCollector: src/DataCollector.cpp $(OBJ_F)
 	$(CC) $^ -o bin/DataCollector $(LIBS_EXTRA) $(LIBS) $(CCFLAGS)
 

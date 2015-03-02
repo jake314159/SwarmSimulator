@@ -707,10 +707,21 @@ void measure_describe_round_start(void *simulation) {
     s->getCenterOfMass(&MEASURE_DECR_CENTER_LAST);
 }
 
+void measure_describe_get_vals(double *spread, double *speed) {
+    *spread = MEASURE_DECR_SUM_SPREAD/((double)MEASURE_DECR_COUNT);
+    *speed = MEASURE_DECR_SUM_SPEED/((double)MEASURE_DECR_COUNT);
+}
+
 void measure_describe_round_end(void *simulation) {
     Simulation *s = (Simulation*)simulation;
     Agent* agents = s->getAgents();
     long frame = s->getRunTime();
+
+    if(frame > 3000) {
+        double spread, speed;
+        measure_describe_get_vals(&spread, &speed);
+        cout << "$$$$$$$$$$ (" <<spread<<","<<speed<<")"<<endl;
+    }
 
     if(frame < 1000 || frame > 3000) return;
 
@@ -739,11 +750,6 @@ void measure_describe_round_end(void *simulation) {
     MEASURE_DECR_SUM_SPEED += position_change;
 
     MEASURE_DECR_COUNT++;
-}
-
-void measure_describe_get_vals(double *spread, double *speed) {
-    *spread = MEASURE_DECR_SUM_SPREAD/((double)MEASURE_DECR_COUNT);
-    *speed = MEASURE_DECR_SUM_SPEED/((double)MEASURE_DECR_COUNT);
 }
 
 void measure_describe_destroy() {
