@@ -728,16 +728,53 @@ void measure_describe_round_end(void *simulation) {
     Point2d new_center;
     s->getCenterOfMass(&new_center);
 
+    int flockSize = s->flockSize;
+    double spread_temp = 0.0;
 
     //Spread
-    double spread_temp = 0.0;
-    int flockSize = s->flockSize;
+    /*
+    
     for(unsigned int i=0; i<flockSize; i++) {
         double x = (agents[i].getLocationX() - new_center.x);
         double y = (agents[i].getLocationY() - new_center.y);
 
         spread_temp += sqrt( x*x + y*y );
     }
+    spread_temp /= (double)flockSize;
+    MEASURE_DECR_SUM_SPREAD += spread_temp;*/
+
+    //Spread with bug fixed for birds
+    Agent *knn[ENV_SPREAD_SWARM_SIZE];
+    Point2d center;
+
+    for(unsigned int i=0; i<flockSize; i++) {
+        Point2d p;
+        p.x = agents[i].getLocationX();
+        p.y = agents[i].getLocationY();
+
+        //Find the center of mass for the nearest 30 individuals
+        s->getKNN(p, knn, ENV_SPREAD_SWARM_SIZE, -1);
+        center.x = 0;
+        center.y = 0;
+        int count = 0;
+        for(int j=0; j<ENV_SPREAD_SWARM_SIZE; j++) {
+            if(knn[j] != NULL) {
+                center.x += knn[j]->getLocationX();
+                center.y += knn[j]->getLocationY();
+                count++;
+            }
+        }
+        if(count >=0) {
+            center.x /= ENV_SPREAD_SWARM_SIZE;
+            center.y /= ENV_SPREAD_SWARM_SIZE;
+        }
+
+        double xd = center.x - agents[i].getLocationX();
+        double yd = center.y - agents[i].getLocationY();
+        double distance_sq = xd*xd + yd*yd;
+        spread_temp += sqrt(distance_sq);
+    }
+
     spread_temp /= (double)flockSize;
     MEASURE_DECR_SUM_SPREAD += spread_temp;
 
