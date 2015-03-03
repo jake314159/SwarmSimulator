@@ -732,18 +732,6 @@ void measure_describe_round_end(void *simulation) {
     double spread_temp = 0.0;
 
     //Spread
-    /*
-    
-    for(unsigned int i=0; i<flockSize; i++) {
-        double x = (agents[i].getLocationX() - new_center.x);
-        double y = (agents[i].getLocationY() - new_center.y);
-
-        spread_temp += sqrt( x*x + y*y );
-    }
-    spread_temp /= (double)flockSize;
-    MEASURE_DECR_SUM_SPREAD += spread_temp;*/
-
-    //Spread with bug fixed for birds
     Agent *knn[ENV_SPREAD_SWARM_SIZE];
     Point2d center;
 
