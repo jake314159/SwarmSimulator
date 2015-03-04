@@ -36,6 +36,9 @@ Describe: src/Describe.cpp $(OBJ_F)
 DataCollector: src/DataCollector.cpp $(OBJ_F)
 	$(CC) $^ -o bin/DataCollector $(LIBS_EXTRA) $(LIBS) $(CCFLAGS)
 
+VisSampler: src/visSampler.cpp $(OBJ_F)
+	$(CC) $^ -o bin/VisSampler $(LIBS_EXTRA) $(LIBS) $(CCFLAGS)
+
 GA: src/ga.cpp $(OBJ_F)
 	$(CC) $^ -o bin/GA $(LIBS_EXTRA) $(LIBS) $(CCFLAGS)
 

@@ -576,6 +576,19 @@ void Simulation::getCenterOfMass(Point2d *p) {
     p->y /= (double)flockSize;
 }
 
+void Simulation::getAverageParamiter(double *proj, double *align) {
+    double p = 0;
+    double a = 0;
+
+    for(unsigned int i=(flockSize-1); i>0; i--) {
+        p += agents[i].values.proj_weight;
+        a += agents[i].values.align_weight;
+    }
+
+    *proj = (p/flockSize);
+    *align = (a/flockSize); 
+}
+
 void Simulation::incScore(int v) {
     score += v;
 }

@@ -75,6 +75,8 @@ class Simulation {
         int getRoundLength();
 
         void setVisibility(double vis);
+
+        void getAverageParamiter(double *proj, double *align);
 };
 
 
