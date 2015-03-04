@@ -741,7 +741,7 @@ void measure_describe_round_end(void *simulation) {
         p.y = agents[i].getLocationY();
 
         //Find the center of mass for the nearest 30 individuals
-        s->getKNN(p, knn, ENV_SPREAD_SWARM_SIZE, -1);
+        s->getKNN(p, knn, ENV_SPREAD_SWARM_SIZE, i);
         center.x = 0;
         center.y = 0;
         int count = 0;
@@ -753,8 +753,8 @@ void measure_describe_round_end(void *simulation) {
             }
         }
         if(count >=0) {
-            center.x /= ENV_SPREAD_SWARM_SIZE;
-            center.y /= ENV_SPREAD_SWARM_SIZE;
+            center.x /= count;
+            center.y /= count;
         }
 
         double xd = center.x - agents[i].getLocationX();

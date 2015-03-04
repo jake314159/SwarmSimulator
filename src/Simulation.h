@@ -73,6 +73,8 @@ class Simulation {
         void save_round(int round_number, Agent *pop, int flockSize);
         void load_json(string filename);
         int getRoundLength();
+
+        void setVisibility(double vis);
 };
 
 

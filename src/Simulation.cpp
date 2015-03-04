@@ -608,3 +608,7 @@ int Simulation::getRoundLength(){
     return this->round_length;
 }
 
+void Simulation::setVisibility(double vis) {
+    this->visibility = vis;
+}
+

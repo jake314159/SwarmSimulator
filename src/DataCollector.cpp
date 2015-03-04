@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
 
     double i, j;
     int k, grid_i;
-    double step = 0.05;
+    double step = 0.049;
     #define SAMPLE_NUMBER 10
     #define GRID_NUMBER 1
     #define RUN_TIME 3000
