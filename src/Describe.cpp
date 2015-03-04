@@ -13,6 +13,8 @@
 
 int main(int argc, char *argv[]) {
 
+	srand(time(NULL));
+
 	//You should know what you are doing if you use this program
 	//Note there are no checks on the paramiters
 
