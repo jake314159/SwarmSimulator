@@ -178,6 +178,7 @@ int main(int argc, char *argv[]) {
                 env->onFrame = &environment_center_disp_onFrame;
             } else if(!compare(argv[i], "M_DESC")) {
                 env->id = 101;
+                env->onFrame = &measure_describe_onFrame;
                 env->roundStart = &measure_describe_round_start;
                 env->roundEnd = &measure_describe_round_end;
                 env->init = &measure_describe_init;

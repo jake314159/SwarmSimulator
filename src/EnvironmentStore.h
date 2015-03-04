@@ -42,6 +42,7 @@ void environment_polarity_onFrame(void *simulation);
 void measure_describe_init();
 void measure_describe_round_start(void *simulation);
 void measure_describe_round_end(void *simulation);
+void measure_describe_onFrame(void *simulation);
 void measure_describe_destroy();
 void measure_describe_get_vals(double *spread, double *speed);
 

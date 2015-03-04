@@ -693,6 +693,7 @@ void environment_center_disp_onFrame(void *simulation) {
 double MEASURE_DECR_SUM_SPREAD = 0.0;
 double MEASURE_DECR_SUM_SPEED = 0.0;
 int MEASURE_DECR_COUNT = 0;
+int MEASURE_DECR_COUNT_SPREAD = 0;
 
 Point2d MEASURE_DECR_CENTER_LAST; //x and y
 
@@ -708,25 +709,16 @@ void measure_describe_round_start(void *simulation) {
 }
 
 void measure_describe_get_vals(double *spread, double *speed) {
-    *spread = MEASURE_DECR_SUM_SPREAD/((double)MEASURE_DECR_COUNT);
+    *spread = MEASURE_DECR_SUM_SPREAD/((double)MEASURE_DECR_COUNT_SPREAD);
     *speed = MEASURE_DECR_SUM_SPEED/((double)MEASURE_DECR_COUNT);
 }
 
-void measure_describe_round_end(void *simulation) {
+void measure_describe_onFrame(void *simulation) {
     Simulation *s = (Simulation*)simulation;
     Agent* agents = s->getAgents();
     long frame = s->getRunTime();
 
-    if(frame > 3000) {
-        double spread, speed;
-        measure_describe_get_vals(&spread, &speed);
-        cout << "$$$$$$$$$$ (" <<spread<<","<<speed<<")"<<endl;
-    }
-
     if(frame < 1000 || frame > 3000) return;
-
-    Point2d new_center;
-    s->getCenterOfMass(&new_center);
 
     int flockSize = s->flockSize;
     double spread_temp = 0.0;
@@ -765,6 +757,25 @@ void measure_describe_round_end(void *simulation) {
 
     spread_temp /= (double)flockSize;
     MEASURE_DECR_SUM_SPREAD += spread_temp;
+    MEASURE_DECR_COUNT_SPREAD++;
+}
+
+void measure_describe_round_end(void *simulation) {
+    Simulation *s = (Simulation*)simulation;
+    long frame = s->getRunTime();
+
+    if(frame > 3000) {
+        double spread, speed;
+        measure_describe_get_vals(&spread, &speed);
+        cout << "$$$$$$$$$$ (" <<spread<<","<<speed<<")"<<endl;
+    }
+
+    if(frame < 1000 || frame > 3000) return;
+
+    Point2d new_center;
+    s->getCenterOfMass(&new_center);
+
+    int flockSize = s->flockSize;
 
     //Speed
 
