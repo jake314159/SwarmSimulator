@@ -23,6 +23,7 @@ int main(int argc, char *argv[]) {
 
     Environment *env = new Environment();
     env->id = 101;
+    env->onFrame = &measure_describe_onFrame;
     env->roundStart = &measure_describe_round_start;
     env->roundEnd = &measure_describe_round_end;
     env->init = &measure_describe_init;
