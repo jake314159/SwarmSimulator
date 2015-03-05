@@ -697,6 +697,7 @@ void measure_describe_init() {
     MEASURE_DECR_SUM_SPREAD = 0.0;
     MEASURE_DECR_SUM_SPEED = 0.0;
     MEASURE_DECR_COUNT = 0;
+    MEASURE_DECR_COUNT_SPREAD = 0;
 }
 
 void measure_describe_round_start(void *simulation) {
