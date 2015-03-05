@@ -200,9 +200,8 @@ void environment_cope_onFrame(void *simulation) {
         for(unsigned int j=0; j<flockSize; j++) {
             if(
                 convert_to_grid_index_cope(agents[j].getLocationX()) == x && 
-                convert_to_grid_index_cope(agents[j].getLocationX()) == y
+                convert_to_grid_index_cope(agents[j].getLocationY()) == y
                 ) {
-                cout << i << " shares with " << j << endl;
                 //If also in same grid location then j also gets a meal
                 agents[j].score += 1;
                 shared = true;
