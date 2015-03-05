@@ -1,6 +1,7 @@
 using namespace std;
 #include <stdlib.h>
 #include <iostream>
+#include <set>
 #include <math.h>
 #include "Display.h"
 #include "Simulation.h"
@@ -168,14 +169,12 @@ void environment_food_onFrame(void *simulation) {
 
 #define GRID_RESOLUTION_COPE 50.0
 #define GRID_SIZE_COPE 1000
-int cope_grid[GRID_SIZE_COPE][GRID_SIZE_COPE] = {{0}};
+typedef pair<int, int> Coord;
+typedef set<Coord> SetCoord;
+SetCoord cope_set;
 
 void environment_cope_round_start(void *simulation) {
-    for(int x=0; x<GRID_SIZE_COPE; x++) {
-        for(int y=0; y<GRID_SIZE_COPE; y++) {
-            cope_grid[x][y] = 0;
-        }
-    }
+    
 }
 
 int convert_to_grid_index_cope(double d) {
@@ -191,31 +190,29 @@ void environment_cope_onFrame(void *simulation) {
         int x = convert_to_grid_index_cope(agents[i].getLocationX());
         int y = convert_to_grid_index_cope(agents[i].getLocationY());
 
-        //Check they are on the grid first
-        if(x<0 || x>GRID_SIZE_COPE || y<0 || y>GRID_SIZE_COPE) continue;
+        Coord coord;
+        coord.first = x;
+        coord.second = y;
 
-        if(cope_grid[x][y] < 0) continue; //no food here
+        if(cope_set.find(coord) != cope_set.end()) continue; //no food here
 
-        cope_grid[x][y] += 1;
-    }
-
-    for(unsigned int i=0; i<flockSize; i++) {
-        int x = convert_to_grid_index_cope(agents[i].getLocationX());
-        int y = convert_to_grid_index_cope(agents[i].getLocationY());
-
-        //Check they are on the grid first
-        if(x<0 || x>GRID_SIZE_COPE || y<0 || y>GRID_SIZE_COPE) continue;
-
-        if( cope_grid[x][y] >=2  ) {
-            agents[i].score += 1;
-        }
-    }
-
-    for(int x=0; x<GRID_SIZE_COPE; x++) {
-        for(int y=0; y<GRID_SIZE_COPE; y++) {
-            if(cope_grid[x][y] >=2) {
-                cope_grid[x][y] = -1;
+        bool shared = false;
+        for(unsigned int j=0; j<flockSize; j++) {
+            if(
+                convert_to_grid_index_cope(agents[j].getLocationX()) == x && 
+                convert_to_grid_index_cope(agents[j].getLocationX()) == y
+                ) {
+                cout << i << " shares with " << j << endl;
+                //If also in same grid location then j also gets a meal
+                agents[j].score += 1;
+                shared = true;
             }
+        }
+
+        if(shared) {
+            //We successfuly caught something YAY!
+            agents[i].score += 1;
+            cope_set.insert(coord);
         }
     }
 }
