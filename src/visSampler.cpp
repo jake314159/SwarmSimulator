@@ -61,10 +61,10 @@ int main(int argc, char *argv[]) {
     	s->getAverageParamiter(&proj, &align);
 
     	json << "    {" << endl;
-    	json << "        'visibility':" << i << endl;
-    	json << "        'proj_w':" << proj << endl;
-    	json << "        'align_w':" << align << endl;
-    	json << "        'count':" << ++count << endl;
+    	json << "        \"visibility\":" << i << "," << endl;
+    	json << "        \"proj_w\":" << proj << "," << endl;
+    	json << "        \"align_w\":" << align << "," << endl;
+    	json << "        \"count\":" << ++count << endl;
     	json << "    }," << endl;
     }
 
@@ -75,10 +75,10 @@ int main(int argc, char *argv[]) {
     	s->getAverageParamiter(&proj, &align);
 
     	json << "    {" << endl;
-    	json << "        'visibility':" << i << endl;
-    	json << "        'proj_w':" << proj << endl;
-    	json << "        'align_w':" << align << endl;
-    	json << "        'count':" << ++count << endl;
+    	json << "        \"visibility\":" << i << "," << endl;
+    	json << "        \"proj_w\":" << proj << "," << endl;
+    	json << "        \"align_w\":" << align << "," << endl;
+    	json << "        \"count\":" << ++count << endl;
     	json << "    }," << endl;
     }
 
@@ -89,10 +89,10 @@ int main(int argc, char *argv[]) {
     	s->getAverageParamiter(&proj, &align);
 
     	json << "    {" << endl;
-    	json << "        'visibility':" << i << endl;
-    	json << "        'proj_w':" << proj << endl;
-    	json << "        'align_w':" << align << endl;
-    	json << "        'count':" << ++count << endl;
+    	json << "        \"visibility\":" << i << "," << endl;
+    	json << "        \"proj_w\":" << proj << "," << endl;
+    	json << "        \"align_w\":" << align << "," << endl;
+    	json << "        \"count\":" << ++count << endl;
     	json << "    }," << endl;
     }
 
