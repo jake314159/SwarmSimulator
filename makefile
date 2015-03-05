@@ -39,6 +39,9 @@ DataCollector: src/DataCollector.cpp $(OBJ_F)
 VisSampler: src/visSampler.cpp $(OBJ_F)
 	$(CC) $^ -o bin/VisSampler $(LIBS_EXTRA) $(LIBS) $(CCFLAGS)
 
+VisSpreadCalc: src/visSpreadCalc.cpp $(OBJ_F)
+	$(CC) $^ -o bin/VisSpreadCalc $(LIBS_EXTRA) $(LIBS) $(CCFLAGS)
+
 GA: src/ga.cpp $(OBJ_F)
 	$(CC) $^ -o bin/GA $(LIBS_EXTRA) $(LIBS) $(CCFLAGS)
 
