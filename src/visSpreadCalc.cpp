@@ -93,6 +93,7 @@ int main(int argc, char *argv[]) {
 
     	json << "        \"spread\":[" << endl;
     	for(int j=0; j<SAMPLE_N; j++) {
+    		env->init();
 	    	s->reset();
 	    	s->runSimulation(RUN_TIME);
 	    	measure_describe_get_vals(&t_spread, &t_speed);
