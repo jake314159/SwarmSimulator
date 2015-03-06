@@ -94,14 +94,14 @@ for i in range(len(all_results)):
 
     sum_data /= len(all_results[i])
 
-    
-    linePoints.append(sum_data)
+    if i>1: #sum_data > 0:    
+        linePoints.append(sum_data)
 
 #Plot boundry line
 plt.plot(linePoints, color="#000000")
 
 #plt.ylim([0, 1])
-#plt.xlim([0, 80])
+#plt.xlim([0, 200])
 plt.ylabel('Total score')
 plt.xlabel('Round')
 plt.title('How the total score of the flock changes for each round of the hill climber\n')

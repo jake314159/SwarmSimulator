@@ -98,7 +98,7 @@ for i in range(len(all_results)):
     plt.xlim([0, 1])
     plt.ylabel('Alignment weight')
     plt.xlabel('Projection weight')
-    plt.title('Location in the search space of each individual in a population\nfor a random mutation hill climber on the food environment')
+    plt.title('Location in the search space of each individual in a population\n')
     plt.show()
     #plt.savefig('images/%06d.png'%(i), bbox_inches='tight')
     plt.cla()

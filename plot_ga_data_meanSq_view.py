@@ -105,7 +105,7 @@ for i in range(len(all_results)):
 plt.plot(linePoints, color="#000000")
 
 #plt.ylim([0, 1])
-#plt.xlim([0, 150])
+plt.xlim([0, 2000])
 plt.ylabel('Spread')
 plt.xlabel('Round')
 plt.title('How the spread of the individuals changes for each round of the hill climber\n')
