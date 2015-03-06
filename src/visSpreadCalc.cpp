@@ -30,7 +30,7 @@ using namespace std;
  */
 
  #define RUN_TIME 3500
- #define SAMPLE_N 100
+ #define SAMPLE_N 50
 
 int main(int argc, char *argv[]) {
 	//Parse the input json file

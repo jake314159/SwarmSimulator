@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
     int count = 0;
     double proj, align;
 
-    for(int i=0; i<=50; i+=10) {
+    for(int i=0; i<=50; i+=12) {
     	s->reset();
     	s->setVisibility((double)i);
     	s->runSimulation(run_time);
@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
     	json << "    }," << endl;
     }
 
-    for(int i=54; i<=70; i+=4) {
+    for(int i=55; i<=70; i+=5) {
     	s->reset();
     	s->setVisibility((double)i);
     	s->runSimulation(run_time);
@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
     	json << "    }," << endl;
     }
 
-    for(int i=100; i<=250; i+=50) {
+    for(int i=100; i<=200; i+=50) {
     	s->reset();
     	s->setVisibility((double)i);
     	s->runSimulation(run_time);
