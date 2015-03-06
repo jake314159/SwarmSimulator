@@ -93,7 +93,9 @@ int main(int argc, char *argv[]) {
     	json << "        \"proj_w\":" << proj << "," << endl;
     	json << "        \"align_w\":" << align << "," << endl;
     	json << "        \"count\":" << ++count << endl;
-    	json << "    }," << endl;
+    	json << "    }";
+        if(i < 200) json << ",";
+        json << endl;
     }
 
     json << "]" << endl;
