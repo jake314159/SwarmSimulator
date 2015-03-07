@@ -180,7 +180,7 @@ void Simulation::setEnvironment(Environment *env) {
 
 void Simulation::setSwarmValues(SwarmValues *values) {
     this->values = *values;
-    for(unsigned int i=(flockSize-1); i>0; i--) {
+    for(unsigned int i=0; i<flockSize; i++) {
         agents[i].values = *values;
     }
 }
@@ -195,7 +195,7 @@ void Simulation::getKNN(const Point2d p, Agent *knn[], const int number, const u
     int largest_index = -1;
     int filled = 0;
     
-    for(unsigned int i=(flockSize-1); i>0; i--) {
+    for(unsigned int i=0; i<flockSize; i++) {
         if(i == ignore_index) continue;
 
         if(filled < number) {
@@ -270,7 +270,7 @@ Vector2d Simulation::getProjectionVector(const unsigned int i, std::vector<char>
     double binSize = (M_PI*2)/BIN_COUNT;
 
     Point2d l;
-    for(unsigned int j=(flockSize-1); j>0; j--) {
+    for(unsigned int j=0; j<flockSize; j++) {
         if( j == i) continue; //Skip self
         l.x = agents[j].getLocationX();
         l.y = agents[j].getLocationY();
@@ -372,7 +372,7 @@ void Simulation::runSimulation(const long maxRunTime) {
     while(this->maxRunTime >=0 && this->runTime < this->maxRunTime) {
 
         if( runTime%update_rate == 0) {
-            for(unsigned int i=(flockSize-1); i>0; i--) {
+            for(unsigned int i=0; i<flockSize; i++) {
                 //Update agents[i]
 
                 Point2d p;
@@ -524,7 +524,7 @@ void Simulation::reset() {
 
     double spread = 40;//100.0;
     Vector2d *v = new Vector2d();
-    for(unsigned int i=(flockSize-1); i>0; i--) {
+    for(unsigned int i=0; i<flockSize; i++) {
         spread = ((double)rand()/(double)RAND_MAX)*50 + 50;
         double x = ((double)rand()/(double)RAND_MAX)*spread-(spread/2);
         //double y = ((double)rand()/(double)RAND_MAX)*spread;
@@ -567,7 +567,7 @@ void Simulation::getCenterOfMass(Point2d *p) {
     p->x = 0;
     p->y = 0;
 
-    for(unsigned int i=(flockSize-1); i>0; i--) {
+    for(unsigned int i=0; i<flockSize; i++) {
         p->x += agents[i].getLocationX();
         p->y += agents[i].getLocationY();
     }
@@ -580,7 +580,7 @@ void Simulation::getAverageParamiter(double *proj, double *align) {
     double p = 0;
     double a = 0;
 
-    for(unsigned int i=(flockSize-1); i>0; i--) {
+    for(unsigned int i=0; i<flockSize; i++) {
         p += agents[i].values.proj_weight;
         a += agents[i].values.align_weight;
     }
@@ -595,7 +595,7 @@ void Simulation::incScore(int v) {
 
 long long Simulation::getScore() {
     long long score = 0;
-    for(unsigned int i=(flockSize-1); i>0; i--) {
+    for(unsigned int i=0; i<flockSize; i++) {
         score += agents[i].score;
     }
     return score;
