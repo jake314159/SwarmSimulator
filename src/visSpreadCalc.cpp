@@ -107,5 +107,6 @@ int main(int argc, char *argv[]) {
     }
 
     json << "{}" << endl;//Hacky fix to extra end comma
+    json << "]" << endl;
 
 }
