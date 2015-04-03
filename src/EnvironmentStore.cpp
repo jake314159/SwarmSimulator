@@ -693,6 +693,9 @@ int MEASURE_DECR_COUNT_SPREAD = 0;
 
 Point2d MEASURE_DECR_CENTER_LAST; //x and y
 
+Point2d *start_points = NULL;
+int start_points_length = 0;
+
 void measure_describe_init() {
     MEASURE_DECR_SUM_SPREAD = 0.0;
     MEASURE_DECR_SUM_SPEED = 0.0;
@@ -703,6 +706,25 @@ void measure_describe_init() {
 void measure_describe_round_start(void *simulation) {
     Simulation *s = (Simulation*)simulation;
     s->getCenterOfMass(&MEASURE_DECR_CENTER_LAST);
+    int flockSize = s->flockSize;
+    Agent* agents = s->getAgents();
+
+    if(start_points != 0 && start_points_length != flockSize) {
+        free(start_points);
+        start_points = NULL;
+        start_points_length = 0;
+    }
+
+    if(start_points == NULL) {
+        // I'm a C programmer at heart
+        start_points = (Point2d*)malloc(sizeof(Point2d) * flockSize);
+        start_points_length = flockSize;
+    }
+
+    for(unsigned int i=0; i<flockSize; i++) {
+        start_points[i].x = agents[i].getLocationX();
+        start_points[i].y = agents[i].getLocationY();
+    }
 }
 
 void measure_describe_get_vals(double *spread, double *speed) {
@@ -760,6 +782,7 @@ void measure_describe_onFrame(void *simulation) {
 void measure_describe_round_end(void *simulation) {
     Simulation *s = (Simulation*)simulation;
     long frame = s->getRunTime();
+    Agent* agents = s->getAgents();
 
     if(frame > 3000) {
         double spread, speed;
@@ -775,12 +798,19 @@ void measure_describe_round_end(void *simulation) {
     int flockSize = s->flockSize;
 
     //Speed
-
-    double a = new_center.x - MEASURE_DECR_CENTER_LAST.x;
+    double speed_acc = 0;
+    /*double a = new_center.x - MEASURE_DECR_CENTER_LAST.x;
     double b = new_center.y - MEASURE_DECR_CENTER_LAST.y;
-    double position_change = sqrt( a*a + b*b )/((double)flockSize);
+    double position_change = sqrt( a*a + b*b )/((double)flockSize);*/
 
-    MEASURE_DECR_SUM_SPEED += position_change;
+    for(unsigned int i=0; i<flockSize; i++) {
+        double a = (start_points[i].x - agents[i].getLocationX());
+        double b = (start_points[i].y - agents[i].getLocationY());
+        speed_acc += sqrt(a*a + b*b);
+    }
+    speed_acc /= flockSize;
+
+    MEASURE_DECR_SUM_SPEED += speed_acc;//position_change;
 
     MEASURE_DECR_COUNT++;
 }
@@ -790,4 +820,10 @@ void measure_describe_destroy() {
     measure_describe_get_vals(&a, &b);
     double speed = 4.3; //We can't access this so it's hard coded :'(
     cout << "Measure describe = (" << a << "," << (b/speed)*100 << ")" << endl;
+
+    if(start_points != NULL) {
+        free(start_points);
+        start_points = NULL;
+        start_points_length = 0;
+    }
 }
