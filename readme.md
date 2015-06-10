@@ -4,10 +4,11 @@ SwarmSimulator
 Example of running with simplest possible settings
 ```
 # Run with the values 0.35 and 0.45
-./bin/SwarmSimulator 0.35 0.45
+./bin/SwarmSimulator 0.35 0.45 --NoEvo
 
 # Run with random values (different for each agent)
-./bin/SwarmSimulator X X
+# But still don't evolve beyond that as there is no environment set
+./bin/SwarmSimulator X X --NoEvo
 ```
 
 Command line options
@@ -15,6 +16,11 @@ Command line options
 ```
 --NoDisplay
     Don't show a display
+
+--NoEvo
+    Stops the individuals from attempting to evolve (ie. their parameter values are fixed)
+    This MUST be applied if no environment has been set otherwise it will cause instability
+    in the simulated behaviors
 
 -R --EnableRecord
     Enable recording (Note: The directory to save the images in must also be specified)
@@ -47,6 +53,13 @@ Command line options
         - INTER
             Agents are encouraged to share as much of their line of sight with
             other agents as possible
+        - VORTEX
+            a.k.a. Hydrodynamic efficiency, each individual attempts to minimise
+            the energy they use to move about
+        - CONF
+            Individuals attempt to confuse predators by grouping together
+        - COPE
+            Simulation of feeding on copepod plankton
 
         - M_DESC
             Measures the 'describe' parameters (spread & speed)
@@ -57,5 +70,9 @@ Command line options
 --RoundN <NUMBER_OF_ROUNDS>
     Specified the run time in terms of the number of evolution rounds to use
     Takes precedence over the '--RunTime' argument
+
+--jsonDir <DIR>
+    Specifies the directory where the json output should be saved to (the output
+    of the GA)
 ```
 
