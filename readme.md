@@ -1,6 +1,8 @@
 SwarmSimulator
 ==================
 
+The code for my third year BSci Computer Science dissertation. Report can be viewed [here](https://gitlab.com/jake314159/Y3_final_report).
+
 Example of running with simplest possible settings
 ```
 # Run with the values 0.35 and 0.45
@@ -75,4 +77,25 @@ Command line options
     Specifies the directory where the json output should be saved to (the output
     of the GA)
 ```
+
+Screenshots
+--------------------------
+
+**SCAN**:
+
+![Virtual fish in a ball patern](screenshots/ball.png)
+
+
+
+**COPE**:
+
+![Virtual fish traveling together in one direction in a group](screenshots/bird.png)
+
+
+**FOOD**:
+
+
+![Virtual fish randomly spread and traveling in different directions](screenshots/ant.png)
+
+
 
